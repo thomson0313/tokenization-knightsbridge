@@ -18,13 +18,17 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
   return (
     <div className="sticky top-4 border bg-bg-secondary p-6 rounded-3xl border-border-primary">
       <div className="mb-6">
-        <div className="w-1 h-16 bg-text-primary mb-4"></div>
-        <h2 className="text-text-primary text-2xl md:text-3xl font-normal mb-2">
-          Your Selected Services
-        </h2>
-        <p className="text-text-secondary text-base">
-          See the prices for each
-        </p>
+        <div className="flex items-start gap-4 mb-4">
+          <div className="w-1 h-16 lg:h-20 bg-text-primary flex-shrink-0"></div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2">
+              Your Selected Services
+            </h2>
+            <p className="text-text-secondary text-base md:text-[17px] font-normal">
+              See the prices for each
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4 mb-8">
