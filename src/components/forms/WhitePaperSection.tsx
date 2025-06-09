@@ -1,8 +1,12 @@
+
 import React, { useState } from 'react';
-import { RadioGroup } from '../ui/RadioGroup';
+import { CheckboxField } from '../ui/CheckboxField';
+import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const WhitePaperSection: React.FC = () => {
-  const [selectedPages, setSelectedPages] = useState('');
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedPages, setSelectedPages] = useState<string[]>([]);
 
   const pageOptions = [
     { value: '30', label: '30 Pages' },
@@ -10,25 +14,42 @@ export const WhitePaperSection: React.FC = () => {
     { value: 'none', label: 'None' }
   ];
 
+  const handlePageChange = (page: string, checked: boolean) => {
+    if (checked) {
+      setSelectedPages(prev => [...prev, page]);
+    } else {
+      setSelectedPages(prev => prev.filter(p => p !== page));
+    }
+  };
+
+  const handleCategoryToggle = (checked: boolean) => {
+    setIsEnabled(checked);
+    setIsExpanded(checked);
+  };
+
   return (
     <section className="box-border m-0 p-0">
-      <div className="box-border relative mb-8 m-0 p-0">
-        <h2 className="box-border text-white text-[35px] font-normal mb-2 m-0 pl-[46px] p-0 max-sm:text-[28px] max-sm:pl-[30px]">
-          White Paper
-        </h2>
-        <p className="box-border text-white text-[17px] font-normal m-0 pl-[11px] p-0">
-          Create and mint your customization token
-        </p>
-        <div className="box-border w-[54px] h-px absolute bg-white m-0 p-0 left-0 top-2" />
-        <div className="box-border absolute m-0 p-0 right-0 top-6 max-sm:static max-sm:mt-5">
-          <RadioGroup
-            options={pageOptions}
-            selectedValue={selectedPages}
-            onChange={setSelectedPages}
-            className="gap-[51px] max-sm:flex-wrap max-sm:gap-[15px]"
-          />
-        </div>
-      </div>
+      <CategoryHeader
+        title="White Paper"
+        description="Create and mint your customization token"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={handleCategoryToggle}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+        rightContent={
+          <div className="flex gap-[51px] max-sm:flex-wrap max-sm:gap-[15px]">
+            {pageOptions.map((option) => (
+              <CheckboxField
+                key={option.value}
+                label={option.label}
+                checked={selectedPages.includes(option.value)}
+                onChange={(checked) => handlePageChange(option.value, checked)}
+              />
+            ))}
+          </div>
+        }
+      />
     </section>
   );
 };

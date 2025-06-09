@@ -1,8 +1,12 @@
+
 import React, { useState } from 'react';
-import { RadioGroup } from '../ui/RadioGroup';
+import { CheckboxField } from '../ui/CheckboxField';
+import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const ExchangeListingSection: React.FC = () => {
-  const [selectedExchange, setSelectedExchange] = useState('');
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedExchanges, setSelectedExchanges] = useState<string[]>([]);
 
   const exchangeOptions = [
     { value: 'xt', label: 'XT' },
@@ -10,25 +14,42 @@ export const ExchangeListingSection: React.FC = () => {
     { value: 'none', label: 'None' }
   ];
 
+  const handleExchangeChange = (exchange: string, checked: boolean) => {
+    if (checked) {
+      setSelectedExchanges(prev => [...prev, exchange]);
+    } else {
+      setSelectedExchanges(prev => prev.filter(e => e !== exchange));
+    }
+  };
+
+  const handleCategoryToggle = (checked: boolean) => {
+    setIsEnabled(checked);
+    setIsExpanded(checked);
+  };
+
   return (
     <section className="box-border m-0 p-0">
-      <div className="box-border relative mb-8 m-0 p-0">
-        <h2 className="box-border text-white text-[35px] font-normal mb-2 m-0 pl-[46px] p-0 max-sm:text-[28px] max-sm:pl-[30px]">
-          Listings on Exchange
-        </h2>
-        <p className="box-border text-white text-[17px] font-normal m-0 pl-[11px] p-0">
-          choose your prefernces for listing
-        </p>
-        <div className="box-border w-[54px] h-px absolute bg-white m-0 p-0 left-0 top-2" />
-        <div className="box-border absolute m-0 p-0 right-0 top-6 max-sm:static max-sm:mt-5">
-          <RadioGroup
-            options={exchangeOptions}
-            selectedValue={selectedExchange}
-            onChange={setSelectedExchange}
-            className="gap-[72px] max-sm:flex-wrap max-sm:gap-[15px]"
-          />
-        </div>
-      </div>
+      <CategoryHeader
+        title="Listings on Exchange"
+        description="choose your preferences for listing"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={handleCategoryToggle}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+        rightContent={
+          <div className="flex gap-[72px] max-sm:flex-wrap max-sm:gap-[15px]">
+            {exchangeOptions.map((option) => (
+              <CheckboxField
+                key={option.value}
+                label={option.label}
+                checked={selectedExchanges.includes(option.value)}
+                onChange={(checked) => handleExchangeChange(option.value, checked)}
+              />
+            ))}
+          </div>
+        }
+      />
     </section>
   );
 };

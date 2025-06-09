@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Check } from 'lucide-react';
 
 interface CheckboxFieldProps {
   label: string;
@@ -15,18 +16,20 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   className = ""
 }) => {
   return (
-    <div className={`box-border flex items-center gap-2 m-0 p-0 ${className}`}>
+    <div className={`box-border flex items-center gap-[15px] m-0 p-0 ${className}`}>
       <div 
-        className={`box-border w-4 h-4 border cursor-pointer m-0 p-0 rounded border-solid ${checked ? 'bg-blue-500 border-blue-500' : 'border-gray-600'}`}
+        className={`box-border w-6 h-6 border cursor-pointer m-0 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center ${
+          checked 
+            ? 'bg-green-500 border-green-500' 
+            : 'border-[#535353] hover:border-green-400'
+        }`}
         onClick={() => onChange(!checked)}
       >
         {checked && (
-          <div className="box-border w-full h-full flex items-center justify-center">
-            <div className="box-border w-2 h-2 bg-white rounded-sm"></div>
-          </div>
+          <Check className="w-4 h-4 text-white" />
         )}
       </div>
-      <div className="box-border text-white text-[14px] font-normal m-0 p-0">
+      <div className="box-border text-white text-[17px] font-normal whitespace-nowrap m-0 p-0">
         {label}
       </div>
     </div>

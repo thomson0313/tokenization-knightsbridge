@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
 import { TokenMintForm } from '../components/forms/TokenMintForm';
@@ -14,45 +13,56 @@ import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 
 const Index: React.FC = () => {
+  const [showPayment, setShowPayment] = useState(false);
+
+  const handleCheckout = () => {
+    setShowPayment(true);
+  };
+
+  const handleClosePayment = () => {
+    setShowPayment(false);
+  };
+
   return (
-    <div className="box-border w-full min-h-screen relative overflow-x-hidden bg-[#0a0a0a] m-0 p-0">
+    <div className="box-border w-full min-h-screen relative overflow-x-hidden bg-[#0C0C0C] m-0 p-0">
       <Header />
       
       <main>
         <HeroSection />
         
-        <div className="box-border flex gap-8 mb-[100px] m-0 px-8 py-0 max-lg:flex-col max-md:px-6 max-sm:px-4">
-          <div className="box-border flex-1 border bg-[#111111] m-0 p-8 rounded-lg border-solid border-gray-700 max-lg:w-full">
+        <div className="box-border flex gap-[29px] mb-[100px] m-0 px-[68px] py-0 max-md:flex-col max-md:px-10 max-md:py-0 max-sm:px-5 max-sm:py-0">
+          <form className="box-border flex-[7] border backdrop-blur-[0.3px] bg-[rgba(98,87,87,0.10)] m-0 p-7 rounded-3xl border-solid border-[rgba(211,204,204,0.10)] max-md:w-full">
             <TokenMintForm />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <FeaturesSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <LetterheadSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <RaiseDocumentSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <WhitePaperSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <WebsitePlanSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <ExchangeListingSection />
             
-            <div className="box-border w-full h-px bg-gray-700 mx-0 my-8 p-0" />
+            <div className="box-border w-full h-px bg-[#535353] mx-0 my-8 p-0" />
             <LegalDocumentsSection />
-          </div>
+          </form>
           
-          <div className="box-border flex flex-col gap-6 m-0 p-0 max-lg:flex-row max-lg:w-full max-sm:flex-col">
-            <ServicesSidebar />
-            <PaymentSidebar />
+          <div className="box-border flex-[3] m-0 p-0 max-md:w-full">
+            <ServicesSidebar onCheckout={handleCheckout} />
           </div>
         </div>
       </main>
+      
+      <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
     </div>
   );
 };
