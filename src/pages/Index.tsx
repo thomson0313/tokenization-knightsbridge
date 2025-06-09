@@ -37,11 +37,15 @@ const Index: React.FC = () => {
 
   const handleThemeToggle = () => {
     setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
+    if (!isDarkMode) {
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.add('light');
+    }
   };
 
   return (
-    <div className={`w-full min-h-screen relative overflow-x-hidden ${isDarkMode ? 'bg-hsl(var(--bg-primary))' : 'bg-hsl(var(--bg-primary))'} ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`w-full min-h-screen relative overflow-x-hidden bg-hsl(var(--bg-primary)) ${!isDarkMode ? 'light' : ''}`}>
       <Header isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
       
       <main>
