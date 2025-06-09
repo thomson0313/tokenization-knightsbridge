@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
+import Knightsbridge from "./pages/Knightsbridge";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,10 @@ const App = () => {
             <Route 
               path="/decentralized" 
               element={<Index isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
+            />
+            <Route 
+              path="/knightsbridge" 
+              element={<Knightsbridge isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

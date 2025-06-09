@@ -29,10 +29,13 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-6 mb-20">
-          <button className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]">
+          <Link 
+            to="/knightsbridge"
+            className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
+          >
             Knightsbridge
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-          </button>
+          </Link>
           
           <Link 
             to="/decentralized"
