@@ -35,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
           </button>
           
           <Link 
-            to="/form"
+            to="/decentralized"
             className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
           >
             Decentralized
@@ -50,7 +50,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
               STEP 01: CHOOSE PATH
             </h3>
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed">
+            <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Select between a fully Decentralized launch or the Knightsbridge Approved route.
             </p>
             <div className="w-full h-px bg-text-secondary mt-8"></div>
@@ -61,7 +61,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
               STEP 02: CUSTOMIZE
             </h3>
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed">
+            <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Add token details, select optional services (whitepaper, legal docs, listings), and upload required documents.
             </p>
             <div className="w-full h-px bg-text-secondary mt-8"></div>
@@ -72,7 +72,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
               STEP 03: CHECKOUT
             </h3>
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed">
+            <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Choose your payment method — Stripe, USDT, or Bitcoin.
             </p>
             <div className="w-full h-px bg-text-secondary mt-8"></div>

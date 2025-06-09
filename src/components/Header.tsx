@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, onThemeToggle }) => 
       <div className="w-full max-w-[1200px] h-full flex items-center justify-between mx-auto px-4 md:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
           <img
-            src="/lovable-uploads/36b8674e-10dd-4101-9217-d6dc1f80d6ea.png"
+            src={isDarkMode ? "/lovable-uploads/36b8674e-10dd-4101-9217-d6dc1f80d6ea.png" : "/lovable-uploads/51692217-6449-4702-80ba-17108daa87c5.png"}
             alt="Logo"
             className="w-16 h-16 md:w-20 md:h-20"
           />

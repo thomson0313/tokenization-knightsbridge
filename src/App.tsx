@@ -35,7 +35,7 @@ const App = () => {
               element={<Home isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
             />
             <Route 
-              path="/form" 
+              path="/decentralized" 
               element={<Index isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
