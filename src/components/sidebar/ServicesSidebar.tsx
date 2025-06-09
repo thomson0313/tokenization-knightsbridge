@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 
 interface ServicesSidebarProps {
@@ -23,6 +24,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
     whitePaper: 0,
     websitePlan: 0,
     exchangeListing: 0,
+    legalDocuments: 0,
     dexListing: 0,
     total: 0
   });
@@ -37,6 +39,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
       whitePaper: selectedServices.whitePaper.length * 34,
       websitePlan: selectedServices.websitePlan ? 230 : 0,
       exchangeListing: selectedServices.exchangeListing.length * 34,
+      legalDocuments: selectedServices.legalDocuments.length * 34,
       dexListing: 0,
     };
     
