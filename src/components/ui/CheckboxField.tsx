@@ -21,7 +21,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
         className={`box-border w-6 h-6 border cursor-pointer m-0 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center ${
           checked 
             ? 'bg-transparent border-green-500' 
-            : 'border-[#535353] dark:border-[#535353] light:border-gray-300 hover:border-green-400'
+            : 'border-hsl(var(--input-border)) hover:border-green-400'
         }`}
         onClick={() => onChange(!checked)}
       >
@@ -29,7 +29,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
           <Check className="w-4 h-4 text-green-500" />
         )}
       </div>
-      <div className="box-border text-white dark:text-white light:text-gray-900 text-[17px] font-normal whitespace-nowrap m-0 p-0">
+      <div className="box-border text-hsl(var(--text-primary)) text-[17px] font-normal whitespace-nowrap m-0 p-0">
         {label}
       </div>
     </div>
