@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { RadioGroup } from '../ui/RadioGroup';
 import { FormInput } from '../ui/FormInput';
@@ -27,24 +28,23 @@ export const RaiseDocumentSection: React.FC = () => {
 
   return (
     <section className="box-border m-0 p-0">
-      <div className="box-border relative mb-8 m-0 p-0">
-        <h2 className="box-border text-white text-[35px] font-normal mb-2 m-0 pl-[46px] p-0 max-sm:text-[28px] max-sm:pl-[30px]">
+      <div className="box-border relative mb-6 m-0 p-0">
+        <h2 className="box-border text-white text-[24px] font-medium mb-2 m-0 p-0">
           Raise Document
         </h2>
-        <p className="box-border text-white text-[17px] font-normal m-0 pl-[11px] p-0">
+        <p className="box-border text-gray-400 text-[14px] font-normal m-0 p-0">
           Create and mint your customization token
         </p>
-        <div className="box-border w-[54px] h-px absolute bg-white m-0 p-0 left-0 top-2" />
-        <div className="box-border absolute m-0 p-0 right-0 top-6 max-sm:static max-sm:mt-5">
+        <div className="box-border absolute right-0 top-0 max-sm:static max-sm:mt-4">
           <RadioGroup
             options={regionOptions}
             selectedValue={selectedRegion}
             onChange={setSelectedRegion}
-            className="gap-[61px] max-sm:flex-wrap max-sm:gap-[15px]"
+            className="gap-4"
           />
         </div>
       </div>
-      <div className="box-border grid grid-cols-[repeat(3,243px)] gap-[32px_29px] mb-8 m-0 p-0 max-md:grid-cols-[1fr_1fr] max-md:gap-5 max-sm:grid-cols-[1fr]">
+      <div className="box-border grid grid-cols-3 gap-4 mb-6 m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
         <FormInput
           label="Company Name"
           placeholder="e.g BONAM"
@@ -81,19 +81,19 @@ export const RaiseDocumentSection: React.FC = () => {
           value={formData.phoneNo}
           onChange={(value) => updateField('phoneNo', value)}
         />
+      </div>
+      <div className="box-border grid grid-cols-2 gap-4 m-0 p-0 max-sm:grid-cols-1">
         <FormInput
           label="Company Address"
           placeholder="2972 Westheimer Rd. Santa Ana, Illinois 85486"
           value={formData.companyAddress}
           onChange={(value) => updateField('companyAddress', value)}
-          className="col-[span_2]"
         />
         <FormInput
           label="Website URL"
           placeholder="e.g www.your website.com"
           value={formData.websiteUrl}
           onChange={(value) => updateField('websiteUrl', value)}
-          className="col-[span_2]"
         />
       </div>
     </section>

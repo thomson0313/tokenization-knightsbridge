@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { FormInput } from '../ui/FormInput';
 
@@ -18,15 +19,14 @@ export const TokenMintForm: React.FC = () => {
   return (
     <section className="box-border m-0 p-0">
       <div className="box-border relative mb-8 m-0 p-0">
-        <h2 className="box-border text-white text-[35px] font-normal mb-2 m-0 pl-[46px] p-0 max-sm:text-[28px] max-sm:pl-[30px]">
+        <h2 className="box-border text-white text-[24px] font-medium mb-2 m-0 p-0">
           Mint Token
         </h2>
-        <p className="box-border text-white text-[17px] font-normal m-0 pl-[11px] p-0">
+        <p className="box-border text-gray-400 text-[14px] font-normal m-0 p-0">
           Create and mint your customization token
         </p>
-        <div className="box-border w-[54px] h-px absolute bg-white m-0 p-0 left-0 top-2" />
       </div>
-      <div className="box-border grid grid-cols-[358px_199px_199px] gap-[16px_20px] mb-8 m-0 p-0 max-md:grid-cols-[1fr_1fr] max-md:gap-4 max-sm:grid-cols-[1fr]">
+      <div className="box-border grid grid-cols-3 gap-4 mb-8 m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
         <FormInput
           label="Token Name"
           placeholder="e.g BONAM"

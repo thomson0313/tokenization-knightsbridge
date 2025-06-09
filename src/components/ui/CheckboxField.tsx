@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface CheckboxFieldProps {
@@ -14,12 +15,18 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   className = ""
 }) => {
   return (
-    <div className={`box-border flex items-center gap-[15px] m-0 p-0 ${className}`}>
+    <div className={`box-border flex items-center gap-2 m-0 p-0 ${className}`}>
       <div 
-        className={`box-border w-6 h-6 border cursor-pointer m-0 p-0 rounded-[5px] border-solid border-[#535353] ${checked ? 'bg-white' : ''}`}
+        className={`box-border w-4 h-4 border cursor-pointer m-0 p-0 rounded border-solid ${checked ? 'bg-blue-500 border-blue-500' : 'border-gray-600'}`}
         onClick={() => onChange(!checked)}
-      />
-      <div className="box-border text-white text-[17px] font-normal whitespace-nowrap m-0 p-0">
+      >
+        {checked && (
+          <div className="box-border w-full h-full flex items-center justify-center">
+            <div className="box-border w-2 h-2 bg-white rounded-sm"></div>
+          </div>
+        )}
+      </div>
+      <div className="box-border text-white text-[14px] font-normal m-0 p-0">
         {label}
       </div>
     </div>
