@@ -10,32 +10,32 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isDarkMode, onThemeToggle }) => {
   return (
-    <header className="box-border w-full h-[60px] relative m-0 p-0 border-b border-gray-700 dark:border-gray-700 border-gray-200">
-      <div className="box-border w-full max-w-[1200px] h-full flex items-center justify-between mx-auto my-0 px-8 py-0 max-md:px-6 max-sm:px-4">
-        <div className="box-border flex items-center gap-2 m-0 p-0">
+    <header className="w-full h-[60px] relative border-b border-hsl(var(--border-primary))">
+      <div className="w-full max-w-[1200px] h-full flex items-center justify-between mx-auto px-4 md:px-6 lg:px-8">
+        <div className="flex items-center gap-2">
           <img
             src="/lovable-uploads/36b8674e-10dd-4101-9217-d6dc1f80d6ea.png"
             alt="Logo"
-            className="box-border w-12 h-12 m-0 p-0"
+            className="w-16 h-16 md:w-20 md:h-20"
           />
         </div>
-        <div className="flex items-center gap-4">
-          <nav className="box-border flex gap-8 items-center m-0 p-0 max-sm:hidden">
+        <div className="flex items-center gap-2 md:gap-4">
+          <nav className="hidden sm:flex gap-4 md:gap-8 items-center">
             <a
               href="#"
-              className="box-border text-white dark:text-white text-gray-900 text-[14px] font-medium cursor-pointer m-0 p-0 hover:text-blue-400 transition-colors"
+              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               Home
             </a>
             <a
               href="#"
-              className="box-border text-white dark:text-white text-gray-900 text-[14px] font-medium cursor-pointer m-0 p-0 hover:text-blue-400 transition-colors"
+              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               FAQ
             </a>
             <a
               href="#"
-              className="box-border text-white dark:text-white text-gray-900 text-[14px] font-medium cursor-pointer m-0 p-0 hover:text-blue-400 transition-colors"
+              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               Contact Us
             </a>

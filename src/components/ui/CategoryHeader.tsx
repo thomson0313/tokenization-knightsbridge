@@ -19,17 +19,17 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
   rightContent
 }) => {
   return (
-    <div className="box-border relative mb-8 m-0 p-0">
+    <div className="relative mb-8">
       <div className="flex items-start gap-4">
-        <div className="flex items-start gap-4">
-          <div className="box-border w-1 h-16 bg-white dark:bg-white bg-gray-900 m-0 p-0"></div>
+        <div className="flex items-start gap-4 flex-1">
+          <div className="w-1 h-20 bg-hsl(var(--text-primary))"></div>
           
           {hasCheckbox && (
             <div 
-              className={`box-border w-6 h-6 border cursor-pointer m-0 mt-2 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center ${
+              className={`w-6 h-6 border cursor-pointer mt-2 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center ${
                 checked 
                   ? 'bg-transparent border-green-500' 
-                  : 'border-[#535353] dark:border-[#535353] border-gray-400 hover:border-green-400'
+                  : 'border-hsl(var(--border-primary)) hover:border-green-400'
               }`}
               onClick={() => onCheckboxChange?.(!checked)}
             >
@@ -39,18 +39,18 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
             </div>
           )}
           
-          <div className="flex-1">
-            <h2 className="box-border text-white dark:text-white text-gray-900 text-[35px] font-normal mb-2 m-0 p-0 max-sm:text-[28px]">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-hsl(var(--text-primary)) text-2xl md:text-3xl lg:text-[35px] font-normal mb-2 break-words">
               {title}
             </h2>
-            <p className="box-border text-white dark:text-white text-gray-600 text-[17px] font-normal m-0 p-0">
+            <p className="text-hsl(var(--text-secondary)) text-base md:text-[17px] font-normal break-words">
               {description}
             </p>
           </div>
         </div>
         
         {rightContent && (
-          <div className="box-border m-0 p-0 max-sm:static max-sm:mt-5">
+          <div className="flex-shrink-0 mt-2 lg:mt-0">
             {rightContent}
           </div>
         )}

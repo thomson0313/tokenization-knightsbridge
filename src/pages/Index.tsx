@@ -41,39 +41,39 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className={`box-border w-full min-h-screen relative overflow-x-hidden ${isDarkMode ? 'bg-[#0C0C0C]' : 'bg-white'} m-0 p-0 ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`w-full min-h-screen relative overflow-x-hidden ${isDarkMode ? 'bg-hsl(var(--bg-primary))' : 'bg-hsl(var(--bg-primary))'} ${isDarkMode ? 'dark' : ''}`}>
       <Header isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
       
       <main>
         <HeroSection />
         
-        <div className="box-border flex gap-[29px] mb-[100px] m-0 px-[68px] py-0 max-md:flex-col max-md:px-10 max-md:py-0 max-sm:px-5 max-sm:py-0">
-          <form className="box-border flex-[7] border backdrop-blur-[0.3px] bg-[rgba(98,87,87,0.10)] dark:bg-[rgba(98,87,87,0.10)] bg-[rgba(200,200,200,0.10)] m-0 p-7 rounded-3xl border-solid border-[rgba(211,204,204,0.10)] dark:border-[rgba(211,204,204,0.10)] border-[rgba(100,100,100,0.10)] max-md:w-full">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-7 mb-[100px] px-4 md:px-8 lg:px-16 xl:px-[68px]">
+          <form className="flex-[7] border backdrop-blur-[0.3px] bg-hsl(var(--surface-overlay)) p-4 md:p-7 rounded-3xl border-hsl(var(--border-primary))">
             <TokenMintForm />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <FeaturesSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <LetterheadSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <RaiseDocumentSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <WhitePaperSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <WebsitePlanSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <ExchangeListingSection />
             
-            <div className="box-border w-full h-px bg-[#535353] dark:bg-[#535353] bg-gray-300 mx-0 my-8 p-0" />
+            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
             <LegalDocumentsSection />
           </form>
           
-          <div className="box-border flex-[3] m-0 p-0 max-md:w-full">
+          <div className="flex-[3] min-w-0">
             <ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
             <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
           </div>

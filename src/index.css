@@ -45,6 +45,14 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom variables for light/dark mode */
+    --text-primary: 0 0% 9%;
+    --text-secondary: 0 0% 45%;
+    --bg-primary: 0 0% 100%;
+    --bg-secondary: 0 0% 96%;
+    --border-primary: 0 0% 85%;
+    --surface-overlay: rgba(255, 255, 255, 0.1);
   }
 
   .dark {
@@ -83,6 +91,14 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom variables for light/dark mode */
+    --text-primary: 0 0% 98%;
+    --text-secondary: 0 0% 65%;
+    --bg-primary: 8 8% 8%;
+    --bg-secondary: 0 0% 10%;
+    --border-primary: 0 0% 33%;
+    --surface-overlay: rgba(98, 87, 87, 0.1);
   }
 }
 
