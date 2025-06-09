@@ -13,9 +13,13 @@ import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection
 import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 
-const Index: React.FC = () => {
+interface IndexProps {
+  isDarkMode: boolean;
+  onThemeToggle: () => void;
+}
+
+const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
   const [showPayment, setShowPayment] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [selectedServices, setSelectedServices] = useState({
     mintToken: false,
     features: [] as string[],
@@ -35,18 +39,9 @@ const Index: React.FC = () => {
     setShowPayment(false);
   };
 
-  const handleThemeToggle = () => {
-    setIsDarkMode(!isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
-  };
-
   return (
     <div className={`w-full min-h-screen relative overflow-x-hidden bg-bg-primary ${!isDarkMode ? 'light' : ''}`}>
-      <Header isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
+      <Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
       
       <main>
         <HeroSection />
