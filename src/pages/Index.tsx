@@ -45,35 +45,35 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className={`w-full min-h-screen relative overflow-x-hidden bg-hsl(var(--bg-primary)) ${!isDarkMode ? 'light' : ''}`}>
+    <div className={`w-full min-h-screen relative overflow-x-hidden bg-bg-primary ${!isDarkMode ? 'light' : ''}`}>
       <Header isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
       
       <main>
         <HeroSection />
         
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-7 mb-[100px] px-4 md:px-8 lg:px-16 xl:px-[68px]">
-          <form className="flex-[7] border backdrop-blur-[0.3px] bg-hsl(var(--surface-overlay)) p-4 md:p-7 rounded-3xl border-hsl(var(--border-primary))">
+          <form className="flex-[7] border bg-surface-overlay p-4 md:p-7 rounded-3xl border-border-primary">
             <TokenMintForm />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <FeaturesSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <LetterheadSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <RaiseDocumentSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <WhitePaperSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <WebsitePlanSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <ExchangeListingSection />
             
-            <div className="w-full h-px bg-hsl(var(--border-primary)) my-8" />
+            <div className="w-full h-px bg-border-primary my-8" />
             <LegalDocumentsSection />
           </form>
           

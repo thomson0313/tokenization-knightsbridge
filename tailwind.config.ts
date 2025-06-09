@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom colors from design system
+				'text-primary': 'hsl(var(--text-primary))',
+				'text-secondary': 'hsl(var(--text-secondary))',
+				'bg-primary': 'hsl(var(--bg-primary))',
+				'bg-secondary': 'hsl(var(--bg-secondary))',
+				'border-primary': 'hsl(var(--border-primary))',
+				'input-bg': 'hsl(var(--input-bg))',
+				'input-border': 'hsl(var(--input-border))'
+			},
+			backgroundColor: {
+				'surface-overlay': 'var(--surface-overlay)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
