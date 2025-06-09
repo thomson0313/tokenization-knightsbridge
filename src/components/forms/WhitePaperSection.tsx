@@ -5,7 +5,6 @@ import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const WhitePaperSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedPages, setSelectedPages] = useState<string[]>([]);
 
   const pageOptions = [
@@ -22,11 +21,6 @@ export const WhitePaperSection: React.FC = () => {
     }
   };
 
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
-  };
-
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
@@ -34,9 +28,7 @@ export const WhitePaperSection: React.FC = () => {
         description="Create and mint your customization token"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <div className="flex gap-[51px] max-sm:flex-wrap max-sm:gap-[15px]">
             {pageOptions.map((option) => (

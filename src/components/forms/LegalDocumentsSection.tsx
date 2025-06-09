@@ -1,10 +1,10 @@
+
 import React, { useState } from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const LegalDocumentsSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [documents, setDocuments] = useState({
     offeringMemorandum: false,
     smartContractLegalOpinion: false,
@@ -25,11 +25,6 @@ export const LegalDocumentsSection: React.FC = () => {
     setDocuments(prev => ({ ...prev, [document]: checked }));
   };
 
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
-  };
-
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
@@ -37,12 +32,10 @@ export const LegalDocumentsSection: React.FC = () => {
         description="Legal Document Templates design"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
       />
       
-      <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border mb-8 m-0 p-0">
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
@@ -61,7 +54,7 @@ export const LegalDocumentsSection: React.FC = () => {
               onChange={(checked) => updateDocument('nonDisclosureAgreement', checked)}
             />
           </div>
-          <div className="box-border flex gap-[66px] mb-[27px] m-0 p-0 max-sm:flex-col max-sm:gap-[15px]">
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Security Token Offering"
               checked={documents.securityTokenOffering}
@@ -78,7 +71,7 @@ export const LegalDocumentsSection: React.FC = () => {
               onChange={(checked) => updateDocument('sada', checked)}
             />
           </div>
-          <div className="box-border flex gap-[66px] mb-[27px] m-0 p-0 max-sm:flex-col max-sm:gap-[15px]">
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="NDA"
               checked={documents.nda}
@@ -95,7 +88,7 @@ export const LegalDocumentsSection: React.FC = () => {
               onChange={(checked) => updateDocument('tokenomicsWhitepaper', checked)}
             />
           </div>
-          <div className="box-border flex gap-[66px] mb-[27px] m-0 p-0 max-sm:flex-col max-sm:gap-[15px]">
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Mutual NDA"
               checked={documents.mutualNda}

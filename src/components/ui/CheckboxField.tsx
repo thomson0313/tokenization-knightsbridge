@@ -20,13 +20,13 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
       <div 
         className={`box-border w-6 h-6 border cursor-pointer m-0 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center ${
           checked 
-            ? 'bg-green-500 border-green-500' 
+            ? 'bg-transparent border-green-500' 
             : 'border-[#535353] hover:border-green-400'
         }`}
         onClick={() => onChange(!checked)}
       >
         {checked && (
-          <Check className="w-4 h-4 text-white" />
+          <Check className="w-4 h-4 text-green-500" />
         )}
       </div>
       <div className="box-border text-white text-[17px] font-normal whitespace-nowrap m-0 p-0">

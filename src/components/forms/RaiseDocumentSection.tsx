@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { FormInput } from '../ui/FormInput';
@@ -5,7 +6,6 @@ import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const RaiseDocumentSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     companyName: '',
@@ -36,11 +36,6 @@ export const RaiseDocumentSection: React.FC = () => {
     }
   };
 
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
-  };
-
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
@@ -48,9 +43,7 @@ export const RaiseDocumentSection: React.FC = () => {
         description="Create and mint your customization token"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <div className="flex gap-[61px] max-sm:flex-wrap max-sm:gap-[15px]">
             {regionOptions.map((option) => (
@@ -65,7 +58,7 @@ export const RaiseDocumentSection: React.FC = () => {
         }
       />
       
-      <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border grid grid-cols-[358px_358px] gap-[16px_20px] mb-8 m-0 p-0 max-md:grid-cols-[1fr] max-md:gap-4 max-sm:grid-cols-[1fr]">
           <FormInput
             label="Company Name"

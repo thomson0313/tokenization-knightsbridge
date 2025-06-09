@@ -1,20 +1,15 @@
+
 import React, { useState } from 'react';
 import { CategoryHeader } from '../ui/CategoryHeader';
 import { UploadButton } from '../ui/UploadButton';
 
 export const WebsitePlanSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [details, setDetails] = useState('');
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileUpload = (file: File) => {
     setFile(file);
-  };
-
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
   };
 
   return (
@@ -24,12 +19,10 @@ export const WebsitePlanSection: React.FC = () => {
         description="Get website plan and structure."
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
       />
       
-      <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border relative h-16 mb-8 m-0 p-0">
           <div className="max-sm:static max-sm:w-full max-sm:mt-5">
             <UploadButton

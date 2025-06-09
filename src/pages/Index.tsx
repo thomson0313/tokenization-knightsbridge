@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
@@ -58,11 +59,10 @@ const Index: React.FC = () => {
           
           <div className="box-border flex-[3] m-0 p-0 max-md:w-full">
             <ServicesSidebar onCheckout={handleCheckout} />
+            <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
           </div>
         </div>
       </main>
-      
-      <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
     </div>
   );
 };

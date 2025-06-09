@@ -1,20 +1,15 @@
+
 import React, { useState } from 'react';
 import { CategoryHeader } from '../ui/CategoryHeader';
 import { UploadButton } from '../ui/UploadButton';
 
 export const LetterheadSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [guidelines, setGuidelines] = useState('');
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileUpload = (file: File) => {
     setFile(file);
-  };
-
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
   };
 
   return (
@@ -24,9 +19,7 @@ export const LetterheadSection: React.FC = () => {
         description="Get branded letterhead designs"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <UploadButton
             label="Upload Brand guide"
@@ -35,7 +28,7 @@ export const LetterheadSection: React.FC = () => {
         }
       />
       
-      <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border mt-6 m-0 p-0">
           <label className="box-border text-white text-[14px] font-medium mb-2 block m-0 p-0">
             Mention your Guidelines

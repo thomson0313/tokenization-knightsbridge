@@ -5,7 +5,6 @@ import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const ExchangeListingSection: React.FC = () => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedExchanges, setSelectedExchanges] = useState<string[]>([]);
 
   const exchangeOptions = [
@@ -22,11 +21,6 @@ export const ExchangeListingSection: React.FC = () => {
     }
   };
 
-  const handleCategoryToggle = (checked: boolean) => {
-    setIsEnabled(checked);
-    setIsExpanded(checked);
-  };
-
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
@@ -34,9 +28,7 @@ export const ExchangeListingSection: React.FC = () => {
         description="choose your preferences for listing"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={handleCategoryToggle}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <div className="flex gap-[72px] max-sm:flex-wrap max-sm:gap-[15px]">
             {exchangeOptions.map((option) => (
