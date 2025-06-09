@@ -22,14 +22,14 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
     <div className="relative mb-8">
       <div className="flex flex-col lg:flex-row lg:items-start gap-4">
         <div className="flex items-start gap-4 flex-1 min-w-0">
-          <div className="w-1 h-16 lg:h-20 bg-hsl(var(--text-primary)) flex-shrink-0"></div>
+          <div className="w-1 h-16 lg:h-20 bg-text-primary flex-shrink-0"></div>
           
           {hasCheckbox && (
             <div 
               className={`w-6 h-6 border cursor-pointer mt-2 lg:mt-1 p-0 rounded-[5px] border-solid transition-all duration-200 flex items-center justify-center flex-shrink-0 ${
                 checked 
                   ? 'bg-transparent border-green-500' 
-                  : 'border-hsl(var(--border-primary)) hover:border-green-400'
+                  : 'border-border-primary hover:border-green-400'
               }`}
               onClick={() => onCheckboxChange?.(!checked)}
             >
@@ -40,10 +40,10 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({
           )}
           
           <div className="flex-1 min-w-0">
-            <h2 className="text-hsl(var(--text-primary)) text-2xl md:text-3xl lg:text-[35px] font-normal mb-2 break-words">
+            <h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2 break-words">
               {title}
             </h2>
-            <p className="text-hsl(var(--text-secondary)) text-base md:text-[17px] font-normal break-words">
+            <p className="text-text-secondary text-base md:text-[17px] font-normal break-words">
               {description}
             </p>
           </div>

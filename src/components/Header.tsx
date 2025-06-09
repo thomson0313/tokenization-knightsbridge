@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isDarkMode, onThemeToggle }) => {
   return (
-    <header className="w-full h-[60px] relative border-b border-hsl(var(--border-primary))">
+    <header className="w-full h-[60px] relative border-b border-border-primary">
       <div className="w-full max-w-[1200px] h-full flex items-center justify-between mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <img
@@ -23,19 +23,19 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, onThemeToggle }) => 
           <nav className="hidden sm:flex gap-4 md:gap-8 items-center">
             <a
               href="#"
-              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
+              className="text-text-primary text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               Home
             </a>
             <a
               href="#"
-              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
+              className="text-text-primary text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               FAQ
             </a>
             <a
               href="#"
-              className="text-hsl(var(--text-primary)) text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
+              className="text-text-primary text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors"
             >
               Contact Us
             </a>

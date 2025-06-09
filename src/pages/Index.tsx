@@ -52,7 +52,7 @@ const Index: React.FC = () => {
         <HeroSection />
         
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-7 mb-[100px] px-4 md:px-8 lg:px-16 xl:px-[68px]">
-          <form className="flex-[7] border bg-surface-overlay p-4 md:p-7 rounded-3xl border-border-primary">
+          <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
             <TokenMintForm />
             
             <div className="w-full h-px bg-border-primary my-8" />

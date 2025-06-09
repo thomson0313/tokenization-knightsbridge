@@ -46,7 +46,7 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Custom variables for dark mode - matching the design exactly */
+    /* Custom variables for dark mode */
     --text-primary: 0 0% 100%;
     --text-secondary: 0 0% 70%;
     --bg-primary: 0 0% 8%;
@@ -95,13 +95,13 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Custom variables for light mode */
-    --text-primary: 0 0% 9%;
+    /* Custom variables for light mode - white backgrounds and black text */
+    --text-primary: 0 0% 0%;
     --text-secondary: 0 0% 45%;
     --bg-primary: 0 0% 100%;
-    --bg-secondary: 0 0% 96%;
+    --bg-secondary: 0 0% 100%;
     --border-primary: 0 0% 85%;
-    --surface-overlay: rgba(255, 255, 255, 0.9);
+    --surface-overlay: rgba(255, 255, 255, 1);
     --input-bg: 0 0% 100%;
     --input-border: 0 0% 85%;
   }
