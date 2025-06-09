@@ -30,18 +30,18 @@ export const WebsitePlanSection: React.FC = () => {
       
       <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border mt-8 m-0 p-0">
-          <label className="box-border text-white dark:text-white text-gray-900 text-xl font-normal mb-8 m-0 p-0 block">
+          <label className="box-border text-hsl(var(--text-primary)) text-xl font-normal mb-8 m-0 p-0 block">
             Mention your details
           </label>
-          <div className="box-border h-[200px] border relative m-0 px-[27px] py-[23px] rounded-xl border-solid border-[#535353] dark:border-[#535353] border-gray-300">
+          <div className="box-border h-[200px] border relative m-0 px-[27px] py-[23px] rounded-xl border-solid border-hsl(var(--input-border)) bg-hsl(var(--input-bg))">
             <textarea
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               placeholder="e.g what you want etc"
-              className="box-border w-full h-full bg-transparent text-white dark:text-white text-gray-900 placeholder-white dark:placeholder-white placeholder-gray-400 placeholder-opacity-50 text-[15px] font-normal resize-none border-none outline-none m-0 p-0"
+              className="box-border w-full h-full bg-transparent text-hsl(var(--text-primary)) placeholder-hsl(var(--text-secondary)) placeholder-opacity-50 text-[15px] font-normal resize-none border-none outline-none m-0 p-0"
               maxLength={500}
             />
-            <div className="box-border text-white dark:text-white text-gray-400 text-[15px] font-normal opacity-50 absolute m-0 p-0 right-[27px] bottom-[33px]">
+            <div className="box-border text-hsl(var(--text-secondary)) text-[15px] font-normal opacity-50 absolute m-0 p-0 right-[27px] bottom-[33px]">
               500 max
             </div>
           </div>

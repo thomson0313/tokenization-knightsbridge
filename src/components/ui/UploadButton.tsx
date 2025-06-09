@@ -21,15 +21,15 @@ export const UploadButton: React.FC<UploadButtonProps> = ({
   };
 
   return (
-    <div className="box-border w-[271px] h-16 border flex items-center justify-center gap-8 m-0 p-0 rounded-xl border-solid border-[#535353] max-sm:w-full cursor-pointer hover:border-white transition-colors relative">
+    <div className="box-border w-[271px] h-16 border flex items-center justify-center gap-8 m-0 p-0 rounded-xl border-solid border-hsl(var(--input-border)) max-sm:w-full cursor-pointer hover:border-hsl(var(--text-primary)) transition-colors relative">
       <input
         type="file"
         onChange={handleFileChange}
         className="absolute inset-0 opacity-0 cursor-pointer"
         accept={acceptedTypes}
       />
-      <Upload className="w-[21px] h-[21px] text-white opacity-50" />
-      <div className="box-border text-white text-xl font-normal m-0 p-0">
+      <Upload className="w-[21px] h-[21px] text-hsl(var(--text-primary)) opacity-50" />
+      <div className="box-border text-hsl(var(--text-primary)) text-xl font-normal m-0 p-0">
         {label}
       </div>
     </div>

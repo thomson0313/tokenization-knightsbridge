@@ -26,7 +26,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="box-border h-[40px] border bg-hsl(var(--input-bg)) text-hsl(var(--text-primary)) placeholder:text-gray-500 text-[14px] font-normal m-0 px-3 py-0 rounded-md border-solid border-hsl(var(--input-border)) focus:outline-none focus:border-blue-500"
+        className="box-border h-[40px] border bg-hsl(var(--input-bg)) text-hsl(var(--text-primary)) placeholder:text-hsl(var(--text-secondary)) text-[14px] font-normal m-0 px-3 py-0 rounded-md border-solid border-hsl(var(--input-border)) focus:outline-none focus:border-blue-500"
       />
     </div>
   );

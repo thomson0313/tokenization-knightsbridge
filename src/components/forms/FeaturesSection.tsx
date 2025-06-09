@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
@@ -123,14 +124,14 @@ export const FeaturesSection: React.FC = () => {
       </div>
       
       <div className="box-border flex flex-col m-0 p-0">
-        <label className="box-border text-white text-[17px] font-normal mb-[11px] m-0 p-0">
+        <label className="box-border text-hsl(var(--text-primary)) text-[17px] font-normal mb-[11px] m-0 p-0">
           Guidelines
         </label>
         <textarea
           value={guidelines}
           onChange={(e) => setGuidelines(e.target.value)}
           placeholder="Enter guidelines"
-          className="box-border w-full h-[144px] border bg-[#1a1a1a] text-white placeholder-gray-500 text-[17px] font-normal m-0 px-[19px] py-[11px] rounded-xl border-solid border-[#535353] focus:outline-none focus:border-blue-500 resize-none"
+          className="box-border w-full h-[144px] border bg-hsl(var(--input-bg)) text-hsl(var(--text-primary)) placeholder-hsl(var(--text-secondary)) text-[17px] font-normal m-0 px-[19px] py-[11px] rounded-xl border-solid border-hsl(var(--input-border)) focus:outline-none focus:border-blue-500 resize-none"
         />
       </div>
     </section>
