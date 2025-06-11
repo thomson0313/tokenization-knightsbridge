@@ -39,7 +39,7 @@ export const FeaturesSection: React.FC = () => {
         checked={isEnabled}
         onCheckboxChange={setIsEnabled}
         rightContent={
-          <div>
+          <div className="flex flex-col gap-[10px]">
             <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
               <CheckboxField
                 label="Able to mint?"
