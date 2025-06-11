@@ -64,7 +64,7 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
           </div>
         </section>
 
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-7 mb-[100px] px-4 md:px-8 lg:px-16 xl:px-[68px]">
+        <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
           <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
             <KYCInformationSection />
 
