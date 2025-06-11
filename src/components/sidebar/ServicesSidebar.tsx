@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 
 interface ServicesSidebarProps {
@@ -81,7 +82,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
   }, [selectedServices]);
 
   return (
-    <aside className="sticky top-4 w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
+    <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
       <div className="relative mb-8">
         <div className="flex items-center gap-2">
           <div className="w-1 h-8 bg-text-primary"></div>

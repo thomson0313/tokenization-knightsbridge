@@ -16,7 +16,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
   selectedServices
 }) => {
   return (
-    <div className="sticky top-4 border bg-bg-secondary p-6 rounded-3xl border-border-primary">
+    <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto border bg-bg-secondary p-6 rounded-3xl border-border-primary">
       <div className="mb-6">
         <div className="flex items-start gap-4 mb-4">
           <div className="w-1 h-16 lg:h-20 bg-text-primary flex-shrink-0"></div>
