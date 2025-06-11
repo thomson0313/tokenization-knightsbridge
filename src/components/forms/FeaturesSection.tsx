@@ -39,17 +39,19 @@ export const FeaturesSection: React.FC = () => {
         checked={isEnabled}
         onCheckboxChange={setIsEnabled}
         rightContent={
-          <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
-            <CheckboxField
-              label="Able to mint?"
-              checked={features.ableToMint}
-              onChange={(checked) => updateFeature('ableToMint', checked)}
-            />
-            <CheckboxField
-              label="Able to Burn?"
-              checked={features.ableToBurn}
-              onChange={(checked) => updateFeature('ableToBurn', checked)}
-            />
+          <div>
+            <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
+              <CheckboxField
+                label="Able to mint?"
+                checked={features.ableToMint}
+                onChange={(checked) => updateFeature('ableToMint', checked)}
+              />
+              <CheckboxField
+                label="Able to Burn?"
+                checked={features.ableToBurn}
+                onChange={(checked) => updateFeature('ableToBurn', checked)}
+              />
+            </div>
             <CheckboxField
               label="Others ?"
               checked={features.others}
