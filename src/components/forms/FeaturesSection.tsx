@@ -50,17 +50,15 @@ export const FeaturesSection: React.FC = () => {
               checked={features.ableToBurn}
               onChange={(checked) => updateFeature('ableToBurn', checked)}
             />
+            <CheckboxField
+              label="Others ?"
+              checked={features.others}
+              onChange={(checked) => updateFeature('others', checked)}
+            />
           </div>
         }
       />
       
-      <div className="box-border mb-4 m-0 p-0">
-        <CheckboxField
-          label="Others ?"
-          checked={features.others}
-          onChange={(checked) => updateFeature('others', checked)}
-        />
-      </div>
       
       <div className="box-border flex flex-col gap-[17px] mb-8 m-0 p-0">
         <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
