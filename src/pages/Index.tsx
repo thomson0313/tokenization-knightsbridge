@@ -49,6 +49,9 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
         
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-7 mb-[100px] px-4 md:px-8 lg:px-16 xl:px-[68px]">
           <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
+            <ContactInformationSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
             <TokenMintForm />
             
             <div className="w-full h-px bg-border-primary my-8" />
@@ -72,8 +75,6 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
             <div className="w-full h-px bg-border-primary my-8" />
             <LegalDocumentsSection />
             
-            <div className="w-full h-px bg-border-primary my-8" />
-            <ContactInformationSection />
           </form>
           
           <div className="flex-[3] min-w-0">
