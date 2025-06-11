@@ -47,9 +47,9 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
       <main>
         <HeroSection />
         
-        <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
+        <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 pb-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
           {/* <div className="pb-60"> */}
-          <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
+          <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary pb-80">
             <ContactInformationSection />
             
             <div className="w-full h-px bg-border-primary my-8" />
