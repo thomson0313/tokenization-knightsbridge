@@ -13,6 +13,7 @@ import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
+import { ScrollArea } from '../components/ui/scroll-area';
 
 interface IndexProps {
   isDarkMode: boolean;
@@ -48,7 +49,6 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
         <HeroSection />
         
         <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 pb-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
-          {/* <div className={`${showPayment ? 'pb-[900px]' : ''} flex-[7]`}> */}
           <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
             <ContactInformationSection />
             
@@ -77,15 +77,14 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
             <LegalDocumentsSection />
             
           </form>
-          {/* </div> */}
           
           <div className="flex-[3] min-w-0 relative">
-            <div className="sticky top-4">
-              <ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
-              <div className="mt-4">
+            <ScrollArea className="h-[calc(100vh-2rem)] sticky top-4">
+              <div className="space-y-4 pr-4">
+                <ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
                 <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
               </div>
-            </div>
+            </ScrollArea>
           </div>
         </div>
       </main>

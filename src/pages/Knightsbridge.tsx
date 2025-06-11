@@ -16,6 +16,7 @@ import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { KnightsbridgeServicesSidebar } from '../components/sidebar/KnightsbridgeServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
+import { ScrollArea } from '../components/ui/scroll-area';
 
 import Icon from '../assets/img/knightsbridge_icon.png';
 
@@ -106,12 +107,12 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
           </form>
 
           <div className="flex-[3] min-w-0 relative">
-            <div className="sticky top-4">
-              <KnightsbridgeServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
-              <div className="mt-4">
+            <ScrollArea className="h-[calc(100vh-2rem)] sticky top-4">
+              <div className="space-y-4 pr-4">
+                <KnightsbridgeServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
                 <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
               </div>
-            </div>
+            </ScrollArea>
           </div>
         </div>
       </main>
