@@ -108,13 +108,25 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
           <div className="flex-[3] min-w-0 relative">
             <div className="sticky top-4">
               <KnightsbridgeServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
-              <div className="mt-4">
-                <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
-              </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Payment Sidebar - positioned fixed from the right */}
+      <div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${
+        showPayment ? 'translate-x-0' : 'translate-x-full'
+      }`}>
+        <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
+      </div>
+
+      {/* Overlay when payment is open */}
+      {showPayment && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={handleClosePayment}
+        />
+      )}
     </div>
   );
 };
