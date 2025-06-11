@@ -4,6 +4,7 @@ import { CategoryHeader } from '../ui/CategoryHeader';
 import { UploadButton } from '../ui/UploadButton';
 
 export const LetterheadSection: React.FC = () => {
+  const [isEnabled, setIsEnabled] = useState(false);
   const [guidelines, setGuidelines] = useState('');
   const [file, setFile] = useState<File | null>(null);
 
@@ -16,6 +17,9 @@ export const LetterheadSection: React.FC = () => {
       <CategoryHeader
         title="Letterhead Design"
         description="Get branded letterhead designs"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <UploadButton
             label="Upload Brand guide"

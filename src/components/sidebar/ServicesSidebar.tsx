@@ -81,7 +81,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
   }, [selectedServices]);
 
   return (
-    <aside className="w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
+    <aside className="sticky top-4 w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
       <div className="relative mb-8">
         <div className="flex items-center gap-2">
           <div className="w-1 h-8 bg-text-primary"></div>

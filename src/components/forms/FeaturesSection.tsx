@@ -4,9 +4,11 @@ import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
 
 export const FeaturesSection: React.FC = () => {
+  const [isEnabled, setIsEnabled] = useState(false);
   const [features, setFeatures] = useState({
     ableToMint: false,
     ableToBurn: false,
+    others: false,
     revokeOwnership1: false,
     revokeOwnership2: false,
     liquidityFee: false,
@@ -33,6 +35,9 @@ export const FeaturesSection: React.FC = () => {
       <CategoryHeader
         title="Want more Features?"
         description="Lorem ipsum dolor sit amet, consectetur"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
             <CheckboxField
@@ -48,6 +53,14 @@ export const FeaturesSection: React.FC = () => {
           </div>
         }
       />
+      
+      <div className="box-border mb-4 m-0 p-0">
+        <CheckboxField
+          label="Others ?"
+          checked={features.others}
+          onChange={(checked) => updateFeature('others', checked)}
+        />
+      </div>
       
       <div className="box-border flex flex-col gap-[17px] mb-8 m-0 p-0">
         <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">

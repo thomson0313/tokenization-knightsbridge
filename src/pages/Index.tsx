@@ -10,6 +10,7 @@ import { WhitePaperSection } from '../components/forms/WhitePaperSection';
 import { WebsitePlanSection } from '../components/forms/WebsitePlanSection';
 import { ExchangeListingSection } from '../components/forms/ExchangeListingSection';
 import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection';
+import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 
@@ -70,6 +71,9 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
             
             <div className="w-full h-px bg-border-primary my-8" />
             <LegalDocumentsSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <ContactInformationSection />
           </form>
           
           <div className="flex-[3] min-w-0">
