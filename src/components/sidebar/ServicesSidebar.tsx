@@ -42,40 +42,40 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
       legalDocuments: selectedServices.legalDocuments.length * 34,
       dexListing: 0,
     };
-    
+
     const total = Object.values(prices).reduce((sum, price) => sum + price, 0);
     return { ...prices, total };
   };
 
   useEffect(() => {
     const newPrices = calculatePrices();
-    
+
     // Animate each price change
     Object.keys(newPrices).forEach((key) => {
       const currentPrice = animatedPrices[key as keyof typeof animatedPrices];
       const targetPrice = newPrices[key as keyof typeof newPrices];
-      
+
       if (currentPrice !== targetPrice) {
         const duration = 500;
         const startTime = Date.now();
         const startValue = currentPrice;
         const difference = targetPrice - startValue;
-        
+
         const animate = () => {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           const currentValue = startValue + (difference * progress);
-          
+
           setAnimatedPrices(prev => ({
             ...prev,
             [key]: Math.round(currentValue * 100) / 100
           }));
-          
+
           if (progress < 1) {
             requestAnimationFrame(animate);
           }
         };
-        
+
         requestAnimationFrame(animate);
       }
     });
@@ -83,18 +83,20 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
 
   return (
     <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
-      <div className="relative mb-8">
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-8 bg-text-primary"></div>
-          <h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2">
-            Your Selected Services
-          </h2>
+      <div className="mb-6">
+        <div className="flex items-start gap-4 mb-4">
+          <div className="w-1 h-16 lg:h-20 bg-text-primary flex-shrink-0"></div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2">
+              Your Selected Services
+            </h2>
+            <p className="text-text-secondary text-base md:text-[17px] font-normal">
+              See the prices for each
+            </p>
+          </div>
         </div>
-        <p className="text-text-secondary text-base md:text-[17px] font-normal ml-5">
-          See the prices for each
-        </p>
       </div>
-      
+
       <div className="space-y-4">
         {/* Mint Token */}
         <div className="flex justify-between items-center py-2 border-b border-border-primary">
@@ -215,7 +217,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
           </div>
         </div>
       </div>
-      
+
       <button
         onClick={onCheckout}
         className="w-full max-w-[152px] h-[54px] text-black text-center text-base md:text-[17px] font-normal cursor-pointer bg-white mx-auto p-0 rounded-[9px] hover:bg-gray-200 transition-all duration-200 hover:scale-105 flex items-center justify-center"
