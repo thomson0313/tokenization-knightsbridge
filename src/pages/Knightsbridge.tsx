@@ -67,6 +67,33 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
 
             <div className="w-full h-px bg-border-primary my-8" />
             <BusinessPlanSection />
+
+            <div className="w-full h-px bg-border-primary my-8" />
+            <ContactInformationSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <TokenMintForm />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <FeaturesSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <LetterheadSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <RaiseDocumentSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <WhitePaperSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <WebsitePlanSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <ExchangeListingSection />
+            
+            <div className="w-full h-px bg-border-primary my-8" />
+            <LegalDocumentsSection />
           </form>
 
           <div className="flex-[3] min-w-0">
