@@ -48,34 +48,36 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
         <HeroSection />
         
         <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
-          <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
-            <ContactInformationSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <TokenMintForm />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <FeaturesSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <LetterheadSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <RaiseDocumentSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <WhitePaperSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <WebsitePlanSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <ExchangeListingSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <LegalDocumentsSection />
-            
-          </form>
+          <div clasName="pb-60">
+            <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
+              <ContactInformationSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <TokenMintForm />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <FeaturesSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <LetterheadSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <RaiseDocumentSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <WhitePaperSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <WebsitePlanSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <ExchangeListingSection />
+              
+              <div className="w-full h-px bg-border-primary my-8" />
+              <LegalDocumentsSection />
+              
+            </form>
+          </div>
           
           <div className="flex-[3] min-w-0 relative">
             <div className="sticky top-4">
