@@ -14,7 +14,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
     <div className={`w-full min-h-screen relative overflow-x-hidden bg-bg-primary ${!isDarkMode ? 'light' : ''}`}>
       <Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
       
-      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-60px)] px-4 md:px-8 lg:px-16">
+      <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 md:px-8 lg:px-16">
         {/* Hero Section */}
         <div className="text-center mb-16 max-w-4xl">
           <h1 className="text-text-primary text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-normal mb-8 leading-tight">
