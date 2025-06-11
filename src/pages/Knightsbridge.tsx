@@ -106,9 +106,11 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
           </form>
 
           <div className="flex-[3] min-w-0 relative">
-            <div className="sticky top-4 space-y-4">
+            <div className="sticky top-4">
               <KnightsbridgeServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
-              <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
+              <div className="mt-4">
+                <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
+              </div>
             </div>
           </div>
         </div>
