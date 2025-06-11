@@ -5,6 +5,15 @@ import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInfo
 import { CustodianInformationSection } from '../components/forms/knightsbridge/CustodianInformationSection';
 import { IssuerInformationSection } from '../components/forms/knightsbridge/IssuerInformationSection';
 import { BusinessPlanSection } from '../components/forms/knightsbridge/BusinessPlanSection';
+import { TokenMintForm } from '../components/forms/TokenMintForm';
+import { FeaturesSection } from '../components/forms/FeaturesSection';
+import { LetterheadSection } from '../components/forms/LetterheadSection';
+import { RaiseDocumentSection } from '../components/forms/RaiseDocumentSection';
+import { WhitePaperSection } from '../components/forms/WhitePaperSection';
+import { WebsitePlanSection } from '../components/forms/WebsitePlanSection';
+import { ExchangeListingSection } from '../components/forms/ExchangeListingSection';
+import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection';
+import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { KnightsbridgeServicesSidebar } from '../components/sidebar/KnightsbridgeServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 
