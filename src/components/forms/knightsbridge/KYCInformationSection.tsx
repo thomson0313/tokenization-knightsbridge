@@ -28,7 +28,7 @@ export const KYCInformationSection: React.FC = () => {
     <section className="box-border m-0 p-0">
       <CategoryHeader
         title="KYC Information"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing at"
+        description="Quickly verify your identity to ensure a safe and compliant experience"
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

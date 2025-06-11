@@ -31,8 +31,8 @@ export const BusinessPlanSection: React.FC = () => {
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
-        title="Business Plan Upload"
-        description="Lorem ipsum dolor sit amet, consectetur"
+        title="Business Plan"
+        description="Outline your strategy to drive growth and achieve your goals"
         rightContent={
           <UploadButton
             label="Upload Plan guide"
@@ -43,27 +43,27 @@ export const BusinessPlanSection: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <CheckboxField
-          label="Industry Name"
+          label="Utility Token"
           checked={industries.industry1}
           onChange={(checked) => updateIndustry('industry1', checked)}
         />
         <CheckboxField
-          label="Industry Name"
+          label="Security Token"
           checked={industries.industry2}
           onChange={(checked) => updateIndustry('industry2', checked)}
         />
         <CheckboxField
-          label="Industry Name"
+          label="Governance Token"
           checked={industries.industry3}
           onChange={(checked) => updateIndustry('industry3', checked)}
         />
         <CheckboxField
-          label="Industry Name"
+          label="Payment Token"
           checked={industries.industry4}
           onChange={(checked) => updateIndustry('industry4', checked)}
         />
         <CheckboxField
-          label="Industry Name"
+          label="Reward Token"
           checked={industries.industry5}
           onChange={(checked) => updateIndustry('industry5', checked)}
         />

@@ -18,7 +18,7 @@ export const CustodianInformationSection: React.FC = () => {
     <section className="box-border m-0 p-0">
       <CategoryHeader
         title="Custodian Information"
-        description="Lorem ipsum dolor sit amet, consectetur"
+        description="Provide details to ensure secure and compliant management of your funds"
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

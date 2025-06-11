@@ -131,7 +131,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
         {/* Raise Document */}
         <div className="space-y-2">
           <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">Rasie document</span>
+            <span className="text-text-primary text-sm md:text-[16px]">Raise document</span>
             <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.raiseDocument.toFixed(2)}</span>
           </div>
           {selectedServices.raiseDocument.length > 0 && (

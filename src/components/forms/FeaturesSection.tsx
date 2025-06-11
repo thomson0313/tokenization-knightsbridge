@@ -34,7 +34,7 @@ export const FeaturesSection: React.FC = () => {
     <section className="box-border m-0 p-0">
       <CategoryHeader
         title="Want more Features?"
-        description="Lorem ipsum dolor sit amet, consectetur"
+        description="Upgrade to access advanced tools and exclusive benefits"
         hasCheckbox={true}
         checked={isEnabled}
         onCheckboxChange={setIsEnabled}
