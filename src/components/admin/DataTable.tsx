@@ -553,20 +553,15 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         )}
 
-                        {/* Token Features Section - Updated */}
+                        {/* Token Features Section */}
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
                           <div className="text-xs space-y-1">
                             {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
                               <>
-                                <div><strong>Count:</strong> {submission.wantMoreFeatures.length} features</div>
-                                <div className="max-h-20 overflow-y-auto">
-                                  <ul className="list-disc list-inside space-y-0.5">
-                                    {submission.wantMoreFeatures.map((feature, index) => (
-                                      <li key={index} className="text-xs">{feature}</li>
-                                    ))}
-                                  </ul>
-                                </div>
+                                {submission.wantMoreFeatures.map((feature, index) => (
+                                  <div key={index}>{feature}</div>
+                                ))}
                               </>
                             ) : (
                               <div className="text-gray-500">No additional features selected</div>
@@ -574,57 +569,58 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         </div>
 
-                        {/* Additional Services Section - Updated */}
+                        {/* Additional Services Section */}
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
-                          <div className="text-xs space-y-1">
+                          <div className="text-xs space-y-2">
                             <div>
                               <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                               {submission.letterheadEnabled && submission.letterheadGuidelines && (
-                                <div className="mt-1 p-1 bg-gray-100 rounded text-xs italic">
-                                  "{submission.letterheadGuidelines.substring(0, 50)}..."
+                                <div className="mt-1 text-gray-600">
+                                  {submission.letterheadGuidelines}
                                 </div>
                               )}
                             </div>
                             <div>
                               <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                               {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-                                <div className="mt-1 p-1 bg-gray-100 rounded text-xs italic">
-                                  "{submission.websitePlanGuidelines.substring(0, 50)}..."
+                                <div className="mt-1 text-gray-600">
+                                  {submission.websitePlanGuidelines}
                                 </div>
                               )}
                             </div>
-                            {submission.whitePaperPages && submission.whitePaperPages !== 'None' && (
-                              <div>
-                                <strong>WhitePaper:</strong> {submission.whitePaperPages}
-                                {submission.whitePaperGuidelines && (
-                                  <div className="mt-1 p-1 bg-gray-100 rounded text-xs italic">
-                                    "{submission.whitePaperGuidelines.substring(0, 50)}..."
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            {submission.exchangeListings && submission.exchangeListings.length > 0 && (
-                              <div><strong>Exchanges:</strong> {submission.exchangeListings.join(', ')}</div>
-                            )}
+                            <div>
+                              <strong>WhitePaper:</strong> {submission.whitePaperPages && submission.whitePaperPages !== 'None' ? submission.whitePaperPages : 'No'}
+                              {submission.whitePaperPages && submission.whitePaperPages !== 'None' && submission.whitePaperGuidelines && (
+                                <div className="mt-1 text-gray-600">
+                                  {submission.whitePaperGuidelines}
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <strong>Exchanges:</strong> {submission.exchangeListings && submission.exchangeListings.length > 0 ? submission.exchangeListings.join(', ') : 'None'}
+                            </div>
                           </div>
                         </div>
 
-                        {/* Documents Section - Updated */}
+                        {/* Documents Section */}
                         <div className="space-y-2 md:col-span-2">
                           <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Documents</h4>
-                          <div className="text-xs space-y-2">
+                          <div className="text-xs space-y-3">
                             {/* Raise Documents */}
                             {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 && (
                               <div>
                                 <div><strong>Raise Documents - Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
-                                {submission.raiseDocumentCompany && (
-                                  <div className="ml-2 mt-1 space-y-0.5">
-                                    <div>Company: {submission.raiseDocumentCompany}</div>
-                                    {submission.raiseDocumentContactName && <div>Contact: {submission.raiseDocumentContactName}</div>}
-                                    {submission.raiseDocumentEmail && <div>Email: {submission.raiseDocumentEmail}</div>}
-                                  </div>
-                                )}
+                                <div className="ml-2 mt-1 space-y-0.5">
+                                  {submission.raiseDocumentCompany && <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>}
+                                  {submission.raiseDocumentContactName && <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>}
+                                  {submission.raiseDocumentContactPerson && <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>}
+                                  {submission.raiseDocumentPosition && <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>}
+                                  {submission.raiseDocumentEmail && <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>}
+                                  {submission.raiseDocumentPhone && <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>}
+                                  {submission.raiseDocumentAddress && <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>}
+                                  {submission.raiseDocumentWebsite && <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>}
+                                </div>
                               </div>
                             )}
                             
@@ -632,16 +628,16 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             {submission.legalDocuments && submission.legalDocuments.length > 0 && (
                               <div>
                                 <div><strong>Legal Documents:</strong></div>
-                                <ul className="list-disc list-inside ml-2 mt-0.5">
-                                  {submission.legalDocuments.map((doc, index) => (
-                                    <li key={index} className="text-xs">{doc}</li>
-                                  ))}
-                                </ul>
                                 {submission.legalDocumentsPreferences && (
-                                  <div className="mt-1 p-1 bg-gray-100 rounded text-xs italic">
-                                    Preferences: "{submission.legalDocumentsPreferences.substring(0, 60)}..."
+                                  <div className="mt-1 text-gray-600 italic">
+                                    {submission.legalDocumentsPreferences}
                                   </div>
                                 )}
+                                <ul className="list-none ml-2 mt-1 space-y-0.5">
+                                  {submission.legalDocuments.map((doc, index) => (
+                                    <li key={index}>{doc}</li>
+                                  ))}
+                                </ul>
                               </div>
                             )}
                           </div>
