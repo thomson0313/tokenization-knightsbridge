@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -538,17 +537,40 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         )}
 
-                        {/* KYC & Business Info (Knightsbridge) */}
+                        {/* KYC & Business Info (Knightsbridge) - Expanded */}
                         {submission.type === 'Knightsbridge' && (
                           <div className="space-y-2">
                             <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
                             <div className="text-xs space-y-1">
-                              {submission.kycFullName && <div><strong>KYC:</strong> {submission.kycFullName}</div>}
-                              {submission.kycIdNumber && <div><strong>ID:</strong> {submission.kycIdNumber}</div>}
-                              {submission.businessPlanType && <div><strong>Plan Type:</strong> {submission.businessPlanType}</div>}
-                              {submission.issuerEntityName && <div><strong>Issuer:</strong> {submission.issuerEntityName}</div>}
+                              {submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
+                              {submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
+                              {submission.kycDateOfBirth && <div><strong>Date of Birth:</strong> {submission.kycDateOfBirth}</div>}
+                              {submission.kycNationality && <div><strong>Nationality:</strong> {submission.kycNationality}</div>}
+                              {submission.kycAddress && <div><strong>Address:</strong> {submission.kycAddress}</div>}
+                              {submission.kycOccupation && <div><strong>Occupation:</strong> {submission.kycOccupation}</div>}
+                              {submission.kycEmployer && <div><strong>Employer:</strong> {submission.kycEmployer}</div>}
+                              {submission.kycIncomeSource && <div><strong>Income Source:</strong> {submission.kycIncomeSource}</div>}
+                              {submission.kycNetWorth && <div><strong>Net Worth:</strong> {submission.kycNetWorth}</div>}
+                              {submission.kycInvestmentExperience && <div><strong>Investment Experience:</strong> {submission.kycInvestmentExperience}</div>}
+                              {submission.kycRiskTolerance && <div><strong>Risk Tolerance:</strong> {submission.kycRiskTolerance}</div>}
+                              {submission.kycInvestmentObjectives && <div><strong>Investment Objectives:</strong> {submission.kycInvestmentObjectives}</div>}
+                              {submission.businessPlanType && <div><strong>Business Plan Type:</strong> {submission.businessPlanType}</div>}
+                              {submission.businessPlanGuidelines && <div><strong>Business Guidelines:</strong> {submission.businessPlanGuidelines}</div>}
+                              {submission.businessPlanExecutiveSummary && <div><strong>Executive Summary:</strong> {submission.businessPlanExecutiveSummary}</div>}
+                              {submission.businessPlanMarketAnalysis && <div><strong>Market Analysis:</strong> {submission.businessPlanMarketAnalysis}</div>}
+                              {submission.businessPlanFinancialProjections && <div><strong>Financial Projections:</strong> {submission.businessPlanFinancialProjections}</div>}
+                              {submission.issuerEntityName && <div><strong>Issuer Entity:</strong> {submission.issuerEntityName}</div>}
                               {submission.issuerJurisdiction && <div><strong>Jurisdiction:</strong> {submission.issuerJurisdiction}</div>}
+                              {submission.issuerContactPerson && <div><strong>Issuer Contact:</strong> {submission.issuerContactPerson}</div>}
+                              {submission.issuerContactInfo && <div><strong>Issuer Info:</strong> {submission.issuerContactInfo}</div>}
+                              {submission.issuerAddress && <div><strong>Issuer Address:</strong> {submission.issuerAddress}</div>}
+                              {submission.issuerBusinessType && <div><strong>Business Type:</strong> {submission.issuerBusinessType}</div>}
+                              {submission.issuerRegistrationNumber && <div><strong>Registration Number:</strong> {submission.issuerRegistrationNumber}</div>}
                               {submission.custodianName && <div><strong>Custodian:</strong> {submission.custodianName}</div>}
+                              {submission.custodianContact && <div><strong>Custodian Contact:</strong> {submission.custodianContact}</div>}
+                              {submission.custodianRegistration && <div><strong>Custodian Registration:</strong> {submission.custodianRegistration}</div>}
+                              {submission.custodianAddress && <div><strong>Custodian Address:</strong> {submission.custodianAddress}</div>}
+                              {submission.custodianServices && <div><strong>Custodian Services:</strong> {submission.custodianServices}</div>}
                             </div>
                           </div>
                         )}
@@ -629,15 +651,15 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               <div>
                                 <div><strong>Legal Documents:</strong></div>
                                 {submission.legalDocumentsPreferences && (
-                                  <div className="mt-1 text-gray-600 italic">
+                                  <div className="mt-1 text-gray-600">
                                     {submission.legalDocumentsPreferences}
                                   </div>
                                 )}
-                                <ul className="list-none ml-2 mt-1 space-y-0.5">
+                                <div className="ml-2 mt-1 space-y-0.5">
                                   {submission.legalDocuments.map((doc, index) => (
-                                    <li key={index}>{doc}</li>
+                                    <div key={index}>{doc}</div>
                                   ))}
-                                </ul>
+                                </div>
                               </div>
                             )}
                           </div>
