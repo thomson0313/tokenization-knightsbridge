@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Table,
@@ -312,15 +313,15 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             </div>
           )}
 
-          {/* Services & Guidelines */}
+          {/* Additional Services */}
           <div className="space-y-4 md:col-span-2">
-            <h3 className="font-semibold text-lg border-b pb-2">Services & Guidelines</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">Additional Services</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <strong>Letterhead Service:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
+                <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                 {submission.letterheadEnabled && submission.letterheadGuidelines && (
                   <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
-                    <strong>Guidelines:</strong> {submission.letterheadGuidelines}
+                    {submission.letterheadGuidelines}
                   </div>
                 )}
               </div>
@@ -329,7 +330,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                 <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                 {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
                   <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
-                    <strong>Guidelines:</strong> {submission.websitePlanGuidelines}
+                    {submission.websitePlanGuidelines}
                   </div>
                 )}
               </div>
@@ -338,23 +339,35 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                 <strong>WhitePaper:</strong> {submission.whitePaperPages && submission.whitePaperPages !== 'None' ? submission.whitePaperPages : 'No'}
                 {submission.whitePaperPages && submission.whitePaperPages !== 'None' && submission.whitePaperGuidelines && (
                   <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
-                    <strong>Guidelines:</strong> {submission.whitePaperGuidelines}
+                    {submission.whitePaperGuidelines}
                   </div>
                 )}
               </div>
               
               <div>
-                <strong>Exchange Listings:</strong>
+                <strong>Exchanges:</strong>
                 {submission.exchangeListings && submission.exchangeListings.length > 0 ? (
-                  <ul className="list-disc list-inside ml-2 mt-1">
-                    {submission.exchangeListings.map((exchange, index) => (
-                      <li key={index} className="text-xs">{exchange}</li>
-                    ))}
-                  </ul>
+                  <span> {submission.exchangeListings.join(', ')}</span>
                 ) : (
-                  <span> No exchanges selected</span>
+                  <span> None</span>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Token Features */}
+          <div className="space-y-4 md:col-span-2">
+            <h3 className="font-semibold text-lg border-b pb-2">Token Features</h3>
+            <div className="text-sm">
+              {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1">
+                  {submission.wantMoreFeatures.map((feature, index) => (
+                    <li key={index}>{feature}</li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-gray-500">No additional features selected</div>
+              )}
             </div>
           </div>
 
@@ -365,35 +378,32 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             {/* Raise Documents */}
             {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 && (
               <div className="mb-4">
-                <h4 className="font-medium text-md mb-2">Raise Documents</h4>
-                <div className="text-sm space-y-2">
-                  <div><strong>Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                    {submission.raiseDocumentCompany && (
-                      <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>
-                    )}
-                    {submission.raiseDocumentContactName && (
-                      <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>
-                    )}
-                    {submission.raiseDocumentContactPerson && (
-                      <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>
-                    )}
-                    {submission.raiseDocumentPosition && (
-                      <div><strong>Position:</strong> {submission.raiseDocumentPosition}</div>
-                    )}
-                    {submission.raiseDocumentEmail && (
-                      <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>
-                    )}
-                    {submission.raiseDocumentPhone && (
-                      <div><strong>Phone:</strong> {submission.raiseDocumentPhone}</div>
-                    )}
-                    {submission.raiseDocumentAddress && (
-                      <div><strong>Address:</strong> {submission.raiseDocumentAddress}</div>
-                    )}
-                    {submission.raiseDocumentWebsite && (
-                      <div><strong>Website:</strong> {submission.raiseDocumentWebsite}</div>
-                    )}
-                  </div>
+                <h4 className="font-medium text-md mb-2">Raise Documents - Regions: {submission.raiseDocumentRegions.join(', ')}</h4>
+                <div className="text-sm space-y-1">
+                  {submission.raiseDocumentCompany && (
+                    <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>
+                  )}
+                  {submission.raiseDocumentContactName && (
+                    <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>
+                  )}
+                  {submission.raiseDocumentContactPerson && (
+                    <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>
+                  )}
+                  {submission.raiseDocumentPosition && (
+                    <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>
+                  )}
+                  {submission.raiseDocumentEmail && (
+                    <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>
+                  )}
+                  {submission.raiseDocumentPhone && (
+                    <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>
+                  )}
+                  {submission.raiseDocumentAddress && (
+                    <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>
+                  )}
+                  {submission.raiseDocumentWebsite && (
+                    <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>
+                  )}
                 </div>
               </div>
             )}
@@ -401,21 +411,18 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             {/* Legal Documents */}
             {submission.legalDocuments && submission.legalDocuments.length > 0 && (
               <div>
-                <h4 className="font-medium text-md mb-2">Legal Documents</h4>
+                <h4 className="font-medium text-md mb-2">Legal Documents:</h4>
                 <div className="text-sm space-y-2">
-                  <div>
-                    <strong>Selected Documents:</strong>
-                    <ul className="list-disc list-inside ml-2 mt-1">
-                      {submission.legalDocuments.map((doc, index) => (
-                        <li key={index} className="text-xs">{doc}</li>
-                      ))}
-                    </ul>
-                  </div>
                   {submission.legalDocumentsPreferences && (
-                    <div className="mt-2 p-2 bg-gray-50 rounded">
-                      <strong>Special Preferences:</strong> {submission.legalDocumentsPreferences}
+                    <div className="p-2 bg-gray-50 rounded">
+                      {submission.legalDocumentsPreferences}
                     </div>
                   )}
+                  <ul className="list-disc list-inside space-y-1">
+                    {submission.legalDocuments.map((doc, index) => (
+                      <li key={index}>{doc}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
@@ -537,6 +544,20 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         )}
 
+                        {/* Token Features */}
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
+                          <div className="text-xs space-y-1">
+                            {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
+                              submission.wantMoreFeatures.map((feature, index) => (
+                                <div key={index}>• {feature}</div>
+                              ))
+                            ) : (
+                              <div className="text-gray-500">No additional features selected</div>
+                            )}
+                          </div>
+                        </div>
+
                         {/* KYC & Business Info (Knightsbridge) - Expanded */}
                         {submission.type === 'Knightsbridge' && (
                           <div className="space-y-2">
@@ -575,22 +596,6 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         )}
 
-                        {/* Token Features Section */}
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
-                          <div className="text-xs space-y-1">
-                            {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
-                              <>
-                                {submission.wantMoreFeatures.map((feature, index) => (
-                                  <div key={index}>{feature}</div>
-                                ))}
-                              </>
-                            ) : (
-                              <div className="text-gray-500">No additional features selected</div>
-                            )}
-                          </div>
-                        </div>
-
                         {/* Additional Services Section */}
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
@@ -598,7 +603,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <div>
                               <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                               {submission.letterheadEnabled && submission.letterheadGuidelines && (
-                                <div className="mt-1 text-gray-600">
+                                <div className="mt-1 text-gray-600 italic">
                                   {submission.letterheadGuidelines}
                                 </div>
                               )}
@@ -606,7 +611,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <div>
                               <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                               {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-                                <div className="mt-1 text-gray-600">
+                                <div className="mt-1 text-gray-600 italic">
                                   {submission.websitePlanGuidelines}
                                 </div>
                               )}
@@ -614,7 +619,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <div>
                               <strong>WhitePaper:</strong> {submission.whitePaperPages && submission.whitePaperPages !== 'None' ? submission.whitePaperPages : 'No'}
                               {submission.whitePaperPages && submission.whitePaperPages !== 'None' && submission.whitePaperGuidelines && (
-                                <div className="mt-1 text-gray-600">
+                                <div className="mt-1 text-gray-600 italic">
                                   {submission.whitePaperGuidelines}
                                 </div>
                               )}
@@ -651,13 +656,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               <div>
                                 <div><strong>Legal Documents:</strong></div>
                                 {submission.legalDocumentsPreferences && (
-                                  <div className="mt-1 text-gray-600">
+                                  <div className="mt-1 text-gray-600 italic">
                                     {submission.legalDocumentsPreferences}
                                   </div>
                                 )}
                                 <div className="ml-2 mt-1 space-y-0.5">
                                   {submission.legalDocuments.map((doc, index) => (
-                                    <div key={index}>{doc}</div>
+                                    <div key={index}>• {doc}</div>
                                   ))}
                                 </div>
                               </div>
