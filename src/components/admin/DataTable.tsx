@@ -404,7 +404,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                         {/* Token Details */}
                         {(submission.tokenName || submission.tokenTicker) && (
                           <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-blue-700">Token Information</h4>
+                            <h4 className="font-semibold text-sm text-blue-700 border-b border-blue-200 pb-1">Token Information</h4>
                             <div className="text-xs space-y-1">
                               {submission.tokenDecimals && <div><strong>Decimals:</strong> {submission.tokenDecimals}</div>}
                               {submission.targetPrice && <div><strong>Target Price:</strong> ${submission.targetPrice}</div>}
@@ -418,30 +418,89 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                         {/* KYC & Business Info (Knightsbridge) */}
                         {submission.type === 'Knightsbridge' && (
                           <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-purple-700">KYC & Business</h4>
+                            <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
                             <div className="text-xs space-y-1">
                               {submission.kycFullName && <div><strong>KYC:</strong> {submission.kycFullName}</div>}
-                              {submission.businessPlanType && <div><strong>Plan:</strong> {submission.businessPlanType}</div>}
+                              {submission.kycIdNumber && <div><strong>ID:</strong> {submission.kycIdNumber}</div>}
+                              {submission.businessPlanType && <div><strong>Plan Type:</strong> {submission.businessPlanType}</div>}
                               {submission.issuerEntityName && <div><strong>Issuer:</strong> {submission.issuerEntityName}</div>}
+                              {submission.issuerJurisdiction && <div><strong>Jurisdiction:</strong> {submission.issuerJurisdiction}</div>}
                               {submission.custodianName && <div><strong>Custodian:</strong> {submission.custodianName}</div>}
                             </div>
                           </div>
                         )}
 
-                        {/* Services & Features */}
+                        {/* Features Section */}
                         <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-green-700">Services & Features</h4>
+                          <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
                           <div className="text-xs space-y-1">
-                            {submission.features && submission.features.length > 0 && (
-                              <div><strong>Features:</strong> {submission.features.join(', ')}</div>
+                            {submission.features && submission.features.length > 0 ? (
+                              <>
+                                <div><strong>Count:</strong> {submission.features.length} features</div>
+                                <div className="max-h-20 overflow-y-auto">
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    {submission.features.map((feature, index) => (
+                                      <li key={index} className="text-xs">{feature}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-gray-500">No features selected</div>
                             )}
-                            {submission.letterheadEnabled && <div>✓ Letterhead Service</div>}
-                            {submission.websitePlanEnabled && <div>✓ Website Plan</div>}
+                          </div>
+                        </div>
+
+                        {/* Services Section */}
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
+                          <div className="text-xs space-y-1">
+                            <div><strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}</div>
+                            <div><strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}</div>
                             {submission.whitePaperPages && submission.whitePaperPages !== 'None' && (
-                              <div>✓ WhitePaper ({submission.whitePaperPages})</div>
+                              <div><strong>WhitePaper:</strong> {submission.whitePaperPages}</div>
                             )}
-                            {submission.exchangeListings && submission.exchangeListings.length > 0 && (
-                              <div><strong>Exchanges:</strong> {submission.exchangeListings.join(', ')}</div>
+                            {submission.raiseDocumentCompany && (
+                              <div><strong>Raise Company:</strong> {submission.raiseDocumentCompany}</div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Regions & Documents */}
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Regions & Documents</h4>
+                          <div className="text-xs space-y-1">
+                            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 && (
+                              <div><strong>Raise Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
+                            )}
+                            {submission.legalDocuments && submission.legalDocuments.length > 0 && (
+                              <div>
+                                <strong>Legal Docs:</strong>
+                                <ul className="list-disc list-inside ml-2 mt-0.5">
+                                  {submission.legalDocuments.map((doc, index) => (
+                                    <li key={index} className="text-xs">{doc}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Exchange Listings */}
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm text-indigo-700 border-b border-indigo-200 pb-1">Exchange Listings</h4>
+                          <div className="text-xs space-y-1">
+                            {submission.exchangeListings && submission.exchangeListings.length > 0 ? (
+                              <div>
+                                <strong>Exchanges:</strong>
+                                <ul className="list-disc list-inside ml-2 mt-0.5">
+                                  {submission.exchangeListings.map((exchange, index) => (
+                                    <li key={index} className="text-xs">{exchange}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ) : (
+                              <div className="text-gray-500">No exchanges selected</div>
                             )}
                           </div>
                         </div>
