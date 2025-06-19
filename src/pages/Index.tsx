@@ -13,15 +13,16 @@ import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
+import { FormProvider, useFormContext } from '../contexts/FormContext';
+import { useFormSubmission } from '../hooks/useFormSubmission';
 
 interface IndexProps {
   isDarkMode: boolean;
   onThemeToggle: () => void;
 }
 
-const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
+const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
   const [showPayment, setShowPayment] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedServices, setSelectedServices] = useState({
     mintToken: false,
     features: [] as string[],
@@ -33,21 +34,53 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
     legalDocuments: [] as string[]
   });
 
+  const { formData } = useFormContext();
+  const { submitForm, isSubmitting } = useFormSubmission();
+
   const handleCheckout = () => {
     setShowPayment(true);
   };
 
   const handlePayNow = async () => {
-    setIsSubmitting(true);
     try {
-      // Simulate payment processing for the basic form
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Payment processed for basic form');
+      // Prepare form data for submission
+      const submissionData = {
+        main: {
+          type: 'Decentralized' as const,
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          token_name: formData.tokenName,
+          token_ticker: formData.tokenTicker,
+          token_chain: formData.tokenChain,
+          token_decimals: formData.tokenDecimals,
+          target_price: formData.targetPrice,
+          treasury_address: formData.treasuryAddress,
+          letterhead_enabled: formData.letterheadEnabled,
+          letterhead_guidelines: formData.letterheadGuidelines,
+          raise_document_company: formData.raiseDocumentCompany,
+          raise_document_contact_name: formData.raiseDocumentContactName,
+          raise_document_contact_person: formData.raiseDocumentContactPerson,
+          raise_document_position: formData.raiseDocumentPosition,
+          raise_document_email: formData.raiseDocumentEmail,
+          raise_document_phone: formData.raiseDocumentPhone,
+          raise_document_address: formData.raiseDocumentAddress,
+          raise_document_website: formData.raiseDocumentWebsite,
+          white_paper_pages: formData.whitePaperPages,
+          white_paper_guidelines: formData.whitePaperGuidelines,
+          website_plan_enabled: formData.websitePlanEnabled,
+          website_plan_guidelines: formData.websitePlanGuidelines,
+          legal_documents_preferences: formData.legalDocumentsPreferences,
+        },
+        tokenFeatures: formData.tokenFeatures,
+        raiseDocumentRegions: formData.raiseDocumentRegions,
+        exchangeListings: formData.exchangeListings,
+        legalDocuments: formData.legalDocuments,
+      };
+
+      await submitForm(submissionData);
       setShowPayment(false);
     } catch (error) {
-      console.error('Payment error:', error);
-    } finally {
-      setIsSubmitting(false);
+      console.error('Form submission error:', error);
     }
   };
 
@@ -120,6 +153,14 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
         />
       )}
     </div>
+  );
+};
+
+const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
+  return (
+    <FormProvider>
+      <IndexContent isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
+    </FormProvider>
   );
 };
 

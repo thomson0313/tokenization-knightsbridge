@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CategoryHeader } from '../ui/CategoryHeader';
 import { FormInput } from '../ui/FormInput';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const ContactInformationSection: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const { formData, updateFormData } = useFormContext();
 
   return (
     <section className="box-border m-0 p-0">
@@ -18,14 +18,14 @@ export const ContactInformationSection: React.FC = () => {
         <FormInput
           label="Email"
           placeholder="Enter your email"
-          value={email}
-          onChange={setEmail}
+          value={formData.contactEmail}
+          onChange={(value) => updateFormData('contactEmail', value)}
         />
         <FormInput
           label="Phone Number"
           placeholder="Enter your phone number"
-          value={phone}
-          onChange={setPhone}
+          value={formData.contactPhone}
+          onChange={(value) => updateFormData('contactPhone', value)}
         />
       </div>
     </section>
