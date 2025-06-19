@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from './use-toast';
+import { supabase } from '../utils/supabase';
 
 interface FormSubmissionData {
   main: {
@@ -23,30 +24,94 @@ export const useFormSubmission = () => {
     setIsSubmitting(true);
 
     try {
-      // Use the correct Supabase Edge Function URL
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-form`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ formData: data }),
-      });
+      console.log('Submitting form data:', data);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response error:', errorText);
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      // Insert main form submission
+      const { data: submission, error: submissionError } = await supabase
+        .from('form_submissions')
+        .insert(data.main)
+        .select()
+        .single();
+
+      if (submissionError) {
+        console.error('Submission error:', submissionError);
+        throw submissionError;
       }
 
-      const result = await response.json();
+      const submissionId = submission.id;
+      console.log('Created submission with ID:', submissionId);
+
+      // Insert related data
+      if (data.tokenFeatures && data.tokenFeatures.length > 0) {
+        const tokenFeatures = data.tokenFeatures.map((feature: string) => ({
+          submission_id: submissionId,
+          feature_name: feature
+        }));
+        
+        const { error: featuresError } = await supabase
+          .from('token_features')
+          .insert(tokenFeatures);
+        
+        if (featuresError) {
+          console.error('Features error:', featuresError);
+          throw featuresError;
+        }
+      }
+
+      if (data.raiseDocumentRegions && data.raiseDocumentRegions.length > 0) {
+        const regions = data.raiseDocumentRegions.map((region: string) => ({
+          submission_id: submissionId,
+          region: region
+        }));
+        
+        const { error: regionsError } = await supabase
+          .from('raise_document_regions')
+          .insert(regions);
+        
+        if (regionsError) {
+          console.error('Regions error:', regionsError);
+          throw regionsError;
+        }
+      }
+
+      if (data.exchangeListings && data.exchangeListings.length > 0) {
+        const exchanges = data.exchangeListings.map((exchange: string) => ({
+          submission_id: submissionId,
+          exchange_name: exchange
+        }));
+        
+        const { error: exchangesError } = await supabase
+          .from('exchange_listings')
+          .insert(exchanges);
+        
+        if (exchangesError) {
+          console.error('Exchanges error:', exchangesError);
+          throw exchangesError;
+        }
+      }
+
+      if (data.legalDocuments && data.legalDocuments.length > 0) {
+        const documents = data.legalDocuments.map((doc: string) => ({
+          submission_id: submissionId,
+          document_type: doc
+        }));
+        
+        const { error: documentsError } = await supabase
+          .from('legal_documents')
+          .insert(documents);
+        
+        if (documentsError) {
+          console.error('Documents error:', documentsError);
+          throw documentsError;
+        }
+      }
 
       toast({
         title: "Success!",
         description: "Your form has been submitted successfully.",
       });
 
-      return result;
+      return { success: true, submissionId };
     } catch (error) {
       console.error('Form submission error:', error);
       toast({
