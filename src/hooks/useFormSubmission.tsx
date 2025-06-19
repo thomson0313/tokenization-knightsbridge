@@ -26,6 +26,22 @@ export const useFormSubmission = () => {
     try {
       console.log('Submitting form data:', data);
 
+      // First check if the tables exist
+      const { error: testError } = await supabase
+        .from('form_submissions')
+        .select('id')
+        .limit(1);
+
+      if (testError) {
+        console.error('Database tables not found:', testError);
+        toast({
+          title: "Database Error",
+          description: "Database tables are not set up. Please run the database migrations first.",
+          variant: "destructive",
+        });
+        throw new Error('Database tables not found. Please run migrations.');
+      }
+
       // Insert main form submission
       const { data: submission, error: submissionError } = await supabase
         .from('form_submissions')
