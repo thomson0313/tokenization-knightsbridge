@@ -23,19 +23,23 @@ export const useFormSubmission = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('/functions/v1/submit-form', {
+      // Use the correct Supabase Edge Function URL
+      const response = await fetch('https://your-project-id.supabase.co/functions/v1/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ formData: data }),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit form');
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
+
+      const result = await response.json();
 
       toast({
         title: "Success!",
@@ -44,6 +48,7 @@ export const useFormSubmission = () => {
 
       return result;
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to submit form",
