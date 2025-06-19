@@ -46,7 +46,7 @@ const App = () => {
             />
             <Route 
               path="/admin-dashboard-knightsbridge" 
-              element={<AdminDashboard />} 
+              element={<AdminDashboard isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
