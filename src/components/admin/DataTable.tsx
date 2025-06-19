@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -190,124 +189,103 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             </div>
           )}
 
-          {/* KYC Information (Knightsbridge only) - Expanded */}
+          {/* KYC Information (Knightsbridge only) - Simplified */}
           {submission.type === 'Knightsbridge' && (
-            <div className="space-y-4 md:col-span-2">
+            <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2">KYC Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm">
                 {submission.kycFullName && (
-                  <div><strong>Full Name:</strong> {submission.kycFullName}</div>
+                  <>
+                    <div><strong>Full Name:</strong></div>
+                    <div>{submission.kycFullName}</div>
+                  </>
                 )}
                 {submission.kycIdNumber && (
-                  <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>
-                )}
-                {submission.kycDateOfBirth && (
-                  <div><strong>Date of Birth:</strong> {submission.kycDateOfBirth}</div>
-                )}
-                {submission.kycNationality && (
-                  <div><strong>Nationality:</strong> {submission.kycNationality}</div>
-                )}
-                {submission.kycAddress && (
-                  <div><strong>Address:</strong> {submission.kycAddress}</div>
-                )}
-                {submission.kycOccupation && (
-                  <div><strong>Occupation:</strong> {submission.kycOccupation}</div>
-                )}
-                {submission.kycEmployer && (
-                  <div><strong>Employer:</strong> {submission.kycEmployer}</div>
-                )}
-                {submission.kycIncomeSource && (
-                  <div><strong>Income Source:</strong> {submission.kycIncomeSource}</div>
-                )}
-                {submission.kycNetWorth && (
-                  <div><strong>Net Worth:</strong> {submission.kycNetWorth}</div>
-                )}
-                {submission.kycInvestmentExperience && (
-                  <div><strong>Investment Experience:</strong> {submission.kycInvestmentExperience}</div>
-                )}
-                {submission.kycRiskTolerance && (
-                  <div><strong>Risk Tolerance:</strong> {submission.kycRiskTolerance}</div>
-                )}
-                {submission.kycInvestmentObjectives && (
-                  <div><strong>Investment Objectives:</strong> {submission.kycInvestmentObjectives}</div>
+                  <>
+                    <div><strong>ID Number:</strong></div>
+                    <div>{submission.kycIdNumber}</div>
+                  </>
                 )}
               </div>
             </div>
           )}
 
-          {/* Custodian Information (Knightsbridge only) - Expanded */}
+          {/* Custodian Information (Knightsbridge only) - Simplified */}
           {submission.type === 'Knightsbridge' && (
-            <div className="space-y-4 md:col-span-2">
+            <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2">Custodian Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm">
                 {submission.custodianName && (
-                  <div><strong>Name:</strong> {submission.custodianName}</div>
+                  <>
+                    <div><strong>Name:</strong></div>
+                    <div>{submission.custodianName}</div>
+                  </>
                 )}
                 {submission.custodianContact && (
-                  <div><strong>Contact:</strong> {submission.custodianContact}</div>
+                  <>
+                    <div><strong>Contact:</strong></div>
+                    <div>{submission.custodianContact}</div>
+                  </>
                 )}
                 {submission.custodianRegistration && (
-                  <div><strong>Registration:</strong> {submission.custodianRegistration}</div>
-                )}
-                {submission.custodianAddress && (
-                  <div><strong>Address:</strong> {submission.custodianAddress}</div>
-                )}
-                {submission.custodianServices && (
-                  <div><strong>Services:</strong> {submission.custodianServices}</div>
+                  <>
+                    <div><strong>Registration:</strong></div>
+                    <div>{submission.custodianRegistration}</div>
+                  </>
                 )}
               </div>
             </div>
           )}
 
-          {/* Issuer Information (Knightsbridge only) - Expanded */}
+          {/* Issuer Information (Knightsbridge only) - Simplified */}
           {submission.type === 'Knightsbridge' && (
-            <div className="space-y-4 md:col-span-2">
+            <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2">Issuer Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm">
                 {submission.issuerEntityName && (
-                  <div><strong>Entity Name:</strong> {submission.issuerEntityName}</div>
+                  <>
+                    <div><strong>Entity Name:</strong></div>
+                    <div>{submission.issuerEntityName}</div>
+                  </>
                 )}
                 {submission.issuerJurisdiction && (
-                  <div><strong>Jurisdiction:</strong> {submission.issuerJurisdiction}</div>
+                  <>
+                    <div><strong>Jurisdiction:</strong></div>
+                    <div>{submission.issuerJurisdiction}</div>
+                  </>
                 )}
                 {submission.issuerContactPerson && (
-                  <div><strong>Contact Person:</strong> {submission.issuerContactPerson}</div>
+                  <>
+                    <div><strong>Contact Person:</strong></div>
+                    <div>{submission.issuerContactPerson}</div>
+                  </>
                 )}
                 {submission.issuerContactInfo && (
-                  <div><strong>Contact Info:</strong> {submission.issuerContactInfo}</div>
-                )}
-                {submission.issuerAddress && (
-                  <div><strong>Address:</strong> {submission.issuerAddress}</div>
-                )}
-                {submission.issuerBusinessType && (
-                  <div><strong>Business Type:</strong> {submission.issuerBusinessType}</div>
-                )}
-                {submission.issuerRegistrationNumber && (
-                  <div><strong>Registration Number:</strong> {submission.issuerRegistrationNumber}</div>
+                  <>
+                    <div><strong>Contact Info:</strong></div>
+                    <div>{submission.issuerContactInfo}</div>
+                  </>
                 )}
               </div>
             </div>
           )}
 
-          {/* Business Plan (Knightsbridge only) - Expanded */}
+          {/* Business Plan (Knightsbridge only) - Simplified */}
           {submission.type === 'Knightsbridge' && (
-            <div className="space-y-4 md:col-span-2">
+            <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2">Business Plan</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-sm">
                 {submission.businessPlanType && (
-                  <div><strong>Type:</strong> {submission.businessPlanType}</div>
+                  <>
+                    <div><strong>Type:</strong></div>
+                    <div>{submission.businessPlanType}</div>
+                  </>
                 )}
                 {submission.businessPlanGuidelines && (
-                  <div><strong>Guidelines:</strong> {submission.businessPlanGuidelines}</div>
-                )}
-                {submission.businessPlanExecutiveSummary && (
-                  <div><strong>Executive Summary:</strong> {submission.businessPlanExecutiveSummary}</div>
-                )}
-                {submission.businessPlanMarketAnalysis && (
-                  <div><strong>Market Analysis:</strong> {submission.businessPlanMarketAnalysis}</div>
-                )}
-                {submission.businessPlanFinancialProjections && (
-                  <div><strong>Financial Projections:</strong> {submission.businessPlanFinancialProjections}</div>
+                  <>
+                    <div><strong>Guidelines:</strong></div>
+                    <div>{submission.businessPlanGuidelines}</div>
+                  </>
                 )}
               </div>
             </div>
@@ -376,7 +354,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             <h3 className="font-semibold text-lg border-b pb-2">Documents</h3>
             
             {/* Raise Documents */}
-            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 && (
+            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
               <div className="mb-4">
                 <h4 className="font-medium text-md mb-2">Raise Documents - Regions: {submission.raiseDocumentRegions.join(', ')}</h4>
                 <div className="text-sm space-y-1">
@@ -406,10 +384,15 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                   )}
                 </div>
               </div>
+            ) : (
+              <div className="mb-4">
+                <h4 className="font-medium text-md mb-2">Raise Documents</h4>
+                <div className="text-sm text-gray-500">None selected</div>
+              </div>
             )}
 
             {/* Legal Documents */}
-            {submission.legalDocuments && submission.legalDocuments.length > 0 && (
+            {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
               <div>
                 <h4 className="font-medium text-md mb-2">Legal Documents:</h4>
                 <div className="text-sm space-y-2">
@@ -424,6 +407,11 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                     ))}
                   </ul>
                 </div>
+              </div>
+            ) : (
+              <div>
+                <h4 className="font-medium text-md mb-2">Legal Documents</h4>
+                <div className="text-sm text-gray-500">None selected</div>
               </div>
             )}
           </div>
@@ -558,40 +546,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           </div>
                         </div>
 
-                        {/* KYC & Business Info (Knightsbridge) - Expanded */}
+                        {/* KYC & Business Info (Knightsbridge) - Only Essential Fields */}
                         {submission.type === 'Knightsbridge' && (
                           <div className="space-y-2">
                             <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
                             <div className="text-xs space-y-1">
                               {submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
                               {submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
-                              {submission.kycDateOfBirth && <div><strong>Date of Birth:</strong> {submission.kycDateOfBirth}</div>}
-                              {submission.kycNationality && <div><strong>Nationality:</strong> {submission.kycNationality}</div>}
-                              {submission.kycAddress && <div><strong>Address:</strong> {submission.kycAddress}</div>}
-                              {submission.kycOccupation && <div><strong>Occupation:</strong> {submission.kycOccupation}</div>}
-                              {submission.kycEmployer && <div><strong>Employer:</strong> {submission.kycEmployer}</div>}
-                              {submission.kycIncomeSource && <div><strong>Income Source:</strong> {submission.kycIncomeSource}</div>}
-                              {submission.kycNetWorth && <div><strong>Net Worth:</strong> {submission.kycNetWorth}</div>}
-                              {submission.kycInvestmentExperience && <div><strong>Investment Experience:</strong> {submission.kycInvestmentExperience}</div>}
-                              {submission.kycRiskTolerance && <div><strong>Risk Tolerance:</strong> {submission.kycRiskTolerance}</div>}
-                              {submission.kycInvestmentObjectives && <div><strong>Investment Objectives:</strong> {submission.kycInvestmentObjectives}</div>}
-                              {submission.businessPlanType && <div><strong>Business Plan Type:</strong> {submission.businessPlanType}</div>}
-                              {submission.businessPlanGuidelines && <div><strong>Business Guidelines:</strong> {submission.businessPlanGuidelines}</div>}
-                              {submission.businessPlanExecutiveSummary && <div><strong>Executive Summary:</strong> {submission.businessPlanExecutiveSummary}</div>}
-                              {submission.businessPlanMarketAnalysis && <div><strong>Market Analysis:</strong> {submission.businessPlanMarketAnalysis}</div>}
-                              {submission.businessPlanFinancialProjections && <div><strong>Financial Projections:</strong> {submission.businessPlanFinancialProjections}</div>}
-                              {submission.issuerEntityName && <div><strong>Issuer Entity:</strong> {submission.issuerEntityName}</div>}
-                              {submission.issuerJurisdiction && <div><strong>Jurisdiction:</strong> {submission.issuerJurisdiction}</div>}
-                              {submission.issuerContactPerson && <div><strong>Issuer Contact:</strong> {submission.issuerContactPerson}</div>}
-                              {submission.issuerContactInfo && <div><strong>Issuer Info:</strong> {submission.issuerContactInfo}</div>}
-                              {submission.issuerAddress && <div><strong>Issuer Address:</strong> {submission.issuerAddress}</div>}
-                              {submission.issuerBusinessType && <div><strong>Business Type:</strong> {submission.issuerBusinessType}</div>}
-                              {submission.issuerRegistrationNumber && <div><strong>Registration Number:</strong> {submission.issuerRegistrationNumber}</div>}
-                              {submission.custodianName && <div><strong>Custodian:</strong> {submission.custodianName}</div>}
-                              {submission.custodianContact && <div><strong>Custodian Contact:</strong> {submission.custodianContact}</div>}
-                              {submission.custodianRegistration && <div><strong>Custodian Registration:</strong> {submission.custodianRegistration}</div>}
-                              {submission.custodianAddress && <div><strong>Custodian Address:</strong> {submission.custodianAddress}</div>}
-                              {submission.custodianServices && <div><strong>Custodian Services:</strong> {submission.custodianServices}</div>}
                             </div>
                           </div>
                         )}
@@ -635,7 +596,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                           <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Documents</h4>
                           <div className="text-xs space-y-3">
                             {/* Raise Documents */}
-                            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 && (
+                            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
                               <div>
                                 <div><strong>Raise Documents - Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
                                 <div className="ml-2 mt-1 space-y-0.5">
@@ -649,10 +610,14 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                                   {submission.raiseDocumentWebsite && <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>}
                                 </div>
                               </div>
+                            ) : (
+                              <div>
+                                <div><strong>Raise Documents:</strong> None</div>
+                              </div>
                             )}
                             
                             {/* Legal Documents */}
-                            {submission.legalDocuments && submission.legalDocuments.length > 0 && (
+                            {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
                               <div>
                                 <div><strong>Legal Documents:</strong></div>
                                 {submission.legalDocumentsPreferences && (
@@ -665,6 +630,10 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                                     <div key={index}>• {doc}</div>
                                   ))}
                                 </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <div><strong>Legal Documents:</strong> None</div>
                               </div>
                             )}
                           </div>
