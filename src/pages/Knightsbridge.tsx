@@ -16,6 +16,8 @@ import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { KnightsbridgeServicesSidebar } from '../components/sidebar/KnightsbridgeServicesSidebar';
 import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
+import { FormProvider, useFormContext } from '../contexts/FormContext';
+import { useFormSubmission } from '../hooks/useFormSubmission';
 
 import Icon from '../assets/img/knightsbridge_icon.png';
 
@@ -24,7 +26,7 @@ interface KnightsbridgeProps {
   onThemeToggle: () => void;
 }
 
-const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle }) => {
+const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle }) => {
   const [showPayment, setShowPayment] = useState(false);
   const [selectedServices, setSelectedServices] = useState({
     knightsbridgeService: true,
@@ -32,8 +34,81 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
     vatTax: true
   });
 
-  const handleCheckout = () => {
-    setShowPayment(true);
+  const { formData } = useFormContext();
+  const { submitForm, isSubmitting } = useFormSubmission();
+
+  const handleCheckout = async () => {
+    try {
+      // Prepare form data for submission
+      const submissionData = {
+        main: {
+          type: 'Knightsbridge' as const,
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          kyc_full_name: formData.kycFullName,
+          kyc_id_number: formData.kycIdNumber,
+          kyc_date_of_birth: formData.kycDateOfBirth,
+          kyc_nationality: formData.kycNationality,
+          kyc_address: formData.kycAddress,
+          kyc_occupation: formData.kycOccupation,
+          kyc_employer: formData.kycEmployer,
+          kyc_income_source: formData.kycIncomeSource,
+          kyc_net_worth: formData.kycNetWorth,
+          kyc_investment_experience: formData.kycInvestmentExperience,
+          kyc_risk_tolerance: formData.kycRiskTolerance,
+          kyc_investment_objectives: formData.kycInvestmentObjectives,
+          custodian_name: formData.custodianName,
+          custodian_contact: formData.custodianContact,
+          custodian_registration: formData.custodianRegistration,
+          custodian_address: formData.custodianAddress,
+          custodian_services: formData.custodianServices,
+          issuer_entity_name: formData.issuerEntityName,
+          issuer_jurisdiction: formData.issuerJurisdiction,
+          issuer_contact_person: formData.issuerContactPerson,
+          issuer_contact_info: formData.issuerContactInfo,
+          issuer_address: formData.issuerAddress,
+          issuer_business_type: formData.issuerBusinessType,
+          issuer_registration_number: formData.issuerRegistrationNumber,
+          business_plan_type: formData.businessPlanType,
+          business_plan_guidelines: formData.businessPlanGuidelines,
+          business_plan_executive_summary: formData.businessPlanExecutiveSummary,
+          business_plan_market_analysis: formData.businessPlanMarketAnalysis,
+          business_plan_financial_projections: formData.businessPlanFinancialProjections,
+          token_name: formData.tokenName,
+          token_ticker: formData.tokenTicker,
+          token_chain: formData.tokenChain,
+          token_decimals: formData.tokenDecimals,
+          target_price: formData.targetPrice,
+          treasury_address: formData.treasuryAddress,
+          letterhead_enabled: formData.letterheadEnabled,
+          letterhead_guidelines: formData.letterheadGuidelines,
+          raise_document_company: formData.raiseDocumentCompany,
+          raise_document_contact_name: formData.raiseDocumentContactName,
+          raise_document_contact_person: formData.raiseDocumentContactPerson,
+          raise_document_position: formData.raiseDocumentPosition,
+          raise_document_email: formData.raiseDocumentEmail,
+          raise_document_phone: formData.raiseDocumentPhone,
+          raise_document_address: formData.raiseDocumentAddress,
+          raise_document_website: formData.raiseDocumentWebsite,
+          white_paper_pages: formData.whitePaperPages,
+          white_paper_guidelines: formData.whitePaperGuidelines,
+          website_plan_enabled: formData.websitePlanEnabled,
+          website_plan_guidelines: formData.websitePlanGuidelines,
+          legal_documents_preferences: formData.legalDocumentsPreferences,
+          payment_amount: 15000, // Default Knightsbridge amount
+          status: 'Pending'
+        },
+        tokenFeatures: formData.tokenFeatures,
+        raiseDocumentRegions: formData.raiseDocumentRegions,
+        exchangeListings: formData.exchangeListings,
+        legalDocuments: formData.legalDocuments
+      };
+
+      await submitForm(submissionData);
+      setShowPayment(true);
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
   };
 
   const handleClosePayment = () => {
@@ -107,7 +182,11 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
 
           <div className="flex-[3] min-w-0 relative">
             <div className="sticky top-4">
-              <KnightsbridgeServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
+              <KnightsbridgeServicesSidebar 
+                onCheckout={handleCheckout} 
+                selectedServices={selectedServices}
+                isSubmitting={isSubmitting}
+              />
             </div>
           </div>
         </div>
@@ -128,6 +207,14 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle
         />
       )}
     </div>
+  );
+};
+
+const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
+  return (
+    <FormProvider>
+      <KnightsbridgeContent {...props} />
+    </FormProvider>
   );
 };
 

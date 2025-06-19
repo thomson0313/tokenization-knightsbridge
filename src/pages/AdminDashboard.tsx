@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { DataTable } from '../components/admin/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Header } from '../components/Header';
+import { useToast } from '../hooks/use-toast';
 
 interface FormSubmission {
   id: string;
@@ -97,204 +97,43 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeToggle }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const fetchSubmissions = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/functions/v1/get-submissions', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to fetch submissions');
+      }
+
+      setSubmissions(result.submissions);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to fetch submissions",
+        variant: "destructive",
+      });
+      console.error('Error fetching submissions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Comprehensive mock data for both submission types
-    const mockSubmissions: FormSubmission[] = [
-      {
-        id: '1',
-        type: 'Knightsbridge',
-        submissionDate: '2024-01-15',
-        contactEmail: 'john.doe@techcorp.com',
-        contactPhone: '+1-555-0123',
-        kycFullName: 'John Doe / TechCorp Inc',
-        kycIdNumber: 'PASS123456',
-        custodianName: 'BINANCE',
-        custodianContact: '+1-555-0199',
-        custodianRegistration: 'CUSTPASS001',
-        issuerEntityName: 'TechCorp Solutions',
-        issuerJurisdiction: 'Delaware',
-        issuerContactPerson: '+1-555-0123',
-        issuerContactInfo: 'john.doe@techcorp.com',
-        businessPlanType: 'Utility Token',
-        businessPlanGuidelines: 'Technology and innovation platform for enterprise solutions',
-        tokenName: 'TechCorpToken',
-        tokenTicker: 'TCT',
-        tokenChain: 'Ethereum',
-        tokenDecimals: '18',
-        targetPrice: '1.50',
-        treasuryAddress: '0x1234...abcd',
-        wantMoreFeatures: ['Revoke ownership', 'Pausable', 'Fees', 'Verify Contract'],
-        letterheadEnabled: true,
-        letterheadGuidelines: 'Professional letterhead with company logo and blockchain integration details',
-        raiseDocumentRegions: ['USA', 'Non USA'],
-        raiseDocumentCompany: 'TechCorp Solutions',
-        raiseDocumentContactName: 'John Doe',
-        raiseDocumentContactPerson: 'John Doe',
-        raiseDocumentPosition: 'CEO & Founder',
-        raiseDocumentEmail: 'john.doe@techcorp.com',
-        raiseDocumentPhone: '+1-555-0123',
-        raiseDocumentAddress: '789 Business Blvd, Delaware, DE 19801',
-        raiseDocumentWebsite: 'https://techcorp.com',
-        whitePaperPages: '30 Pages',
-        whitePaperGuidelines: 'Comprehensive technical whitepaper covering tokenomics and platform architecture',
-        websitePlanEnabled: true,
-        websitePlanGuidelines: 'Modern responsive website with token integration and user dashboard',
-        exchangeListings: ['XT', 'LBank'],
-        legalDocuments: ['Offering Memorandum', 'Smart Contract Legal Opinion', 'Token Purchase Agreement'],
-        legalDocumentsPreferences: 'Focus on regulatory compliance and investor protection with detailed legal framework',
-        paymentAmount: 15000,
-        status: 'Completed'
-      },
-      {
-        id: '2',
-        type: 'Decentralized',
-        submissionDate: '2024-01-14',
-        contactEmail: 'alice@defiproject.com',
-        contactPhone: '+1-555-0456',
-        tokenName: 'DefiCoin',
-        tokenTicker: 'DFC',
-        tokenChain: 'Polygon',
-        tokenDecimals: '18',
-        targetPrice: '0.75',
-        treasuryAddress: '0x5678...efgh',
-        wantMoreFeatures: [], // Empty features to show optional case
-        letterheadEnabled: true,
-        letterheadGuidelines: 'Decentralized finance focused letterhead with DeFi branding elements',
-        raiseDocumentRegions: [], // Empty to show optional case
-        whitePaperPages: '60 Pages',
-        whitePaperGuidelines: 'Detailed DeFi protocol explanation with yield farming mechanisms and liquidity strategies',
-        websitePlanEnabled: false,
-        exchangeListings: [], // Empty to show optional case
-        legalDocuments: [], // Empty to show optional case
-        paymentAmount: 8500,
-        status: 'Processing'
-      },
-      {
-        id: '3',
-        type: 'Knightsbridge',
-        submissionDate: '2024-01-13',
-        contactEmail: 'secure@tokenventures.com',
-        contactPhone: '+1-555-0789',
-        kycFullName: 'Maria Rodriguez / SecureVentures LLC',
-        kycIdNumber: 'PASS789012',
-        custodianName: 'COINBASE',
-        custodianContact: '+1-555-0888',
-        custodianRegistration: 'CUSTPASS002',
-        issuerEntityName: 'SecureVentures LLC',
-        issuerJurisdiction: 'Nevada',
-        issuerContactPerson: '+1-555-0789',
-        issuerContactInfo: 'maria@tokenventures.com',
-        businessPlanType: 'Security Token',
-        businessPlanGuidelines: 'Real estate tokenization platform with fractional ownership',
-        tokenName: 'SecureToken',
-        tokenTicker: 'ST',
-        tokenChain: 'Ethereum',
-        tokenDecimals: '8',
-        targetPrice: '100.00',
-        treasuryAddress: '0x9abc...def0',
-        wantMoreFeatures: ['Blacklist', 'Transaction Limits', 'Wallet Limits', 'Verify Contract'],
-        letterheadEnabled: true,
-        letterheadGuidelines: 'Security-focused letterhead with compliance and regulatory emphasis',
-        raiseDocumentRegions: ['USA'],
-        raiseDocumentCompany: 'SecureVentures LLC',
-        raiseDocumentContactName: 'Maria Rodriguez',
-        raiseDocumentContactPerson: 'Maria Rodriguez',
-        raiseDocumentPosition: 'Managing Partner',
-        raiseDocumentEmail: 'maria@tokenventures.com',
-        raiseDocumentPhone: '+1-555-0789',
-        raiseDocumentAddress: '456 Security Blvd, Miami, FL 33101',
-        raiseDocumentWebsite: 'https://secureventures.com',
-        whitePaperPages: '30 Pages',
-        whitePaperGuidelines: 'Security token whitepaper with regulatory compliance focus and real estate backing details',
-        websitePlanEnabled: true,
-        websitePlanGuidelines: 'Professional website with investor portal and compliance documentation',
-        exchangeListings: [], // Empty to show optional case
-        legalDocuments: ['Security Token Offering', 'Non-disclosure Agreement', 'SADA', 'Mutual NDA'],
-        legalDocumentsPreferences: 'Comprehensive legal framework for security token offering with full regulatory compliance',
-        paymentAmount: 25000,
-        status: 'Pending'
-      },
-      {
-        id: '4',
-        type: 'Decentralized',
-        submissionDate: '2024-01-12',
-        contactEmail: 'team@openprotocol.io',
-        contactPhone: '+1-555-0321',
-        tokenName: 'OpenToken',
-        tokenTicker: 'OPEN',
-        tokenChain: 'Binance Smart Chain',
-        tokenDecimals: '18',
-        targetPrice: '2.25',
-        treasuryAddress: '0xdef0...1234',
-        wantMoreFeatures: ['Superchain', 'Interoperability', 'Verify Contract'],
-        letterheadEnabled: false,
-        raiseDocumentRegions: ['Non USA'],
-        raiseDocumentCompany: 'Open Protocol Foundation',
-        raiseDocumentContactName: 'David Kim',
-        raiseDocumentContactPerson: 'David Kim',
-        raiseDocumentPosition: 'Protocol Lead',
-        raiseDocumentEmail: 'david@openprotocol.io',
-        raiseDocumentPhone: '+1-555-0321',
-        raiseDocumentAddress: '987 Protocol Street, Singapore 018989',
-        raiseDocumentWebsite: 'https://openprotocol.io',
-        whitePaperPages: 'None',
-        websitePlanEnabled: true,
-        websitePlanGuidelines: 'Open-source focused website with developer documentation and community features',
-        exchangeListings: ['LBank'],
-        legalDocuments: ['All'],
-        legalDocumentsPreferences: 'Complete legal package for international deployment with focus on decentralized governance',
-        paymentAmount: 6500,
-        status: 'Completed'
-      },
-      {
-        id: '5',
-        type: 'Knightsbridge',
-        submissionDate: '2024-01-11',
-        contactEmail: 'contact@fintechsolutions.com',
-        contactPhone: '+1-555-0654',
-        kycFullName: 'Robert Chen / FinTech Solutions Inc',
-        kycIdNumber: 'PASS345678',
-        custodianName: 'KRAKEN',
-        custodianContact: '+1-555-0777',
-        custodianRegistration: 'CUSTPASS003',
-        issuerEntityName: 'FinTech Solutions Inc',
-        issuerJurisdiction: 'California',
-        issuerContactPerson: '+1-555-0654',
-        issuerContactInfo: 'robert@fintechsolutions.com',
-        businessPlanType: 'Payment Token',
-        businessPlanGuidelines: 'Digital payments and remittance platform for cross-border transactions',
-        tokenName: 'PayToken',
-        tokenTicker: 'PAY',
-        tokenChain: 'Solana',
-        tokenDecimals: '9',
-        targetPrice: '0.50',
-        treasuryAddress: 'Sol123...456abc',
-        wantMoreFeatures: [], // Empty features to show optional case
-        letterheadEnabled: true,
-        letterheadGuidelines: 'FinTech-focused letterhead with payment processing and blockchain technology emphasis',
-        raiseDocumentRegions: ['Both'],
-        raiseDocumentCompany: 'FinTech Solutions Inc',
-        raiseDocumentContactName: 'Robert Chen',
-        raiseDocumentContactPerson: 'Robert Chen',
-        raiseDocumentPosition: 'CEO',
-        raiseDocumentEmail: 'robert@fintechsolutions.com',
-        raiseDocumentPhone: '+1-555-0654',
-        raiseDocumentAddress: '789 Innovation Way, San Francisco, CA 94107',
-        raiseDocumentWebsite: 'https://fintechsolutions.com',
-        whitePaperPages: '60 Pages',
-        whitePaperGuidelines: 'Comprehensive payment token whitepaper with technical specifications and market analysis',
-        websitePlanEnabled: true,
-        websitePlanGuidelines: 'Modern FinTech website with payment integration demos and enterprise solutions showcase',
-        exchangeListings: ['XT', 'LBank'],
-        legalDocuments: [], // Empty to show optional case
-        paymentAmount: 18500,
-        status: 'Processing'
-      }
-    ];
-    
-    setSubmissions(mockSubmissions);
-  }, []);
+    if (isAuthenticated) {
+      fetchSubmissions();
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -384,7 +223,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
               <CardTitle>Form Submissions</CardTitle>
             </CardHeader>
             <CardContent>
-              <DataTable data={submissions} />
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-text-secondary">Loading submissions...</div>
+                </div>
+              ) : (
+                <DataTable data={submissions} />
+              )}
             </CardContent>
           </Card>
         </div>
