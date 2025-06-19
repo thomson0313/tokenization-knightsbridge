@@ -9,11 +9,13 @@ interface KnightsbridgeServicesSidebarProps {
     serviceTax: boolean;
     vatTax: boolean;
   };
+  isSubmitting?: boolean;
 }
 
 export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebarProps> = ({
   onCheckout,
-  selectedServices
+  selectedServices,
+  isSubmitting = false
 }) => {
   return (
     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto border bg-bg-secondary p-6 rounded-3xl border-border-primary">
@@ -57,9 +59,10 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 
       <Button 
         onClick={onCheckout}
-        className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg"
+        disabled={isSubmitting}
+        className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Check Out Now
+        {isSubmitting ? 'Processing...' : 'Check Out Now'}
       </Button>
     </div>
   );
