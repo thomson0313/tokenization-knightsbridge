@@ -21,6 +21,7 @@ interface IndexProps {
 
 const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
   const [showPayment, setShowPayment] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedServices, setSelectedServices] = useState({
     mintToken: false,
     features: [] as string[],
@@ -34,6 +35,20 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
   const handleCheckout = () => {
     setShowPayment(true);
+  };
+
+  const handlePayNow = async () => {
+    setIsSubmitting(true);
+    try {
+      // Simulate payment processing for the basic form
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Payment processed for basic form');
+      setShowPayment(false);
+    } catch (error) {
+      console.error('Payment error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClosePayment = () => {
@@ -89,7 +104,12 @@ const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
       <div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${
         showPayment ? 'translate-x-0' : 'translate-x-full'
       }`}>
-        <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
+        <PaymentSidebar 
+          isVisible={showPayment} 
+          onClose={handleClosePayment}
+          onPayNow={handlePayNow}
+          isSubmitting={isSubmitting}
+        />
       </div>
 
       {/* Overlay when payment is open */}
