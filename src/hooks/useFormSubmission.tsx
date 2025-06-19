@@ -21,10 +21,10 @@ export const useFormSubmission = () => {
 
   const submitForm = async (data: FormSubmissionData) => {
     setIsSubmitting(true);
-    
+
     try {
       // Use the correct Supabase Edge Function URL
-      const response = await fetch('https://your-project-id.supabase.co/functions/v1/submit-form', {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-form`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
