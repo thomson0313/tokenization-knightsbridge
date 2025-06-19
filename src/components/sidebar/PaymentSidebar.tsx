@@ -1,17 +1,27 @@
-
 import React, { useState } from 'react';
 
 interface PaymentSidebarProps {
   isVisible: boolean;
   onClose: () => void;
+  onPayNow: () => Promise<void>;
+  isSubmitting?: boolean;
 }
 
-export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({ isVisible, onClose }) => {
+export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({ 
+  isVisible, 
+  onClose, 
+  onPayNow,
+  isSubmitting = false 
+}) => {
   const [selectedPayment, setSelectedPayment] = useState('stripe');
 
-  const handlePayNow = () => {
-    alert(`Processing payment via ${selectedPayment}...`);
-    onClose();
+  const handlePayNow = async () => {
+    try {
+      await onPayNow();
+      // Don't close the sidebar here - let the parent component handle it after successful submission
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
   };
 
   return (
@@ -92,9 +102,10 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({ isVisible, onClo
 
       <button
         onClick={handlePayNow}
-        className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8"
+        disabled={isSubmitting}
+        className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Pay Now
+        {isSubmitting ? 'Processing Payment...' : 'Pay Now'}
       </button>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -37,7 +36,11 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
   const { formData } = useFormContext();
   const { submitForm, isSubmitting } = useFormSubmission();
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
+    setShowPayment(true);
+  };
+
+  const handlePayNow = async () => {
     try {
       // Prepare form data for submission
       const submissionData = {
@@ -105,7 +108,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
       };
 
       await submitForm(submissionData);
-      setShowPayment(true);
+      setShowPayment(false);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -196,7 +199,12 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
       <div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${
         showPayment ? 'translate-x-0' : 'translate-x-full'
       }`}>
-        <PaymentSidebar isVisible={showPayment} onClose={handleClosePayment} />
+        <PaymentSidebar 
+          isVisible={showPayment} 
+          onClose={handleClosePayment}
+          onPayNow={handlePayNow}
+          isSubmitting={isSubmitting}
+        />
       </div>
 
       {/* Overlay when payment is open */}
