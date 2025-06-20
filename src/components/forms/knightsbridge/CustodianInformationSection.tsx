@@ -1,18 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CategoryHeader } from '../../ui/CategoryHeader';
 import { FormInput } from '../../ui/FormInput';
+import { useFormContext } from '../../../contexts/FormContext';
 
 export const CustodianInformationSection: React.FC = () => {
-  const [formData, setFormData] = useState({
-    custodianName: '',
-    contactDetails: '',
-    registrationNumber: ''
-  });
-
-  const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const { formData, updateFormData } = useFormContext();
 
   return (
     <section className="box-border m-0 p-0">
@@ -32,17 +25,33 @@ export const CustodianInformationSection: React.FC = () => {
         <FormInput
           label="Contact Details"
           placeholder="eg phone no"
-          value={formData.contactDetails}
-          onChange={(value) => updateFormData('contactDetails', value)}
+          value={formData.custodianContact}
+          onChange={(value) => updateFormData('custodianContact', value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <FormInput
+          label="Custodian Registration Number"
+          placeholder="PASSXXX"
+          value={formData.custodianRegistration}
+          onChange={(value) => updateFormData('custodianRegistration', value)}
+        />
+        
+        <FormInput
+          label="Custodian Address"
+          placeholder="Full address"
+          value={formData.custodianAddress}
+          onChange={(value) => updateFormData('custodianAddress', value)}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6">
         <FormInput
-          label="Custodian Registration Number"
-          placeholder="PASSXXX"
-          value={formData.registrationNumber}
-          onChange={(value) => updateFormData('registrationNumber', value)}
+          label="Custodian Services"
+          placeholder="Describe services"
+          value={formData.custodianServices}
+          onChange={(value) => updateFormData('custodianServices', value)}
         />
       </div>
     </section>

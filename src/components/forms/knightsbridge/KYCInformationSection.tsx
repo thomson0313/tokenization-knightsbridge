@@ -1,20 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CategoryHeader } from '../../ui/CategoryHeader';
 import { FormInput } from '../../ui/FormInput';
 import { UploadButton } from '../../ui/UploadButton';
+import { useFormContext } from '../../../contexts/FormContext';
 
 export const KYCInformationSection: React.FC = () => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    idNumber: '',
-    companyNumber: '',
-    companyIdNumber: ''
-  });
-
-  const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const { formData, updateFormData } = useFormContext();
 
   const handleProofOfIdentityUpload = (file: File) => {
     console.log('Proof of Identity uploaded:', file.name);
@@ -33,17 +25,65 @@ export const KYCInformationSection: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <FormInput
-          label="Full Name/ Company Number"
-          placeholder="eg BINANCE"
-          value={formData.fullName}
-          onChange={(value) => updateFormData('fullName', value)}
+          label="Full Name"
+          placeholder="eg John Doe"
+          value={formData.kycFullName}
+          onChange={(value) => updateFormData('kycFullName', value)}
         />
         
         <FormInput
-          label="Id Number/ Company Number"
+          label="ID Number"
           placeholder="PASSXXX"
-          value={formData.idNumber}
-          onChange={(value) => updateFormData('idNumber', value)}
+          value={formData.kycIdNumber}
+          onChange={(value) => updateFormData('kycIdNumber', value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <FormInput
+          label="Date of Birth"
+          placeholder="YYYY-MM-DD"
+          value={formData.kycDateOfBirth}
+          onChange={(value) => updateFormData('kycDateOfBirth', value)}
+        />
+        
+        <FormInput
+          label="Nationality"
+          placeholder="eg American"
+          value={formData.kycNationality}
+          onChange={(value) => updateFormData('kycNationality', value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <FormInput
+          label="Address"
+          placeholder="Full address"
+          value={formData.kycAddress}
+          onChange={(value) => updateFormData('kycAddress', value)}
+        />
+        
+        <FormInput
+          label="Occupation"
+          placeholder="Your occupation"
+          value={formData.kycOccupation}
+          onChange={(value) => updateFormData('kycOccupation', value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <FormInput
+          label="Employer"
+          placeholder="Company name"
+          value={formData.kycEmployer}
+          onChange={(value) => updateFormData('kycEmployer', value)}
+        />
+        
+        <FormInput
+          label="Income Source"
+          placeholder="eg Salary, Business"
+          value={formData.kycIncomeSource}
+          onChange={(value) => updateFormData('kycIncomeSource', value)}
         />
       </div>
 
