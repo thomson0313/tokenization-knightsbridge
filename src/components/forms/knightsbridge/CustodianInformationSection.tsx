@@ -16,42 +16,26 @@ export const CustodianInformationSection: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <FormInput
-          label="Custodian Name"
+          label="Name"
           placeholder="eg BINANCE"
           value={formData.custodianName}
           onChange={(value) => updateFormData('custodianName', value)}
         />
         
         <FormInput
-          label="Contact Details"
-          placeholder="eg phone no"
+          label="Contact"
+          placeholder="eg +1-555-0199"
           value={formData.custodianContact}
           onChange={(value) => updateFormData('custodianContact', value)}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <FormInput
-          label="Custodian Registration Number"
-          placeholder="PASSXXX"
-          value={formData.custodianRegistration}
-          onChange={(value) => updateFormData('custodianRegistration', value)}
-        />
-        
-        <FormInput
-          label="Custodian Address"
-          placeholder="Full address"
-          value={formData.custodianAddress}
-          onChange={(value) => updateFormData('custodianAddress', value)}
-        />
-      </div>
-
       <div className="grid grid-cols-1 gap-6">
         <FormInput
-          label="Custodian Services"
-          placeholder="Describe services"
-          value={formData.custodianServices}
-          onChange={(value) => updateFormData('custodianServices', value)}
+          label="Registration"
+          placeholder="eg CUSTPASS001"
+          value={formData.custodianRegistration}
+          onChange={(value) => updateFormData('custodianRegistration', value)}
         />
       </div>
     </section>

@@ -30,44 +30,19 @@ export const IssuerInformationSection: React.FC = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormInput
           label="Contact Person"
-          placeholder="Contact person name"
+          placeholder="Phone number"
           value={formData.issuerContactPerson}
           onChange={(value) => updateFormData('issuerContactPerson', value)}
         />
         
         <FormInput
-          label="Contact Information"
-          placeholder="eg email"
+          label="Contact Info"
+          placeholder="Email"
           value={formData.issuerContactInfo}
           onChange={(value) => updateFormData('issuerContactInfo', value)}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormInput
-          label="Issuer Address"
-          placeholder="Full address"
-          value={formData.issuerAddress}
-          onChange={(value) => updateFormData('issuerAddress', value)}
-        />
-        
-        <FormInput
-          label="Business Type"
-          placeholder="eg Corporation"
-          value={formData.issuerBusinessType}
-          onChange={(value) => updateFormData('issuerBusinessType', value)}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 mt-6">
-        <FormInput
-          label="Registration Number"
-          placeholder="Business registration number"
-          value={formData.issuerRegistrationNumber}
-          onChange={(value) => updateFormData('issuerRegistrationNumber', value)}
         />
       </div>
     </section>
