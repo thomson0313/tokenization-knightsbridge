@@ -9,9 +9,13 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  console.log('Request method:', req.method)
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()))
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { 
+    console.log('Handling CORS preflight request')
+    return new Response(null, { 
       headers: corsHeaders, 
       status: 200 
     })
@@ -28,18 +32,21 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Creating Supabase client')
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
+    console.log('Parsing request body')
     const requestBody = await req.text()
-    console.log('Received request body:', requestBody)
+    console.log('Request body:', requestBody)
     
     const { formData } = JSON.parse(requestBody)
-    console.log('Parsed form data:', formData)
+    console.log('Parsed form data:', JSON.stringify(formData, null, 2))
 
     // Insert main form submission
+    console.log('Inserting main form submission')
     const { data: submission, error: submissionError } = await supabaseClient
       .from('form_submissions')
       .insert(formData.main)
@@ -56,6 +63,7 @@ serve(async (req) => {
 
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
+      console.log('Inserting token features')
       const tokenFeatures = formData.tokenFeatures.map((feature: string) => ({
         submission_id: submissionId,
         feature_name: feature
@@ -72,6 +80,7 @@ serve(async (req) => {
     }
 
     if (formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
+      console.log('Inserting raise document regions')
       const regions = formData.raiseDocumentRegions.map((region: string) => ({
         submission_id: submissionId,
         region: region
@@ -88,6 +97,7 @@ serve(async (req) => {
     }
 
     if (formData.exchangeListings && formData.exchangeListings.length > 0) {
+      console.log('Inserting exchange listings')
       const exchanges = formData.exchangeListings.map((exchange: string) => ({
         submission_id: submissionId,
         exchange_name: exchange
@@ -104,6 +114,7 @@ serve(async (req) => {
     }
 
     if (formData.legalDocuments && formData.legalDocuments.length > 0) {
+      console.log('Inserting legal documents')
       const documents = formData.legalDocuments.map((doc: string) => ({
         submission_id: submissionId,
         document_type: doc
@@ -119,6 +130,7 @@ serve(async (req) => {
       }
     }
 
+    console.log('Form submission completed successfully')
     return new Response(
       JSON.stringify({ success: true, submissionId }),
       { 
@@ -130,13 +142,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Function error:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error instanceof Error ? error.stack : undefined
-      }),
+      JSON.stringify({ error: error.message }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
+        status: 400
       }
     )
   }

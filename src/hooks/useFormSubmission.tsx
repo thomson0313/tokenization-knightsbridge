@@ -16,55 +16,46 @@ interface FormSubmissionData {
     treasury_address: string;
     [key: string]: any;
   };
-  tokenFeatures?: string[];
-  raiseDocumentRegions?: string[];
-  exchangeListings?: string[];
-  legalDocuments?: string[];
-}
-
-interface KnightsbridgeSubmissionData {
-  main: {
-    type: 'Knightsbridge';
-    contact_email: string;
-    contact_phone: string;
-    kyc_full_name: string;
-    kyc_id_number: string;
-    kyc_date_of_birth: string;
-    kyc_nationality: string;
-    kyc_address: string;
-    kyc_occupation: string;
-    kyc_employer: string;
-    kyc_income_source: string;
-    custodian_name: string;
-    custodian_contact: string;
-    custodian_registration: string;
-    custodian_address: string;
-    custodian_services: string;
-    issuer_entity_name: string;
-    issuer_jurisdiction: string;
-    issuer_contact_person: string;
-    issuer_contact_info: string;
-    issuer_address: string;
-    issuer_business_type: string;
-    issuer_registration_number: string;
-    business_plan_type: string;
-    business_plan_guidelines: string;
-    business_plan_executive_summary: string;
-    business_plan_market_analysis: string;
-    business_plan_financial_projections: string;
-    token_name: string;
-    token_ticker: string;
-    token_chain: string;
-    token_decimals: string;
-    target_price: string;
-    treasury_address: string;
-    payment_amount: number;
-    status: string;
+  tokenFeatures?: {
+    submission_id?: string;
+    features: string[];
   };
-  tokenFeatures?: string[];
-  raiseDocumentRegions?: string[];
-  exchangeListings?: string[];
-  legalDocuments?: string[];
+  letterhead?: {
+    submission_id?: string;
+    enabled: boolean;
+    guidelines: string;
+  };
+  raiseDocument?: {
+    submission_id?: string;
+    regions: string[];
+    company: string;
+    contact_name: string;
+    contact_person: string;
+    position: string;
+    email: string;
+    phone: string;
+    address: string;
+    website: string;
+  };
+  whitepaper?: {
+    submission_id?: string;
+    pages: string;
+    guidelines: string;
+  };
+  websitePlan?: {
+    submission_id?: string;
+    enabled: boolean;
+    guidelines: string;
+  };
+  exchangeListings?: {
+    submission_id?: string;
+    exchanges: string[];
+  };
+  legalDocuments?: {
+    submission_id?: string;
+    documents: string[];
+    preferences: string;
+  };
 }
 
 interface ValidationError {
@@ -198,8 +189,8 @@ export const useFormSubmission = () => {
       console.log('Created submission with ID:', submissionId);
 
       // Insert optional sections data
-      if (data.tokenFeatures && data.tokenFeatures.length > 0) {
-        const tokenFeatures = data.tokenFeatures.map((feature: string) => ({
+      if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
+        const tokenFeatures = data.tokenFeatures.features.map((feature: string) => ({
           submission_id: submissionId,
           feature_name: feature
         }));
@@ -214,6 +205,132 @@ export const useFormSubmission = () => {
         }
       }
 
+      if (data.letterhead && data.letterhead.enabled) {
+        const { error: letterheadError } = await supabase
+          .from('letterhead_services')
+          .insert({
+            submission_id: submissionId,
+            enabled: data.letterhead.enabled,
+            guidelines: data.letterhead.guidelines
+          });
+        
+        if (letterheadError) {
+          console.error('Letterhead error:', letterheadError);
+          throw letterheadError;
+        }
+      }
+
+      if (data.raiseDocument && data.raiseDocument.regions?.length > 0) {
+        const regions = data.raiseDocument.regions.map((region: string) => ({
+          submission_id: submissionId,
+          region: region
+        }));
+        
+        const { error: regionsError } = await supabase
+          .from('raise_document_regions')
+          .insert(regions);
+        
+        if (regionsError) {
+          console.error('Regions error:', regionsError);
+          throw regionsError;
+        }
+
+        // Insert raise document details
+        const { error: raiseDocError } = await supabase
+          .from('raise_documents')
+          .insert({
+            submission_id: submissionId,
+            company: data.raiseDocument.company,
+            contact_name: data.raiseDocument.contact_name,
+            contact_person: data.raiseDocument.contact_person,
+            position: data.raiseDocument.position,
+            email: data.raiseDocument.email,
+            phone: data.raiseDocument.phone,
+            address: data.raiseDocument.address,
+            website: data.raiseDocument.website
+          });
+        
+        if (raiseDocError) {
+          console.error('Raise document error:', raiseDocError);
+          throw raiseDocError;
+        }
+      }
+
+      if (data.whitepaper && data.whitepaper.pages && data.whitepaper.pages !== 'none') {
+        const { error: whitepaperError } = await supabase
+          .from('whitepapers')
+          .insert({
+            submission_id: submissionId,
+            pages: data.whitepaper.pages,
+            guidelines: data.whitepaper.guidelines
+          });
+        
+        if (whitepaperError) {
+          console.error('Whitepaper error:', whitepaperError);
+          throw whitepaperError;
+        }
+      }
+
+      if (data.websitePlan && data.websitePlan.enabled) {
+        const { error: websiteError } = await supabase
+          .from('website_plans')
+          .insert({
+            submission_id: submissionId,
+            enabled: data.websitePlan.enabled,
+            guidelines: data.websitePlan.guidelines
+          });
+        
+        if (websiteError) {
+          console.error('Website plan error:', websiteError);
+          throw websiteError;
+        }
+      }
+
+      if (data.exchangeListings && data.exchangeListings.exchanges?.length > 0) {
+        const exchanges = data.exchangeListings.exchanges.map((exchange: string) => ({
+          submission_id: submissionId,
+          exchange_name: exchange
+        }));
+        
+        const { error: exchangesError } = await supabase
+          .from('exchange_listings')
+          .insert(exchanges);
+        
+        if (exchangesError) {
+          console.error('Exchanges error:', exchangesError);
+          throw exchangesError;
+        }
+      }
+
+      if (data.legalDocuments && data.legalDocuments.documents?.length > 0) {
+        const documents = data.legalDocuments.documents.map((doc: string) => ({
+          submission_id: submissionId,
+          document_type: doc
+        }));
+        
+        const { error: documentsError } = await supabase
+          .from('legal_documents')
+          .insert(documents);
+        
+        if (documentsError) {
+          console.error('Documents error:', documentsError);
+          throw documentsError;
+        }
+
+        // Insert legal document preferences
+        const { error: legalPrefError } = await supabase
+          .from('legal_document_preferences')
+          .insert({
+            submission_id: submissionId,
+            preferences: data.legalDocuments.preferences
+          });
+        
+        if (legalPrefError) {
+          console.error('Legal preferences error:', legalPrefError);
+          throw legalPrefError;
+        }
+      }
+
       toast({
         title: "Success!",
         description: "Your form has been submitted successfully.",
@@ -222,110 +339,6 @@ export const useFormSubmission = () => {
       return { success: true, submissionId };
     } catch (error) {
       console.error('Form submission error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to submit form",
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const submitKnightsbridgeForm = async (formData: any) => {
-    setIsSubmitting(true);
-
-    try {
-      // Validate required fields
-      const requiredErrors = validateRequiredFields(formData);
-      
-      if (requiredErrors.length > 0) {
-        const errorMessages = requiredErrors.map(error => error.message).join('\n');
-        toast({
-          title: "Validation Error",
-          description: errorMessages,
-          variant: "destructive",
-        });
-        return { success: false, errors: requiredErrors };
-      }
-
-      // Prepare structured form data for edge function
-      const submissionData: KnightsbridgeSubmissionData = {
-        main: {
-          type: 'Knightsbridge' as const,
-          contact_email: formData.contactEmail,
-          contact_phone: formData.contactPhone,
-          kyc_full_name: formData.kycFullName,
-          kyc_id_number: formData.kycIdNumber,
-          kyc_date_of_birth: formData.kycDateOfBirth,
-          kyc_nationality: formData.kycNationality,
-          kyc_address: formData.kycAddress,
-          kyc_occupation: formData.kycOccupation,
-          kyc_employer: formData.kycEmployer,
-          kyc_income_source: formData.kycIncomeSource,
-          custodian_name: formData.custodianName,
-          custodian_contact: formData.custodianContact,
-          custodian_registration: formData.custodianRegistration,
-          custodian_address: formData.custodianAddress,
-          custodian_services: formData.custodianServices,
-          issuer_entity_name: formData.issuerEntityName,
-          issuer_jurisdiction: formData.issuerJurisdiction,
-          issuer_contact_person: formData.issuerContactPerson,
-          issuer_contact_info: formData.issuerContactInfo,
-          issuer_address: formData.issuerAddress,
-          issuer_business_type: formData.issuerBusinessType,
-          issuer_registration_number: formData.issuerRegistrationNumber,
-          business_plan_type: JSON.stringify(formData.businessPlanType || {}),
-          business_plan_guidelines: formData.businessPlanGuidelines,
-          business_plan_executive_summary: formData.businessPlanExecutiveSummary,
-          business_plan_market_analysis: formData.businessPlanMarketAnalysis,
-          business_plan_financial_projections: formData.businessPlanFinancialProjections,
-          token_name: formData.tokenName,
-          token_ticker: formData.tokenTicker,
-          token_chain: formData.tokenChain,
-          token_decimals: formData.tokenDecimals,
-          target_price: formData.targetPrice,
-          treasury_address: formData.treasuryAddress,
-          payment_amount: 15000,
-          status: 'Pending'
-        }
-      };
-
-      // Add optional sections only if they have data
-      if (formData.tokenFeatures?.length > 0) {
-        submissionData.tokenFeatures = formData.tokenFeatures;
-      }
-
-      if (formData.raiseDocumentRegions?.length > 0) {
-        submissionData.raiseDocumentRegions = formData.raiseDocumentRegions;
-      }
-
-      if (formData.exchangeListings?.length > 0) {
-        submissionData.exchangeListings = formData.exchangeListings;
-      }
-
-      if (formData.legalDocuments?.length > 0) {
-        submissionData.legalDocuments = formData.legalDocuments;
-      }
-
-      // Call the edge function
-      const { data, error } = await supabase.functions.invoke('submit-form', {
-        body: { formData: submissionData }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "Success!",
-        description: "Your Knightsbridge form has been submitted successfully.",
-      });
-
-      return { success: true, submissionId: data?.submissionId };
-    } catch (error) {
-      console.error('Knightsbridge form submission error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to submit form",
@@ -371,23 +384,61 @@ export const useFormSubmission = () => {
 
     // Add optional sections only if they have data
     if (formData.tokenFeatures?.length > 0) {
-      submissionData.tokenFeatures = formData.tokenFeatures;
+      submissionData.tokenFeatures = {
+        features: formData.tokenFeatures
+      };
+    }
+
+    if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
+      submissionData.letterhead = {
+        enabled: formData.letterheadEnabled,
+        guidelines: formData.letterheadGuidelines || ''
+      };
     }
 
     if (formData.raiseDocumentRegions?.length > 0) {
-      submissionData.raiseDocumentRegions = formData.raiseDocumentRegions;
+      submissionData.raiseDocument = {
+        regions: formData.raiseDocumentRegions,
+        company: formData.raiseDocumentCompany || '',
+        contact_name: formData.raiseDocumentContactName || '',
+        contact_person: formData.raiseDocumentContactPerson || '',
+        position: formData.raiseDocumentPosition || '',
+        email: formData.raiseDocumentEmail || '',
+        phone: formData.raiseDocumentPhone || '',
+        address: formData.raiseDocumentAddress || '',
+        website: formData.raiseDocumentWebsite || ''
+      };
+    }
+
+    if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
+      submissionData.whitepaper = {
+        pages: formData.whitePaperPages,
+        guidelines: formData.whitePaperGuidelines || ''
+      };
+    }
+
+    if (formData.websitePlanEnabled) {
+      submissionData.websitePlan = {
+        enabled: formData.websitePlanEnabled,
+        guidelines: formData.websitePlanGuidelines || ''
+      };
     }
 
     if (formData.exchangeListings?.length > 0) {
-      submissionData.exchangeListings = formData.exchangeListings;
+      submissionData.exchangeListings = {
+        exchanges: formData.exchangeListings
+      };
     }
 
     if (formData.legalDocuments?.length > 0) {
-      submissionData.legalDocuments = formData.legalDocuments;
+      submissionData.legalDocuments = {
+        documents: formData.legalDocuments,
+        preferences: formData.legalDocumentsPreferences || ''
+      };
     }
 
     return await submitForm(submissionData);
   };
 
-  return { submitForm, validateAndSubmit, submitKnightsbridgeForm, isSubmitting };
+  return { submitForm, validateAndSubmit, isSubmitting };
 };
