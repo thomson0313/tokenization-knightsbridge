@@ -136,6 +136,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         console.log('Processing submission:', submission.id, 'Type:', submission.type);
         console.log('Raw submission data:', submission);
         
+        // Log specific boolean fields to debug
+        console.log('Boolean fields for submission', submission.id, ':', {
+          features_enabled: submission.features_enabled,
+          letterhead_enabled: submission.letterhead_enabled,
+          raise_document_enabled: submission.raise_document_enabled,
+          white_paper_enabled: submission.white_paper_enabled,
+          website_plan_enabled: submission.website_plan_enabled,
+          legal_documents_enabled: submission.legal_documents_enabled
+        });
+        
         return {
           id: submission.id,
           type: submission.type as 'Knightsbridge' | 'Decentralized',
@@ -188,16 +198,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - Fixed boolean conversion
-          featuresEnabled: Boolean(submission.features_enabled),
+          // Features and services - More explicit boolean handling
+          featuresEnabled: submission.features_enabled === true || submission.features_enabled === 'true',
           featuresGuidelines: submission.features_guidelines || undefined,
           wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
           features: submission.token_features?.map((f: any) => f.feature_name) || [],
           
-          letterheadEnabled: Boolean(submission.letterhead_enabled),
+          letterheadEnabled: submission.letterhead_enabled === true || submission.letterhead_enabled === 'true',
           letterheadGuidelines: submission.letterhead_guidelines || undefined,
           
-          raiseDocumentEnabled: Boolean(submission.raise_document_enabled),
+          raiseDocumentEnabled: submission.raise_document_enabled === true || submission.raise_document_enabled === 'true',
           raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
           raiseDocumentCompany: submission.raise_document_company || undefined,
           raiseDocumentContactName: submission.raise_document_contact_name || undefined,
@@ -208,16 +218,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raiseDocumentAddress: submission.raise_document_address || undefined,
           raiseDocumentWebsite: submission.raise_document_website || undefined,
           
-          whitePaperEnabled: Boolean(submission.white_paper_enabled),
+          whitePaperEnabled: submission.white_paper_enabled === true || submission.white_paper_enabled === 'true',
           whitePaperPages: submission.white_paper_pages || undefined,
           whitePaperGuidelines: submission.white_paper_guidelines || undefined,
           
-          websitePlanEnabled: Boolean(submission.website_plan_enabled),
+          websitePlanEnabled: submission.website_plan_enabled === true || submission.website_plan_enabled === 'true',
           websitePlanGuidelines: submission.website_plan_guidelines || undefined,
           
           exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
           
-          legalDocumentsEnabled: Boolean(submission.legal_documents_enabled),
+          legalDocumentsEnabled: submission.legal_documents_enabled === true || submission.legal_documents_enabled === 'true',
           legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
           legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
           
