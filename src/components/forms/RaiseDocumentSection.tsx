@@ -1,22 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { FormInput } from '../ui/FormInput';
 import { CategoryHeader } from '../ui/CategoryHeader';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const RaiseDocumentSection: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [formData, setFormData] = useState({
-    companyName: '',
-    contactName: '',
-    contactPerson: '',
-    positionInCompany: '',
-    email: '',
-    phoneNo: '',
-    companyAddress: '',
-    websiteUrl: ''
-  });
+  const { formData, updateFormData } = useFormContext();
 
   const regionOptions = [
     { value: 'usa', label: 'USA' },
@@ -25,16 +15,38 @@ export const RaiseDocumentSection: React.FC = () => {
   ];
 
   const updateField = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    updateFormData(field, value);
   };
 
   const handleRegionChange = (region: string, checked: boolean) => {
+    const currentRegions = formData.raiseDocumentRegions || [];
+    let updatedRegions;
+    
     if (checked) {
-      setSelectedRegions(prev => [...prev, region]);
+      updatedRegions = [...currentRegions, region];
     } else {
-      setSelectedRegions(prev => prev.filter(r => r !== region));
+      updatedRegions = currentRegions.filter((r: string) => r !== region);
+    }
+    
+    updateFormData('raiseDocumentRegions', updatedRegions);
+  };
+
+  const handleCheckboxChange = (enabled: boolean) => {
+    updateFormData('raiseDocumentEnabled', enabled);
+    if (!enabled) {
+      updateFormData('raiseDocumentRegions', []);
+      updateFormData('raiseDocumentCompany', '');
+      updateFormData('raiseDocumentContactName', '');
+      updateFormData('raiseDocumentContactPerson', '');
+      updateFormData('raiseDocumentPosition', '');
+      updateFormData('raiseDocumentEmail', '');
+      updateFormData('raiseDocumentPhone', '');
+      updateFormData('raiseDocumentAddress', '');
+      updateFormData('raiseDocumentWebsite', '');
     }
   };
+
+  const isEnabled = formData.raiseDocumentEnabled || (formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0);
 
   return (
     <section className="box-border m-0 p-0">
@@ -43,14 +55,14 @@ export const RaiseDocumentSection: React.FC = () => {
         description="Create and mint your customization token"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={setIsEnabled}
+        onCheckboxChange={handleCheckboxChange}
         rightContent={
           <div className="flex gap-[61px] max-sm:flex-wrap max-sm:gap-[15px]">
             {regionOptions.map((option) => (
               <CheckboxField
                 key={option.value}
                 label={option.label}
-                checked={selectedRegions.includes(option.value)}
+                checked={(formData.raiseDocumentRegions || []).includes(option.value)}
                 onChange={(checked) => handleRegionChange(option.value, checked)}
               />
             ))}
@@ -63,52 +75,52 @@ export const RaiseDocumentSection: React.FC = () => {
           <FormInput
             label="Company Name"
             placeholder="Enter company name"
-            value={formData.companyName}
-            onChange={(value) => updateField('companyName', value)}
+            value={formData.raiseDocumentCompany || ''}
+            onChange={(value) => updateField('raiseDocumentCompany', value)}
           />
           <FormInput
             label="Contact Name"
             placeholder="Enter contact name"
-            value={formData.contactName}
-            onChange={(value) => updateField('contactName', value)}
+            value={formData.raiseDocumentContactName || ''}
+            onChange={(value) => updateField('raiseDocumentContactName', value)}
           />
           <FormInput
             label="Contact Person"
             placeholder="Enter contact person"
-            value={formData.contactPerson}
-            onChange={(value) => updateField('contactPerson', value)}
+            value={formData.raiseDocumentContactPerson || ''}
+            onChange={(value) => updateField('raiseDocumentContactPerson', value)}
           />
           <FormInput
             label="Position in Company"
             placeholder="Enter position"
-            value={formData.positionInCompany}
-            onChange={(value) => updateField('positionInCompany', value)}
+            value={formData.raiseDocumentPosition || ''}
+            onChange={(value) => updateField('raiseDocumentPosition', value)}
           />
         </div>
         <div className="box-border grid grid-cols-[358px_358px] gap-[16px_20px] mb-8 m-0 p-0 max-md:grid-cols-[1fr] max-md:gap-4 max-sm:grid-cols-[1fr]">
           <FormInput
             label="Email"
             placeholder="Enter email"
-            value={formData.email}
-            onChange={(value) => updateField('email', value)}
+            value={formData.raiseDocumentEmail || ''}
+            onChange={(value) => updateField('raiseDocumentEmail', value)}
           />
           <FormInput
             label="Phone No."
             placeholder="Enter phone number"
-            value={formData.phoneNo}
-            onChange={(value) => updateField('phoneNo', value)}
+            value={formData.raiseDocumentPhone || ''}
+            onChange={(value) => updateField('raiseDocumentPhone', value)}
           />
           <FormInput
             label="Company Address"
             placeholder="Enter address"
-            value={formData.companyAddress}
-            onChange={(value) => updateField('companyAddress', value)}
+            value={formData.raiseDocumentAddress || ''}
+            onChange={(value) => updateField('raiseDocumentAddress', value)}
           />
           <FormInput
             label="Website URL"
             placeholder="Enter website URL"
-            value={formData.websiteUrl}
-            onChange={(value) => updateField('websiteUrl', value)}
+            value={formData.raiseDocumentWebsite || ''}
+            onChange={(value) => updateField('raiseDocumentWebsite', value)}
           />
         </div>
       </div>

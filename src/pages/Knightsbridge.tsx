@@ -44,6 +44,8 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
   const handlePayNow = async () => {
     try {
+      console.log('Current form data before submission:', formData);
+      
       // Prepare structured form data for submission
       const submissionData: any = {
         main: {
@@ -74,7 +76,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           issuer_address: formData.issuerAddress,
           issuer_business_type: formData.issuerBusinessType,
           issuer_registration_number: formData.issuerRegistrationNumber,
-          business_plan_type: formData.businessPlanType,
+          business_plan_type: JSON.stringify(formData.businessPlanType || {}),
           business_plan_guidelines: formData.businessPlanGuidelines,
           business_plan_executive_summary: formData.businessPlanExecutiveSummary,
           business_plan_market_analysis: formData.businessPlanMarketAnalysis,
@@ -99,7 +101,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
       if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
         submissionData.letterhead = {
-          enabled: formData.letterheadEnabled,
+          enabled: formData.letterheadEnabled || false,
           guidelines: formData.letterheadGuidelines || ''
         };
       }
@@ -145,6 +147,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
         };
       }
 
+      console.log('Prepared submission data:', submissionData);
       await submitForm(submissionData);
       setShowPayment(false);
     } catch (error) {
