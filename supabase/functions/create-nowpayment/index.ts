@@ -15,7 +15,7 @@ serve(async (req) => {
   try {
     const { amount, currency, orderId, orderDescription } = await req.json()
     
-    const nowPaymentsApiKey = Deno.env.get('NOWPAYMENTS_API_KEY')
+    const nowPaymentsApiKey = Deno.env.get('V97F98Q-CWZMR8Z-QSYSQP4-0Y0B7BW')
     
     if (!nowPaymentsApiKey) {
       throw new Error('NOWPayments API key not configured')
