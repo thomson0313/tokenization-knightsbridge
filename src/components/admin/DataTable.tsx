@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Table,
@@ -70,11 +71,14 @@ interface FormSubmission {
   
   // Features from "want more features" section
   wantMoreFeatures?: string[];
+  featuresEnabled?: boolean;
+  featuresGuidelines?: string;
   
   // Services with guidelines
   letterheadEnabled?: boolean;
   letterheadGuidelines?: string;
   
+  raiseDocumentEnabled?: boolean;
   raiseDocumentRegions?: string[];
   raiseDocumentCompany?: string;
   raiseDocumentContactName?: string;
@@ -85,6 +89,7 @@ interface FormSubmission {
   raiseDocumentAddress?: string;
   raiseDocumentWebsite?: string;
   
+  whitePaperEnabled?: boolean;
   whitePaperPages?: string;
   whitePaperGuidelines?: string;
   
@@ -93,6 +98,7 @@ interface FormSubmission {
   
   exchangeListings?: string[];
   
+  legalDocumentsEnabled?: boolean;
   legalDocuments?: string[];
   legalDocumentsPreferences?: string;
   
@@ -296,12 +302,25 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             <h3 className="font-semibold text-lg border-b pb-2">Additional Services</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
+                <strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}
+                {submission.featuresEnabled && submission.featuresGuidelines && (
+                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
+                    {submission.featuresGuidelines}
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                 {submission.letterheadEnabled && submission.letterheadGuidelines && (
                   <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
                     {submission.letterheadGuidelines}
                   </div>
                 )}
+              </div>
+              
+              <div>
+                <strong>Raise Document:</strong> {submission.raiseDocumentEnabled ? '✓ Yes' : '✗ No'}
               </div>
               
               <div>
@@ -314,12 +333,21 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
               </div>
               
               <div>
-                <strong>WhitePaper:</strong> {submission.whitePaperPages && submission.whitePaperPages !== 'None' ? submission.whitePaperPages : 'No'}
-                {submission.whitePaperPages && submission.whitePaperPages !== 'None' && submission.whitePaperGuidelines && (
+                <strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
+                {submission.whitePaperEnabled && submission.whitePaperPages && (
+                  <div className="mt-1 text-gray-600">
+                    Pages: {submission.whitePaperPages}
+                  </div>
+                )}
+                {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
                   <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
                     {submission.whitePaperGuidelines}
                   </div>
                 )}
+              </div>
+              
+              <div>
+                <strong>Legal Documents:</strong> {submission.legalDocumentsEnabled ? '✓ Yes' : '✗ No'}
               </div>
               
               <div>
@@ -536,10 +564,19 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
                           <div className="text-xs space-y-1">
+                            <div><strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}</div>
+                            {submission.featuresGuidelines && (
+                              <div className="p-2 bg-gray-50 rounded">
+                                <strong>Guidelines:</strong> {submission.featuresGuidelines}
+                              </div>
+                            )}
                             {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
-                              submission.wantMoreFeatures.map((feature, index) => (
-                                <div key={index}>• {feature}</div>
-                              ))
+                              <div>
+                                <strong>Selected Features:</strong>
+                                {submission.wantMoreFeatures.map((feature, index) => (
+                                  <div key={index}>• {feature}</div>
+                                ))}
+                              </div>
                             ) : (
                               <div className="text-gray-500">No additional features selected</div>
                             )}
@@ -570,6 +607,9 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               )}
                             </div>
                             <div>
+                              <strong>Raise Document:</strong> {submission.raiseDocumentEnabled ? '✓ Yes' : '✗ No'}
+                            </div>
+                            <div>
                               <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                               {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
                                 <div className="mt-1 text-gray-600 italic">
@@ -578,12 +618,20 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               )}
                             </div>
                             <div>
-                              <strong>WhitePaper:</strong> {submission.whitePaperPages && submission.whitePaperPages !== 'None' ? submission.whitePaperPages : 'No'}
-                              {submission.whitePaperPages && submission.whitePaperPages !== 'None' && submission.whitePaperGuidelines && (
+                              <strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
+                              {submission.whitePaperEnabled && submission.whitePaperPages && (
+                                <div className="mt-1 text-gray-600">
+                                  Pages: {submission.whitePaperPages}
+                                </div>
+                              )}
+                              {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
                                 <div className="mt-1 text-gray-600 italic">
                                   {submission.whitePaperGuidelines}
                                 </div>
                               )}
+                            </div>
+                            <div>
+                              <strong>Legal Documents:</strong> {submission.legalDocumentsEnabled ? '✓ Yes' : '✗ No'}
                             </div>
                             <div>
                               <strong>Exchanges:</strong> {submission.exchangeListings && submission.exchangeListings.length > 0 ? submission.exchangeListings.join(', ') : 'None'}

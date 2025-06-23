@@ -60,11 +60,14 @@ interface FormSubmission {
   // Token features
   wantMoreFeatures?: string[];
   features?: string[];
+  featuresEnabled?: boolean;
+  featuresGuidelines?: string;
   
   // Services with guidelines
   letterheadEnabled?: boolean;
   letterheadGuidelines?: string;
   
+  raiseDocumentEnabled?: boolean;
   raiseDocumentRegions?: string[];
   raiseDocumentCompany?: string;
   raiseDocumentContactName?: string;
@@ -75,6 +78,7 @@ interface FormSubmission {
   raiseDocumentAddress?: string;
   raiseDocumentWebsite?: string;
   
+  whitePaperEnabled?: boolean;
   whitePaperPages?: string;
   whitePaperGuidelines?: string;
   
@@ -83,6 +87,7 @@ interface FormSubmission {
   
   exchangeListings?: string[];
   
+  legalDocumentsEnabled?: boolean;
   legalDocuments?: string[];
   legalDocumentsPreferences?: string;
   
@@ -178,13 +183,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         targetPrice: submission.target_price,
         treasuryAddress: submission.treasury_address,
         
-        // Features and services
+        // Features and services - Updated to include all fields
+        featuresEnabled: submission.features_enabled,
+        featuresGuidelines: submission.features_guidelines,
         wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
         features: submission.token_features?.map((f: any) => f.feature_name) || [],
         
         letterheadEnabled: submission.letterhead_enabled,
         letterheadGuidelines: submission.letterhead_guidelines,
         
+        raiseDocumentEnabled: submission.raise_document_enabled,
         raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
         raiseDocumentCompany: submission.raise_document_company,
         raiseDocumentContactName: submission.raise_document_contact_name,
@@ -195,6 +203,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         raiseDocumentAddress: submission.raise_document_address,
         raiseDocumentWebsite: submission.raise_document_website,
         
+        whitePaperEnabled: submission.white_paper_enabled,
         whitePaperPages: submission.white_paper_pages,
         whitePaperGuidelines: submission.white_paper_guidelines,
         
@@ -203,6 +212,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         
         exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
         
+        legalDocumentsEnabled: submission.legal_documents_enabled,
         legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
         legalDocumentsPreferences: submission.legal_documents_preferences,
         
