@@ -134,6 +134,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       // Transform the data to match the frontend interface
       const transformedSubmissions = (submissionsData || []).map(submission => {
         console.log('Processing submission:', submission.id, 'Type:', submission.type);
+        console.log('Raw submission data:', submission);
         
         return {
           id: submission.id,
@@ -187,16 +188,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - Updated to handle both enabled flags and guidelines
-          featuresEnabled: submission.features_enabled || false,
+          // Features and services - Fixed boolean conversion
+          featuresEnabled: Boolean(submission.features_enabled),
           featuresGuidelines: submission.features_guidelines || undefined,
           wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
           features: submission.token_features?.map((f: any) => f.feature_name) || [],
           
-          letterheadEnabled: submission.letterhead_enabled || false,
+          letterheadEnabled: Boolean(submission.letterhead_enabled),
           letterheadGuidelines: submission.letterhead_guidelines || undefined,
           
-          raiseDocumentEnabled: submission.raise_document_enabled || false,
+          raiseDocumentEnabled: Boolean(submission.raise_document_enabled),
           raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
           raiseDocumentCompany: submission.raise_document_company || undefined,
           raiseDocumentContactName: submission.raise_document_contact_name || undefined,
@@ -207,16 +208,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raiseDocumentAddress: submission.raise_document_address || undefined,
           raiseDocumentWebsite: submission.raise_document_website || undefined,
           
-          whitePaperEnabled: submission.white_paper_enabled || false,
+          whitePaperEnabled: Boolean(submission.white_paper_enabled),
           whitePaperPages: submission.white_paper_pages || undefined,
           whitePaperGuidelines: submission.white_paper_guidelines || undefined,
           
-          websitePlanEnabled: submission.website_plan_enabled || false,
+          websitePlanEnabled: Boolean(submission.website_plan_enabled),
           websitePlanGuidelines: submission.website_plan_guidelines || undefined,
           
           exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
           
-          legalDocumentsEnabled: submission.legal_documents_enabled || false,
+          legalDocumentsEnabled: Boolean(submission.legal_documents_enabled),
           legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
           legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
           
