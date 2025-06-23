@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { useFormContext } from '../../contexts/FormContext';
 
 interface KnightsbridgeServicesSidebarProps {
-  onCheckout: () => void;
+  onCheckout: (totalAmount: number) => void;
   selectedServices: {
     knightsbridgeService: boolean;
     serviceTax: boolean;
@@ -99,6 +98,10 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
     }
   }, [totalPrice]);
 
+  const handleCheckout = () => {
+    onCheckout(totalPrice);
+  };
+
   return (
     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto border bg-bg-secondary p-6 rounded-3xl border-border-primary">
       <div className="mb-6">
@@ -132,7 +135,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
       </div>
 
       <Button 
-        onClick={onCheckout}
+        onClick={handleCheckout}
         disabled={isSubmitting}
         className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >

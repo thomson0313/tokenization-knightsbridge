@@ -34,11 +34,13 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 		serviceTax: true,
 		vatTax: true
 	});
+	const [totalAmount, setTotalAmount] = useState(200); // Start with Knightsbridge Service + Mint Token
 
 	const { formData } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
-	const handleCheckout = () => {
+	const handleCheckout = (amount: number) => {
+		setTotalAmount(amount);
 		setShowPayment(true);
 	};
 
@@ -142,6 +144,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 					onClose={handleClosePayment}
 					onPayNow={handlePayNow}
 					isSubmitting={isSubmitting}
+					totalAmount={totalAmount}
 				/>
 			</div>
 

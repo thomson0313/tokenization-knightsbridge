@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useFormContext } from '../../contexts/FormContext';
 
 interface ServicesSidebarProps {
-  onCheckout: () => void;
+  onCheckout: (totalAmount: number) => void;
   selectedServices: {
     mintToken: boolean;
     features: string[];
@@ -14,9 +13,14 @@ interface ServicesSidebarProps {
     exchangeListing: string[];
     legalDocuments: string[];
   };
+  isSubmitting?: boolean;
 }
 
-export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, selectedServices }) => {
+export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
+  onCheckout,
+  selectedServices,
+  isSubmitting = false
+}) => {
   const { formData } = useFormContext();
   const [animatedTotal, setAnimatedTotal] = useState(100); // Start with Mint Token price
 
@@ -95,8 +99,12 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
     }
   }, [totalPrice]);
 
+  const handleCheckout = () => {
+    onCheckout(totalPrice);
+  };
+
   return (
-    <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
+    <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto border bg-bg-secondary p-6 rounded-3xl border-border-primary">
       <div className="mb-6">
         <div className="flex items-start gap-4 mb-4">
           <div className="w-1 h-16 lg:h-20 bg-text-primary flex-shrink-0"></div>
@@ -131,12 +139,13 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
         </div>
       </div>
 
-      <button
-        onClick={onCheckout}
-        className="w-full max-w-[152px] h-[54px] text-black text-center text-base md:text-[17px] font-normal cursor-pointer bg-white mx-auto p-0 rounded-[9px] hover:bg-gray-200 transition-all duration-200 hover:scale-105 flex items-center justify-center"
+      <Button 
+        onClick={handleCheckout}
+        disabled={isSubmitting}
+        className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Check Out Now
-      </button>
-    </aside>
+        {isSubmitting ? 'Processing...' : 'Check Out Now'}
+      </Button>
+    </div>
   );
 };

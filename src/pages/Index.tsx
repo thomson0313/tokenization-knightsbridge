@@ -33,11 +33,13 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 		exchangeListing: [] as string[],
 		legalDocuments: [] as string[]
 	});
+	const [totalAmount, setTotalAmount] = useState(100); // Start with Mint Token
 
 	const { formData } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
-	const handleCheckout = () => {
+	const handleCheckout = (amount: number) => {
+		setTotalAmount(amount);
 		setShowPayment(true);
 	};
 
@@ -109,6 +111,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 					onClose={handleClosePayment}
 					onPayNow={handlePayNow}
 					isSubmitting={isSubmitting}
+					totalAmount={totalAmount}
 				/>
 			</div>
 
