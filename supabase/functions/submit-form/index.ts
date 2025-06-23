@@ -11,7 +11,7 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
+    return new Response('ok', { 
       headers: corsHeaders, 
       status: 200 
     })
@@ -34,7 +34,10 @@ serve(async (req) => {
     )
 
     const requestBody = await req.text()
+    console.log('Received request body:', requestBody)
+    
     const { formData } = JSON.parse(requestBody)
+    console.log('Parsed form data:', formData)
 
     // Insert main form submission
     const { data: submission, error: submissionError } = await supabaseClient
@@ -44,10 +47,12 @@ serve(async (req) => {
       .single()
 
     if (submissionError) {
+      console.error('Submission error:', submissionError)
       throw submissionError
     }
 
     const submissionId = submission.id
+    console.log('Created submission with ID:', submissionId)
 
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
@@ -61,6 +66,7 @@ serve(async (req) => {
         .insert(tokenFeatures)
       
       if (featuresError) {
+        console.error('Features error:', featuresError)
         throw featuresError
       }
     }
@@ -76,6 +82,7 @@ serve(async (req) => {
         .insert(regions)
       
       if (regionsError) {
+        console.error('Regions error:', regionsError)
         throw regionsError
       }
     }
@@ -91,6 +98,7 @@ serve(async (req) => {
         .insert(exchanges)
       
       if (exchangesError) {
+        console.error('Exchanges error:', exchangesError)
         throw exchangesError
       }
     }
@@ -106,6 +114,7 @@ serve(async (req) => {
         .insert(documents)
       
       if (documentsError) {
+        console.error('Documents error:', documentsError)
         throw documentsError
       }
     }
@@ -121,10 +130,13 @@ serve(async (req) => {
   } catch (error) {
     console.error('Function error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        details: error instanceof Error ? error.stack : undefined
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400
+        status: 500
       }
     )
   }
