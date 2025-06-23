@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -44,10 +42,8 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
   const handlePayNow = async () => {
     try {
-      console.log('Current form data before submission:', formData);
-      
-      // Prepare structured form data for submission
-      const submissionData: any = {
+      // Prepare form data for submission
+      const submissionData = {
         main: {
           type: 'Knightsbridge' as const,
           contact_email: formData.contactEmail,
@@ -76,7 +72,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           issuer_address: formData.issuerAddress,
           issuer_business_type: formData.issuerBusinessType,
           issuer_registration_number: formData.issuerRegistrationNumber,
-          business_plan_type: JSON.stringify(formData.businessPlanType || {}),
+          business_plan_type: formData.businessPlanType,
           business_plan_guidelines: formData.businessPlanGuidelines,
           business_plan_executive_summary: formData.businessPlanExecutiveSummary,
           business_plan_market_analysis: formData.businessPlanMarketAnalysis,
@@ -87,67 +83,30 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           token_decimals: formData.tokenDecimals,
           target_price: formData.targetPrice,
           treasury_address: formData.treasuryAddress,
-          payment_amount: 15000,
+          letterhead_enabled: formData.letterheadEnabled,
+          letterhead_guidelines: formData.letterheadGuidelines,
+          raise_document_company: formData.raiseDocumentCompany,
+          raise_document_contact_name: formData.raiseDocumentContactName,
+          raise_document_contact_person: formData.raiseDocumentContactPerson,
+          raise_document_position: formData.raiseDocumentPosition,
+          raise_document_email: formData.raiseDocumentEmail,
+          raise_document_phone: formData.raiseDocumentPhone,
+          raise_document_address: formData.raiseDocumentAddress,
+          raise_document_website: formData.raiseDocumentWebsite,
+          white_paper_pages: formData.whitePaperPages,
+          white_paper_guidelines: formData.whitePaperGuidelines,
+          website_plan_enabled: formData.websitePlanEnabled,
+          website_plan_guidelines: formData.websitePlanGuidelines,
+          legal_documents_preferences: formData.legalDocumentsPreferences,
+          payment_amount: 15000, // Default Knightsbridge amount
           status: 'Pending'
-        }
+        },
+        tokenFeatures: formData.tokenFeatures,
+        raiseDocumentRegions: formData.raiseDocumentRegions,
+        exchangeListings: formData.exchangeListings,
+        legalDocuments: formData.legalDocuments
       };
 
-      // Add optional sections only if they have data
-      if (formData.tokenFeatures?.length > 0) {
-        submissionData.tokenFeatures = {
-          features: formData.tokenFeatures
-        };
-      }
-
-      if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
-        submissionData.letterhead = {
-          enabled: formData.letterheadEnabled || false,
-          guidelines: formData.letterheadGuidelines || ''
-        };
-      }
-
-      if (formData.raiseDocumentRegions?.length > 0) {
-        submissionData.raiseDocument = {
-          regions: formData.raiseDocumentRegions,
-          company: formData.raiseDocumentCompany || '',
-          contact_name: formData.raiseDocumentContactName || '',
-          contact_person: formData.raiseDocumentContactPerson || '',
-          position: formData.raiseDocumentPosition || '',
-          email: formData.raiseDocumentEmail || '',
-          phone: formData.raiseDocumentPhone || '',
-          address: formData.raiseDocumentAddress || '',
-          website: formData.raiseDocumentWebsite || ''
-        };
-      }
-
-      if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
-        submissionData.whitepaper = {
-          pages: formData.whitePaperPages,
-          guidelines: formData.whitePaperGuidelines || ''
-        };
-      }
-
-      if (formData.websitePlanEnabled) {
-        submissionData.websitePlan = {
-          enabled: formData.websitePlanEnabled,
-          guidelines: formData.websitePlanGuidelines || ''
-        };
-      }
-
-      if (formData.exchangeListings?.length > 0) {
-        submissionData.exchangeListings = {
-          exchanges: formData.exchangeListings
-        };
-      }
-
-      if (formData.legalDocuments?.length > 0) {
-        submissionData.legalDocuments = {
-          documents: formData.legalDocuments,
-          preferences: formData.legalDocumentsPreferences || ''
-        };
-      }
-
-      console.log('Prepared submission data:', submissionData);
       await submitForm(submissionData);
       setShowPayment(false);
     } catch (error) {
@@ -268,4 +227,3 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
 };
 
 export default Knightsbridge;
-

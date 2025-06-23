@@ -37,13 +37,7 @@ interface FormData {
   issuerRegistrationNumber: string;
   
   // Business Plan
-  businessPlanType: {
-    utility?: boolean;
-    security?: boolean;
-    governance?: boolean;
-    payment?: boolean;
-    reward?: boolean;
-  };
+  businessPlanType: string;
   businessPlanGuidelines: string;
   businessPlanExecutiveSummary: string;
   businessPlanMarketAnalysis: string;
@@ -65,7 +59,6 @@ interface FormData {
   letterheadGuidelines: string;
   
   // Raise Document
-  raiseDocumentEnabled: boolean;
   raiseDocumentRegions: string[];
   raiseDocumentCompany: string;
   raiseDocumentContactName: string;
@@ -77,7 +70,6 @@ interface FormData {
   raiseDocumentWebsite: string;
   
   // White Paper
-  whitePaperEnabled: boolean;
   whitePaperPages: string;
   whitePaperGuidelines: string;
   
@@ -128,7 +120,7 @@ const initialFormData: FormData = {
   issuerAddress: '',
   issuerBusinessType: '',
   issuerRegistrationNumber: '',
-  businessPlanType: {},
+  businessPlanType: '',
   businessPlanGuidelines: '',
   businessPlanExecutiveSummary: '',
   businessPlanMarketAnalysis: '',
@@ -142,7 +134,6 @@ const initialFormData: FormData = {
   tokenFeatures: [],
   letterheadEnabled: false,
   letterheadGuidelines: '',
-  raiseDocumentEnabled: false,
   raiseDocumentRegions: [],
   raiseDocumentCompany: '',
   raiseDocumentContactName: '',
@@ -152,7 +143,6 @@ const initialFormData: FormData = {
   raiseDocumentPhone: '',
   raiseDocumentAddress: '',
   raiseDocumentWebsite: '',
-  whitePaperEnabled: false,
   whitePaperPages: '',
   whitePaperGuidelines: '',
   websitePlanEnabled: false,

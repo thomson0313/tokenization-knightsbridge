@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
-import { useFormContext } from '../../contexts/FormContext';
 
 export const ExchangeListingSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [selectedExchanges, setSelectedExchanges] = useState<string[]>([]);
 
   const exchangeOptions = [
     { value: 'xt', label: 'XT' },
@@ -14,16 +14,11 @@ export const ExchangeListingSection: React.FC = () => {
   ];
 
   const handleExchangeChange = (exchange: string, checked: boolean) => {
-    const currentExchanges = formData.exchangeListings || [];
-    let updatedExchanges;
-    
     if (checked) {
-      updatedExchanges = [...currentExchanges, exchange];
+      setSelectedExchanges(prev => [...prev, exchange]);
     } else {
-      updatedExchanges = currentExchanges.filter((e: string) => e !== exchange);
+      setSelectedExchanges(prev => prev.filter(e => e !== exchange));
     }
-    
-    updateFormData('exchangeListings', updatedExchanges);
   };
 
   return (
@@ -31,13 +26,16 @@ export const ExchangeListingSection: React.FC = () => {
       <CategoryHeader
         title="Listings on Exchange"
         description="Choose your preference for listing"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={setIsEnabled}
         rightContent={
           <div className="flex gap-[72px] max-sm:flex-wrap max-sm:gap-[15px]">
             {exchangeOptions.map((option) => (
               <CheckboxField
                 key={option.value}
                 label={option.label}
-                checked={(formData.exchangeListings || []).includes(option.value)}
+                checked={selectedExchanges.includes(option.value)}
                 onChange={(checked) => handleExchangeChange(option.value, checked)}
               />
             ))}

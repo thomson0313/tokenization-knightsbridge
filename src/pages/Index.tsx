@@ -35,7 +35,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
   });
 
   const { formData } = useFormContext();
-  const { validateAndSubmit, isSubmitting } = useFormSubmission();
+  const { submitForm, isSubmitting } = useFormSubmission();
 
   const handleCheckout = () => {
     setShowPayment(true);
@@ -43,10 +43,42 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
   const handlePayNow = async () => {
     try {
-      const result = await validateAndSubmit(formData);
-      if (result.success) {
-        setShowPayment(false);
-      }
+      // Prepare form data for submission
+      const submissionData = {
+        main: {
+          type: 'Decentralized' as const,
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          token_name: formData.tokenName,
+          token_ticker: formData.tokenTicker,
+          token_chain: formData.tokenChain,
+          token_decimals: formData.tokenDecimals,
+          target_price: formData.targetPrice,
+          treasury_address: formData.treasuryAddress,
+          letterhead_enabled: formData.letterheadEnabled,
+          letterhead_guidelines: formData.letterheadGuidelines,
+          raise_document_company: formData.raiseDocumentCompany,
+          raise_document_contact_name: formData.raiseDocumentContactName,
+          raise_document_contact_person: formData.raiseDocumentContactPerson,
+          raise_document_position: formData.raiseDocumentPosition,
+          raise_document_email: formData.raiseDocumentEmail,
+          raise_document_phone: formData.raiseDocumentPhone,
+          raise_document_address: formData.raiseDocumentAddress,
+          raise_document_website: formData.raiseDocumentWebsite,
+          white_paper_pages: formData.whitePaperPages,
+          white_paper_guidelines: formData.whitePaperGuidelines,
+          website_plan_enabled: formData.websitePlanEnabled,
+          website_plan_guidelines: formData.websitePlanGuidelines,
+          legal_documents_preferences: formData.legalDocumentsPreferences,
+        },
+        tokenFeatures: formData.tokenFeatures,
+        raiseDocumentRegions: formData.raiseDocumentRegions,
+        exchangeListings: formData.exchangeListings,
+        legalDocuments: formData.legalDocuments,
+      };
+
+      await submitForm(submissionData);
+      setShowPayment(false);
     } catch (error) {
       console.error('Form submission error:', error);
     }

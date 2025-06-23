@@ -1,18 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CategoryHeader } from '../../ui/CategoryHeader';
 import { CheckboxField } from '../../ui/CheckboxField';
 import { UploadButton } from '../../ui/UploadButton';
-import { useFormContext } from '../../../contexts/FormContext';
 
 export const BusinessPlanSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const [industries, setIndustries] = useState({
+    industry1: false,
+    industry2: false,
+    industry3: false,
+    industry4: false,
+    industry5: false,
+    industry6: false
+  });
 
-  const businessPlanTypes = formData.businessPlanType || {};
+  const [guidelines, setGuidelines] = useState('');
 
-  const updateBusinessPlanType = (type: string, checked: boolean) => {
-    const updatedTypes = { ...businessPlanTypes, [type]: checked };
-    updateFormData('businessPlanType', updatedTypes);
+  const updateIndustry = (industry: string, checked: boolean) => {
+    setIndustries(prev => ({ ...prev, [industry]: checked }));
   };
 
   const handleUploadPlanGuide = (file: File) => {
@@ -21,10 +26,6 @@ export const BusinessPlanSection: React.FC = () => {
 
   const handleUploadDocument = (file: File) => {
     console.log('Document uploaded:', file.name);
-  };
-
-  const handleGuidelinesChange = (guidelines: string) => {
-    updateFormData('businessPlanGuidelines', guidelines);
   };
 
   return (
@@ -43,28 +44,28 @@ export const BusinessPlanSection: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <CheckboxField
           label="Utility Token"
-          checked={businessPlanTypes.utility || false}
-          onChange={(checked) => updateBusinessPlanType('utility', checked)}
+          checked={industries.industry1}
+          onChange={(checked) => updateIndustry('industry1', checked)}
         />
         <CheckboxField
           label="Security Token"
-          checked={businessPlanTypes.security || false}
-          onChange={(checked) => updateBusinessPlanType('security', checked)}
+          checked={industries.industry2}
+          onChange={(checked) => updateIndustry('industry2', checked)}
         />
         <CheckboxField
           label="Governance Token"
-          checked={businessPlanTypes.governance || false}
-          onChange={(checked) => updateBusinessPlanType('governance', checked)}
+          checked={industries.industry3}
+          onChange={(checked) => updateIndustry('industry3', checked)}
         />
         <CheckboxField
           label="Payment Token"
-          checked={businessPlanTypes.payment || false}
-          onChange={(checked) => updateBusinessPlanType('payment', checked)}
+          checked={industries.industry4}
+          onChange={(checked) => updateIndustry('industry4', checked)}
         />
         <CheckboxField
           label="Reward Token"
-          checked={businessPlanTypes.reward || false}
-          onChange={(checked) => updateBusinessPlanType('reward', checked)}
+          checked={industries.industry5}
+          onChange={(checked) => updateIndustry('industry5', checked)}
         />
         <div className="flex items-center justify-center">
           <UploadButton
@@ -79,8 +80,8 @@ export const BusinessPlanSection: React.FC = () => {
           Mention your Guidelines
         </label>
         <textarea
-          value={formData.businessPlanGuidelines || ''}
-          onChange={(e) => handleGuidelinesChange(e.target.value)}
+          value={guidelines}
+          onChange={(e) => setGuidelines(e.target.value)}
           placeholder="ENTER YOUR SERVICES"
           className="w-full h-[144px] border bg-bg-secondary text-text-primary placeholder:text-text-secondary text-[17px] font-normal px-[19px] py-[11px] rounded-xl border-solid border-border-primary focus:outline-none focus:border-blue-500 resize-none"
         />
