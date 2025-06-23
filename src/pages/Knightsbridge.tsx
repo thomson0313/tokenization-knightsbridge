@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -36,7 +35,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
   });
 
   const { formData } = useFormContext();
-  const { submitForm, isSubmitting } = useFormSubmission();
+  const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
   const handleCheckout = () => {
     setShowPayment(true);
@@ -46,12 +45,14 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
     try {
       console.log('Current form data before submission:', formData);
       
-      // Prepare structured form data for submission
-      const submissionData: any = {
+      // Prepare structured form data for submission - same as Decentralized but with additional Knightsbridge fields
+      const submissionData = {
         main: {
           type: 'Knightsbridge' as const,
           contact_email: formData.contactEmail,
           contact_phone: formData.contactPhone,
+          
+          // KYC Information (Knightsbridge only)
           kyc_full_name: formData.kycFullName,
           kyc_id_number: formData.kycIdNumber,
           kyc_date_of_birth: formData.kycDateOfBirth,
@@ -64,11 +65,15 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           kyc_investment_experience: formData.kycInvestmentExperience,
           kyc_risk_tolerance: formData.kycRiskTolerance,
           kyc_investment_objectives: formData.kycInvestmentObjectives,
+          
+          // Custodian Information (Knightsbridge only)
           custodian_name: formData.custodianName,
           custodian_contact: formData.custodianContact,
           custodian_registration: formData.custodianRegistration,
           custodian_address: formData.custodianAddress,
           custodian_services: formData.custodianServices,
+          
+          // Issuer Information (Knightsbridge only)
           issuer_entity_name: formData.issuerEntityName,
           issuer_jurisdiction: formData.issuerJurisdiction,
           issuer_contact_person: formData.issuerContactPerson,
@@ -76,79 +81,35 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           issuer_address: formData.issuerAddress,
           issuer_business_type: formData.issuerBusinessType,
           issuer_registration_number: formData.issuerRegistrationNumber,
+          
+          // Business Plan (Knightsbridge only)
           business_plan_type: JSON.stringify(formData.businessPlanType || {}),
           business_plan_guidelines: formData.businessPlanGuidelines,
           business_plan_executive_summary: formData.businessPlanExecutiveSummary,
           business_plan_market_analysis: formData.businessPlanMarketAnalysis,
           business_plan_financial_projections: formData.businessPlanFinancialProjections,
+          
+          // Token Information (same as Decentralized)
           token_name: formData.tokenName,
           token_ticker: formData.tokenTicker,
           token_chain: formData.tokenChain,
           token_decimals: formData.tokenDecimals,
           target_price: formData.targetPrice,
           treasury_address: formData.treasuryAddress,
+          
           payment_amount: 15000,
           status: 'Pending'
-        }
+        },
+        
+        // Optional sections (same structure as Decentralized)
+        tokenFeatures: formData.tokenFeatures,
+        raiseDocumentRegions: formData.raiseDocumentRegions,
+        exchangeListings: formData.exchangeListings,
+        legalDocuments: formData.legalDocuments
       };
 
-      // Add optional sections only if they have data
-      if (formData.tokenFeatures?.length > 0) {
-        submissionData.tokenFeatures = {
-          features: formData.tokenFeatures
-        };
-      }
-
-      if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
-        submissionData.letterhead = {
-          enabled: formData.letterheadEnabled || false,
-          guidelines: formData.letterheadGuidelines || ''
-        };
-      }
-
-      if (formData.raiseDocumentRegions?.length > 0) {
-        submissionData.raiseDocument = {
-          regions: formData.raiseDocumentRegions,
-          company: formData.raiseDocumentCompany || '',
-          contact_name: formData.raiseDocumentContactName || '',
-          contact_person: formData.raiseDocumentContactPerson || '',
-          position: formData.raiseDocumentPosition || '',
-          email: formData.raiseDocumentEmail || '',
-          phone: formData.raiseDocumentPhone || '',
-          address: formData.raiseDocumentAddress || '',
-          website: formData.raiseDocumentWebsite || ''
-        };
-      }
-
-      if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
-        submissionData.whitepaper = {
-          pages: formData.whitePaperPages,
-          guidelines: formData.whitePaperGuidelines || ''
-        };
-      }
-
-      if (formData.websitePlanEnabled) {
-        submissionData.websitePlan = {
-          enabled: formData.websitePlanEnabled,
-          guidelines: formData.websitePlanGuidelines || ''
-        };
-      }
-
-      if (formData.exchangeListings?.length > 0) {
-        submissionData.exchangeListings = {
-          exchanges: formData.exchangeListings
-        };
-      }
-
-      if (formData.legalDocuments?.length > 0) {
-        submissionData.legalDocuments = {
-          documents: formData.legalDocuments,
-          preferences: formData.legalDocumentsPreferences || ''
-        };
-      }
-
       console.log('Prepared submission data:', submissionData);
-      await submitForm(submissionData);
+      await validateAndSubmit(submissionData);
       setShowPayment(false);
     } catch (error) {
       console.error('Form submission error:', error);
@@ -268,4 +229,3 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
 };
 
 export default Knightsbridge;
-
