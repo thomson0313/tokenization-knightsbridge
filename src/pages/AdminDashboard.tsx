@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { DataTable } from '../components/admin/DataTable';
@@ -131,94 +132,98 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       console.log('Raw submissions data:', submissionsData);
 
       // Transform the data to match the frontend interface
-      const transformedSubmissions = (submissionsData || []).map(submission => ({
-        id: submission.id,
-        type: submission.type,
-        submissionDate: submission.submission_date?.split('T')[0] || '',
-        contactEmail: submission.contact_email,
-        contactPhone: submission.contact_phone,
+      const transformedSubmissions = (submissionsData || []).map(submission => {
+        console.log('Processing submission:', submission.id, 'Type:', submission.type);
         
-        // KYC fields
-        kycFullName: submission.kyc_full_name,
-        kycIdNumber: submission.kyc_id_number,
-        kycDateOfBirth: submission.kyc_date_of_birth,
-        kycNationality: submission.kyc_nationality,
-        kycAddress: submission.kyc_address,
-        kycOccupation: submission.kyc_occupation,
-        kycEmployer: submission.kyc_employer,
-        kycIncomeSource: submission.kyc_income_source,
-        kycNetWorth: submission.kyc_net_worth,
-        kycInvestmentExperience: submission.kyc_investment_experience,
-        kycRiskTolerance: submission.kyc_risk_tolerance,
-        kycInvestmentObjectives: submission.kyc_investment_objectives,
-        
-        // Custodian fields
-        custodianName: submission.custodian_name,
-        custodianContact: submission.custodian_contact,
-        custodianRegistration: submission.custodian_registration,
-        custodianAddress: submission.custodian_address,
-        custodianServices: submission.custodian_services,
-        
-        // Issuer fields
-        issuerEntityName: submission.issuer_entity_name,
-        issuerJurisdiction: submission.issuer_jurisdiction,
-        issuerContactPerson: submission.issuer_contact_person,
-        issuerContactInfo: submission.issuer_contact_info,
-        issuerAddress: submission.issuer_address,
-        issuerBusinessType: submission.issuer_business_type,
-        issuerRegistrationNumber: submission.issuer_registration_number,
-        
-        // Business plan fields
-        businessPlanType: submission.business_plan_type,
-        businessPlanGuidelines: submission.business_plan_guidelines,
-        businessPlanExecutiveSummary: submission.business_plan_executive_summary,
-        businessPlanMarketAnalysis: submission.business_plan_market_analysis,
-        businessPlanFinancialProjections: submission.business_plan_financial_projections,
-        
-        // Token fields
-        tokenName: submission.token_name,
-        tokenTicker: submission.token_ticker,
-        tokenChain: submission.token_chain,
-        tokenDecimals: submission.token_decimals,
-        targetPrice: submission.target_price,
-        treasuryAddress: submission.treasury_address,
-        
-        // Features and services - Updated to include all fields
-        featuresEnabled: submission.features_enabled,
-        featuresGuidelines: submission.features_guidelines,
-        wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
-        features: submission.token_features?.map((f: any) => f.feature_name) || [],
-        
-        letterheadEnabled: submission.letterhead_enabled,
-        letterheadGuidelines: submission.letterhead_guidelines,
-        
-        raiseDocumentEnabled: submission.raise_document_enabled,
-        raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
-        raiseDocumentCompany: submission.raise_document_company,
-        raiseDocumentContactName: submission.raise_document_contact_name,
-        raiseDocumentContactPerson: submission.raise_document_contact_person,
-        raiseDocumentPosition: submission.raise_document_position,
-        raiseDocumentEmail: submission.raise_document_email,
-        raiseDocumentPhone: submission.raise_document_phone,
-        raiseDocumentAddress: submission.raise_document_address,
-        raiseDocumentWebsite: submission.raise_document_website,
-        
-        whitePaperEnabled: submission.white_paper_enabled,
-        whitePaperPages: submission.white_paper_pages,
-        whitePaperGuidelines: submission.white_paper_guidelines,
-        
-        websitePlanEnabled: submission.website_plan_enabled,
-        websitePlanGuidelines: submission.website_plan_guidelines,
-        
-        exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
-        
-        legalDocumentsEnabled: submission.legal_documents_enabled,
-        legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
-        legalDocumentsPreferences: submission.legal_documents_preferences,
-        
-        paymentAmount: submission.payment_amount,
-        status: submission.status
-      }));
+        return {
+          id: submission.id,
+          type: submission.type as 'Knightsbridge' | 'Decentralized',
+          submissionDate: submission.submission_date?.split('T')[0] || '',
+          contactEmail: submission.contact_email || '',
+          contactPhone: submission.contact_phone || '',
+          
+          // KYC fields (Knightsbridge only)
+          kycFullName: submission.kyc_full_name || undefined,
+          kycIdNumber: submission.kyc_id_number || undefined,
+          kycDateOfBirth: submission.kyc_date_of_birth || undefined,
+          kycNationality: submission.kyc_nationality || undefined,
+          kycAddress: submission.kyc_address || undefined,
+          kycOccupation: submission.kyc_occupation || undefined,
+          kycEmployer: submission.kyc_employer || undefined,
+          kycIncomeSource: submission.kyc_income_source || undefined,
+          kycNetWorth: submission.kyc_net_worth || undefined,
+          kycInvestmentExperience: submission.kyc_investment_experience || undefined,
+          kycRiskTolerance: submission.kyc_risk_tolerance || undefined,
+          kycInvestmentObjectives: submission.kyc_investment_objectives || undefined,
+          
+          // Custodian fields (Knightsbridge only)
+          custodianName: submission.custodian_name || undefined,
+          custodianContact: submission.custodian_contact || undefined,
+          custodianRegistration: submission.custodian_registration || undefined,
+          custodianAddress: submission.custodian_address || undefined,
+          custodianServices: submission.custodian_services || undefined,
+          
+          // Issuer fields (Knightsbridge only)
+          issuerEntityName: submission.issuer_entity_name || undefined,
+          issuerJurisdiction: submission.issuer_jurisdiction || undefined,
+          issuerContactPerson: submission.issuer_contact_person || undefined,
+          issuerContactInfo: submission.issuer_contact_info || undefined,
+          issuerAddress: submission.issuer_address || undefined,
+          issuerBusinessType: submission.issuer_business_type || undefined,
+          issuerRegistrationNumber: submission.issuer_registration_number || undefined,
+          
+          // Business plan fields (Knightsbridge only)
+          businessPlanType: submission.business_plan_type || undefined,
+          businessPlanGuidelines: submission.business_plan_guidelines || undefined,
+          businessPlanExecutiveSummary: submission.business_plan_executive_summary || undefined,
+          businessPlanMarketAnalysis: submission.business_plan_market_analysis || undefined,
+          businessPlanFinancialProjections: submission.business_plan_financial_projections || undefined,
+          
+          // Token fields (both forms)
+          tokenName: submission.token_name || undefined,
+          tokenTicker: submission.token_ticker || undefined,
+          tokenChain: submission.token_chain || undefined,
+          tokenDecimals: submission.token_decimals || undefined,
+          targetPrice: submission.target_price || undefined,
+          treasuryAddress: submission.treasury_address || undefined,
+          
+          // Features and services - Updated to handle both enabled flags and guidelines
+          featuresEnabled: submission.features_enabled || false,
+          featuresGuidelines: submission.features_guidelines || undefined,
+          wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
+          features: submission.token_features?.map((f: any) => f.feature_name) || [],
+          
+          letterheadEnabled: submission.letterhead_enabled || false,
+          letterheadGuidelines: submission.letterhead_guidelines || undefined,
+          
+          raiseDocumentEnabled: submission.raise_document_enabled || false,
+          raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
+          raiseDocumentCompany: submission.raise_document_company || undefined,
+          raiseDocumentContactName: submission.raise_document_contact_name || undefined,
+          raiseDocumentContactPerson: submission.raise_document_contact_person || undefined,
+          raiseDocumentPosition: submission.raise_document_position || undefined,
+          raiseDocumentEmail: submission.raise_document_email || undefined,
+          raiseDocumentPhone: submission.raise_document_phone || undefined,
+          raiseDocumentAddress: submission.raise_document_address || undefined,
+          raiseDocumentWebsite: submission.raise_document_website || undefined,
+          
+          whitePaperEnabled: submission.white_paper_enabled || false,
+          whitePaperPages: submission.white_paper_pages || undefined,
+          whitePaperGuidelines: submission.white_paper_guidelines || undefined,
+          
+          websitePlanEnabled: submission.website_plan_enabled || false,
+          websitePlanGuidelines: submission.website_plan_guidelines || undefined,
+          
+          exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
+          
+          legalDocumentsEnabled: submission.legal_documents_enabled || false,
+          legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
+          legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
+          
+          paymentAmount: submission.payment_amount || 0,
+          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending'
+        };
+      });
 
       console.log('Transformed submissions:', transformedSubmissions);
       setSubmissions(transformedSubmissions);
