@@ -1,12 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const WhitePaperSection: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [selectedPages, setSelectedPages] = useState<string[]>([]);
-  const [details, setDetails] = useState('');
+  const { formData, updateFormData } = useFormContext();
 
   const pageOptions = [
     { value: '30', label: '30 Pages' },
@@ -15,11 +14,24 @@ export const WhitePaperSection: React.FC = () => {
   ];
 
   const handlePageChange = (page: string, checked: boolean) => {
+    // For whitepaper, only allow one selection at a time
     if (checked) {
-      setSelectedPages(prev => [...prev, page]);
+      updateFormData('whitePaperPages', page);
     } else {
-      setSelectedPages(prev => prev.filter(p => p !== page));
+      updateFormData('whitePaperPages', '');
     }
+  };
+
+  const handleCheckboxChange = (enabled: boolean) => {
+    updateFormData('whitePaperEnabled', enabled);
+    if (!enabled) {
+      updateFormData('whitePaperPages', '');
+      updateFormData('whitePaperGuidelines', '');
+    }
+  };
+
+  const handleDetailsChange = (details: string) => {
+    updateFormData('whitePaperGuidelines', details);
   };
 
   return (
@@ -28,15 +40,15 @@ export const WhitePaperSection: React.FC = () => {
         title="White Paper"
         description="Create and mint your customization token"
         hasCheckbox={true}
-        checked={isEnabled}
-        onCheckboxChange={setIsEnabled}
+        checked={formData.whitePaperEnabled || false}
+        onCheckboxChange={handleCheckboxChange}
         rightContent={
           <div className="flex gap-[51px] max-sm:flex-wrap max-sm:gap-[15px]">
             {pageOptions.map((option) => (
               <CheckboxField
                 key={option.value}
                 label={option.label}
-                checked={selectedPages.includes(option.value)}
+                checked={formData.whitePaperPages === option.value}
                 onChange={(checked) => handlePageChange(option.value, checked)}
               />
             ))}
@@ -44,15 +56,15 @@ export const WhitePaperSection: React.FC = () => {
         }
       />
       
-      {isEnabled && (
+      {formData.whitePaperEnabled && (
         <div className="box-border mt-8 m-0 p-0">
           <label className="box-border text-text-primary text-xl font-normal mb-8 m-0 p-0 block">
             Mention your details
           </label>
           <div className="box-border h-[200px] border relative m-0 px-[27px] py-[23px] rounded-xl border-solid border-border-primary bg-bg-secondary">
             <textarea
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
+              value={formData.whitePaperGuidelines || ''}
+              onChange={(e) => handleDetailsChange(e.target.value)}
               placeholder="e.g what you want etc"
               className="box-border w-full h-full bg-transparent text-text-primary placeholder:text-text-secondary text-[15px] font-normal resize-none border-none outline-none m-0 p-0"
               maxLength={500}
