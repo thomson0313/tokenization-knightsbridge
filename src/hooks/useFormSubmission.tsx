@@ -1,5 +1,4 @@
 
-
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
@@ -17,15 +16,13 @@ interface FormSubmissionData {
 		treasury_address: string;
 		[key: string]: any;
 	};
-	tokenFeatures?: {
-		submission_id?: string;
-		features: string[];
-	};
+	tokenFeatures?: string[];
 	letterhead?: {
 		submission_id?: string;
 		enabled: boolean;
 		guidelines: string;
 	};
+	raiseDocumentRegions?: string[];
 	raiseDocument?: {
 		submission_id?: string;
 		regions: string[];
@@ -38,25 +35,23 @@ interface FormSubmissionData {
 		address: string;
 		website: string;
 	};
+	whitePaperPages?: string;
+	whitePaperGuidelines?: string;
 	whitepaper?: {
 		submission_id?: string;
 		pages: string;
 		guidelines: string;
 	};
+	websitePlanEnabled?: boolean;
+	websitePlanGuidelines?: string;
 	websitePlan?: {
 		submission_id?: string;
 		enabled: boolean;
 		guidelines: string;
 	};
-	exchangeListings?: {
-		submission_id?: string;
-		exchanges: string[];
-	};
-	legalDocuments?: {
-		submission_id?: string;
-		documents: string[];
-		preferences: string;
-	};
+	exchangeListings?: string[];
+	legalDocuments?: string[];
+	legalDocumentsPreferences?: string;
 }
 
 interface ValidationError {
@@ -321,6 +316,7 @@ export const useFormSubmission = () => {
 		if (formData.raiseDocumentRegions?.length > 0) {
 			submissionData.raiseDocumentRegions = formData.raiseDocumentRegions;
 			submissionData.raiseDocument = {
+				regions: formData.raiseDocumentRegions,
 				company: formData.raiseDocumentCompany || '',
 				contact_name: formData.raiseDocumentContactName || '',
 				contact_person: formData.raiseDocumentContactPerson || '',
