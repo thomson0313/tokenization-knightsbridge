@@ -110,9 +110,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      console.log('Fetching submissions from Supabase...');
-
-      // Fetch all submissions with ALL related data including service tables
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
         .select(`
@@ -130,13 +127,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         .order('created_at', { ascending: false });
 
       if (submissionsError) {
-        console.error('Supabase error:', submissionsError);
         throw submissionsError;
       }
 
-      console.log('Raw submissions data from Supabase:', submissionsData);
-
-      // Helper function to convert various boolean representations to actual boolean
       const toBool = (value: any): boolean => {
         if (value === null || value === undefined) return false;
         if (typeof value === 'boolean') return value;
@@ -148,47 +141,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         return Boolean(value);
       };
 
-      // Transform the data to match the frontend interface
       const transformedSubmissions = (submissionsData || []).map(submission => {
-        console.log('=== Processing submission:', submission.id, 'Type:', submission.type, '===');
-        
-        // Extract related data arrays
         const tokenFeatures = submission.token_features?.map((f: any) => f.feature_name) || [];
         const raiseDocumentRegions = submission.raise_document_regions?.map((r: any) => r.region) || [];
         const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
         const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
         
-        // Extract service data from dedicated tables
         const letterheadService = submission.letterhead_services?.[0];
         const raiseDocumentService = submission.raise_documents?.[0];
         const whitepaperService = submission.whitepapers?.[0];
         const websitePlanService = submission.website_plans?.[0];
         const legalDocumentPreferences = submission.legal_document_preferences?.[0];
         
-        console.log('Service data from dedicated tables:', {
-          letterheadService,
-          raiseDocumentService,
-          whitepaperService,
-          websitePlanService,
-          legalDocumentPreferences
-        });
-        
-        // Determine service enablement based on actual data presence
         const featuresEnabled = tokenFeatures.length > 0;
         const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
         const raiseDocumentEnabled = raiseDocumentRegions.length > 0 || !!raiseDocumentService;
         const whitePaperEnabled = !!whitepaperService;
         const websitePlanEnabled = websitePlanService ? toBool(websitePlanService.enabled) : false;
         const legalDocumentsEnabled = legalDocuments.length > 0;
-        
-        console.log('Final service enablement results:', {
-          featuresEnabled,
-          letterheadEnabled,
-          raiseDocumentEnabled,
-          whitePaperEnabled,
-          websitePlanEnabled,
-          legalDocumentsEnabled
-        });
         
         return {
           id: submission.id,
@@ -197,7 +167,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           contactEmail: submission.contact_email || '',
           contactPhone: submission.contact_phone || '',
           
-          // KYC fields (Knightsbridge only)
           kycFullName: submission.kyc_full_name || undefined,
           kycIdNumber: submission.kyc_id_number || undefined,
           kycDateOfBirth: submission.kyc_date_of_birth || undefined,
@@ -211,14 +180,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           kycRiskTolerance: submission.kyc_risk_tolerance || undefined,
           kycInvestmentObjectives: submission.kyc_investment_objectives || undefined,
           
-          // Custodian fields (Knightsbridge only)
           custodianName: submission.custodian_name || undefined,
           custodianContact: submission.custodian_contact || undefined,
           custodianRegistration: submission.custodian_registration || undefined,
           custodianAddress: submission.custodian_address || undefined,
           custodianServices: submission.custodian_services || undefined,
           
-          // Issuer fields (Knightsbridge only)
           issuerEntityName: submission.issuer_entity_name || undefined,
           issuerJurisdiction: submission.issuer_jurisdiction || undefined,
           issuerContactPerson: submission.issuer_contact_person || undefined,
@@ -227,14 +194,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           issuerBusinessType: submission.issuer_business_type || undefined,
           issuerRegistrationNumber: submission.issuer_registration_number || undefined,
           
-          // Business plan fields (Knightsbridge only)
           businessPlanType: submission.business_plan_type || undefined,
           businessPlanGuidelines: submission.business_plan_guidelines || undefined,
           businessPlanExecutiveSummary: submission.business_plan_executive_summary || undefined,
           businessPlanMarketAnalysis: submission.business_plan_market_analysis || undefined,
           businessPlanFinancialProjections: submission.business_plan_financial_projections || undefined,
           
-          // Token fields (both forms)
           tokenName: submission.token_name || undefined,
           tokenTicker: submission.token_ticker || undefined,
           tokenChain: submission.token_chain || undefined,
@@ -242,9 +207,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - Using data from dedicated tables
           featuresEnabled,
-          featuresGuidelines: undefined, // Not stored in separate table
+          featuresGuidelines: undefined,
           wantMoreFeatures: tokenFeatures,
           features: tokenFeatures,
           
@@ -280,10 +244,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         };
       });
 
-      console.log('Final transformed submissions:', transformedSubmissions);
       setSubmissions(transformedSubmissions);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to fetch submissions",
