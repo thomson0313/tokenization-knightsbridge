@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useFormContext } from '../../contexts/FormContext';
 
 interface ServicesSidebarProps {
   onCheckout: () => void;
@@ -16,70 +17,83 @@ interface ServicesSidebarProps {
 }
 
 export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, selectedServices }) => {
-  const [animatedPrices, setAnimatedPrices] = useState({
-    mintToken: 0,
-    features: 0,
-    letterhead: 0,
-    raiseDocument: 0,
-    whitePaper: 0,
-    websitePlan: 0,
-    exchangeListing: 0,
-    legalDocuments: 0,
-    dexListing: 0,
-    total: 0
-  });
+  const { formData } = useFormContext();
+  const [animatedTotal, setAnimatedTotal] = useState(100); // Start with Mint Token price
 
-  // Calculate prices based on selected services
-  const calculatePrices = () => {
-    const prices = {
-      mintToken: selectedServices.mintToken ? 34.78 : 0,
-      features: selectedServices.features.length * 34,
-      letterhead: selectedServices.letterhead ? 34.78 : 0,
-      raiseDocument: selectedServices.raiseDocument.length * 34,
-      whitePaper: selectedServices.whitePaper.length * 34,
-      websitePlan: selectedServices.websitePlan ? 230 : 0,
-      exchangeListing: selectedServices.exchangeListing.length * 34,
-      legalDocuments: selectedServices.legalDocuments.length * 34,
-      dexListing: 0,
-    };
-
-    const total = Object.values(prices).reduce((sum, price) => sum + price, 0);
-    return { ...prices, total };
+  // Calculate which services are enabled based on form data
+  const getEnabledServices = () => {
+    const services = [];
+    
+    // Mint Token is always included
+    services.push({ name: 'Mint Token', price: 100 });
+    
+    // Features
+    if (formData.featuresEnabled && formData.tokenFeatures && formData.tokenFeatures.length > 0) {
+      services.push({ name: 'Features', price: 100 });
+    }
+    
+    // Letterhead
+    if (formData.letterheadEnabled) {
+      services.push({ name: 'Letterhead', price: 100 });
+    }
+    
+    // Raise Document
+    if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
+      services.push({ name: 'Raise Document', price: 100 });
+    }
+    
+    // White Paper
+    if (formData.whitePaperEnabled && formData.whitePaperPages) {
+      services.push({ name: 'White Paper', price: 100 });
+    }
+    
+    // Website Plan
+    if (formData.websitePlanEnabled) {
+      services.push({ name: 'Website Plan', price: 100 });
+    }
+    
+    // Exchange Listing
+    if (formData.exchangeListingEnabled && formData.exchangeListings && formData.exchangeListings.length > 0) {
+      services.push({ name: 'Listing Exchange', price: 100 });
+    }
+    
+    // Legal Documents
+    if (formData.legalDocumentsEnabled && formData.legalDocuments && formData.legalDocuments.length > 0) {
+      services.push({ name: 'Legal Documents', price: 100 });
+    }
+    
+    return services;
   };
 
+  const enabledServices = getEnabledServices();
+  const totalPrice = enabledServices.reduce((sum, service) => sum + service.price, 0);
+
+  // Animate total price changes
   useEffect(() => {
-    const newPrices = calculatePrices();
+    const currentTotal = animatedTotal;
+    const targetTotal = totalPrice;
 
-    // Animate each price change
-    Object.keys(newPrices).forEach((key) => {
-      const currentPrice = animatedPrices[key as keyof typeof animatedPrices];
-      const targetPrice = newPrices[key as keyof typeof newPrices];
+    if (currentTotal !== targetTotal) {
+      const duration = 500;
+      const startTime = Date.now();
+      const startValue = currentTotal;
+      const difference = targetTotal - startValue;
 
-      if (currentPrice !== targetPrice) {
-        const duration = 500;
-        const startTime = Date.now();
-        const startValue = currentPrice;
-        const difference = targetPrice - startValue;
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = startValue + (difference * progress);
 
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const currentValue = startValue + (difference * progress);
+        setAnimatedTotal(Math.round(currentValue));
 
-          setAnimatedPrices(prev => ({
-            ...prev,
-            [key]: Math.round(currentValue * 100) / 100
-          }));
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
 
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        };
-
-        requestAnimationFrame(animate);
-      }
-    });
-  }, [selectedServices]);
+      requestAnimationFrame(animate);
+    }
+  }, [totalPrice]);
 
   return (
     <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto w-full border bg-bg-secondary p-4 md:p-5 rounded-3xl border-border-primary">
@@ -98,113 +112,12 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
       </div>
 
       <div className="space-y-4">
-        {/* Mint Token */}
-        <div className="flex justify-between items-center py-2 border-b border-border-primary">
-          <span className="text-text-primary text-sm md:text-[16px]">Mint Token</span>
-          <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.mintToken.toFixed(2)}</span>
-        </div>
-
-        {/* Features */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">Features</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.features.toFixed(2)}</span>
+        {enabledServices.map((service, index) => (
+          <div key={index} className="flex justify-between items-center py-2 border-b border-border-primary">
+            <span className="text-text-primary text-sm md:text-[16px]">{service.name}</span>
+            <span className="text-text-primary text-sm md:text-[16px]">${service.price}</span>
           </div>
-          {selectedServices.features.length > 0 && (
-            <div className="ml-4 space-y-1">
-              {selectedServices.features.map((feature, index) => (
-                <div key={index} className="flex justify-between items-center text-xs md:text-sm">
-                  <span className="text-text-secondary">• {feature}</span>
-                  <span className="text-text-secondary">$34</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Letterhead */}
-        <div className="flex justify-between items-center py-2 border-b border-border-primary">
-          <span className="text-text-primary text-sm md:text-[16px]">Letterhead</span>
-          <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.letterhead.toFixed(2)}</span>
-        </div>
-
-        {/* Raise Document */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">Raise document</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.raiseDocument.toFixed(2)}</span>
-          </div>
-          {selectedServices.raiseDocument.length > 0 && (
-            <div className="ml-4 space-y-1">
-              {selectedServices.raiseDocument.map((doc, index) => (
-                <div key={index} className="flex justify-between items-center text-xs md:text-sm">
-                  <span className="text-text-secondary">• {doc}</span>
-                  <span className="text-text-secondary">$34</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* WhitePaper */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">WhitePaper</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.whitePaper.toFixed(2)}</span>
-          </div>
-          {selectedServices.whitePaper.length > 0 && (
-            <div className="ml-4 space-y-1">
-              {selectedServices.whitePaper.map((pages, index) => (
-                <div key={index} className="flex justify-between items-center text-xs md:text-sm">
-                  <span className="text-text-secondary">• {pages}Pages</span>
-                  <span className="text-text-secondary">$34</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Website Plan */}
-        <div className="flex justify-between items-center py-2 border-b border-border-primary">
-          <span className="text-text-primary text-sm md:text-[16px]">Website Plan</span>
-          <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.websitePlan.toFixed(2)}</span>
-        </div>
-
-        {/* Listing Exchange */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">Listing Exchange</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.exchangeListing.toFixed(2)}</span>
-          </div>
-          {selectedServices.exchangeListing.length > 0 && (
-            <div className="ml-4 space-y-1">
-              {selectedServices.exchangeListing.map((exchange, index) => (
-                <div key={index} className="flex justify-between items-center text-xs md:text-sm">
-                  <span className="text-text-secondary">• {exchange}</span>
-                  <span className="text-text-secondary">$34</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Legal Documents */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-text-primary text-sm md:text-[16px]">Legal Documents</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${animatedPrices.legalDocuments.toFixed(2)}</span>
-          </div>
-          {selectedServices.legalDocuments.length > 0 && (
-            <div className="ml-4 space-y-1">
-              {selectedServices.legalDocuments.map((doc, index) => (
-                <div key={index} className="flex justify-between items-center text-xs md:text-sm">
-                  <span className="text-text-secondary">• {doc}</span>
-                  <span className="text-text-secondary">$34</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        ))}
 
         <div className="border-t-2 border-text-primary pt-4 mt-6">
           <div className="flex justify-between items-center mb-6">
@@ -212,7 +125,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({ onCheckout, se
               Total:
             </div>
             <div className="text-text-primary text-lg font-semibold">
-              ${animatedPrices.total.toLocaleString()}
+              ${animatedTotal}
             </div>
           </div>
         </div>

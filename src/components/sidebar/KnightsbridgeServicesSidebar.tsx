@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
+import { useFormContext } from '../../contexts/FormContext';
 
 interface KnightsbridgeServicesSidebarProps {
   onCheckout: () => void;
@@ -17,6 +18,87 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
   selectedServices,
   isSubmitting = false
 }) => {
+  const { formData } = useFormContext();
+  const [animatedTotal, setAnimatedTotal] = useState(200); // Start with Knightsbridge Service + Mint Token
+
+  // Calculate which services are enabled based on form data
+  const getEnabledServices = () => {
+    const services = [];
+    
+    // Knightsbridge Service is always included
+    services.push({ name: 'Knightsbridge Service', price: 100 });
+    
+    // Mint Token is always included
+    services.push({ name: 'Mint Token', price: 100 });
+    
+    // Features
+    if (formData.featuresEnabled && formData.tokenFeatures && formData.tokenFeatures.length > 0) {
+      services.push({ name: 'Features', price: 100 });
+    }
+    
+    // Letterhead
+    if (formData.letterheadEnabled) {
+      services.push({ name: 'Letterhead', price: 100 });
+    }
+    
+    // Raise Document
+    if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
+      services.push({ name: 'Raise Document', price: 100 });
+    }
+    
+    // White Paper
+    if (formData.whitePaperEnabled && formData.whitePaperPages) {
+      services.push({ name: 'White Paper', price: 100 });
+    }
+    
+    // Website Plan
+    if (formData.websitePlanEnabled) {
+      services.push({ name: 'Website Plan', price: 100 });
+    }
+    
+    // Exchange Listing
+    if (formData.exchangeListingEnabled && formData.exchangeListings && formData.exchangeListings.length > 0) {
+      services.push({ name: 'Listing Exchange', price: 100 });
+    }
+    
+    // Legal Documents
+    if (formData.legalDocumentsEnabled && formData.legalDocuments && formData.legalDocuments.length > 0) {
+      services.push({ name: 'Legal Documents', price: 100 });
+    }
+    
+    return services;
+  };
+
+  const enabledServices = getEnabledServices();
+  const totalPrice = enabledServices.reduce((sum, service) => sum + service.price, 0);
+
+  // Animate total price changes
+  useEffect(() => {
+    const currentTotal = animatedTotal;
+    const targetTotal = totalPrice;
+
+    if (currentTotal !== targetTotal) {
+      const duration = 500;
+      const startTime = Date.now();
+      const startValue = currentTotal;
+      const difference = targetTotal - startValue;
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = startValue + (difference * progress);
+
+        setAnimatedTotal(Math.round(currentValue));
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }, [totalPrice]);
+
   return (
     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto border bg-bg-secondary p-6 rounded-3xl border-border-primary">
       <div className="mb-6">
@@ -34,26 +116,18 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
       </div>
 
       <div className="space-y-4 mb-8">
-        <div className="flex justify-between items-center py-2">
-          <span className="text-text-primary">Knightsbridge Service</span>
-          <span className="text-text-primary">$54.78</span>
-        </div>
-        
-        <div className="flex justify-between items-center py-2">
-          <span className="text-text-primary">Services Tax</span>
-          <span className="text-text-primary">$4.78</span>
-        </div>
-        
-        <div className="flex justify-between items-center py-2">
-          <span className="text-text-primary">VAT Tax</span>
-          <span className="text-text-primary">$4.78</span>
-        </div>
+        {enabledServices.map((service, index) => (
+          <div key={index} className="flex justify-between items-center py-2">
+            <span className="text-text-primary">{service.name}</span>
+            <span className="text-text-primary">${service.price}</span>
+          </div>
+        ))}
         
         <div className="w-full h-px bg-border-primary my-4"></div>
         
         <div className="flex justify-between items-center py-2 font-medium">
           <span className="text-text-primary text-lg">Total</span>
-          <span className="text-text-primary text-lg">$46.78</span>
+          <span className="text-text-primary text-lg">${animatedTotal}</span>
         </div>
       </div>
 
