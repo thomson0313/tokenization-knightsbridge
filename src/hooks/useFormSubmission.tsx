@@ -4,441 +4,470 @@ import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
 
 interface FormSubmissionData {
-  main: {
-    type: 'Knightsbridge' | 'Decentralized';
-    contact_email: string;
-    contact_phone: string;
-    token_name: string;
-    token_ticker: string;
-    token_chain: string;
-    token_decimals: string;
-    target_price: string;
-    treasury_address: string;
-    [key: string]: any;
-  };
-  tokenFeatures?: {
-    submission_id?: string;
-    features: string[];
-  };
-  letterhead?: {
-    submission_id?: string;
-    enabled: boolean;
-    guidelines: string;
-  };
-  raiseDocument?: {
-    submission_id?: string;
-    regions: string[];
-    company: string;
-    contact_name: string;
-    contact_person: string;
-    position: string;
-    email: string;
-    phone: string;
-    address: string;
-    website: string;
-  };
-  whitepaper?: {
-    submission_id?: string;
-    pages: string;
-    guidelines: string;
-  };
-  websitePlan?: {
-    submission_id?: string;
-    enabled: boolean;
-    guidelines: string;
-  };
-  exchangeListings?: {
-    submission_id?: string;
-    exchanges: string[];
-  };
-  legalDocuments?: {
-    submission_id?: string;
-    documents: string[];
-    preferences: string;
-  };
+	main: {
+		type: string;
+		contact_email: string;
+		contact_phone: string;
+		token_name: string;
+		token_ticker: string;
+		token_chain: string;
+		token_decimals: string;
+		target_price: string;
+		treasury_address: string;
+		[key: string]: any;
+	};
+	tokenFeatures?: {
+		submission_id?: string;
+		features: string[];
+	};
+	letterhead?: {
+		submission_id?: string;
+		enabled: boolean;
+		guidelines: string;
+	};
+	raiseDocument?: {
+		submission_id?: string;
+		regions: string[];
+		company: string;
+		contact_name: string;
+		contact_person: string;
+		position: string;
+		email: string;
+		phone: string;
+		address: string;
+		website: string;
+	};
+	whitepaper?: {
+		submission_id?: string;
+		pages: string;
+		guidelines: string;
+	};
+	websitePlan?: {
+		submission_id?: string;
+		enabled: boolean;
+		guidelines: string;
+	};
+	exchangeListings?: {
+		submission_id?: string;
+		exchanges: string[];
+	};
+	legalDocuments?: {
+		submission_id?: string;
+		documents: string[];
+		preferences: string;
+	};
 }
 
 interface ValidationError {
-  field: string;
-  message: string;
+	field: string;
+	message: string;
 }
 
 export const useFormSubmission = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { toast } = useToast();
 
-  const validateRequiredFields = (formData: any): ValidationError[] => {
-    const errors: ValidationError[] = [];
+	const validateRequiredFields = (formData: any): ValidationError[] => {
+		const errors: ValidationError[] = [];
 
-    // Contact Information validation
-    if (!formData.contactEmail?.trim()) {
-      errors.push({ field: 'contactEmail', message: 'Email is required' });
-    }
-    if (!formData.contactPhone?.trim()) {
-      errors.push({ field: 'contactPhone', message: 'Phone number is required' });
-    }
+		// Contact Information validation
+		if (!formData.contactEmail?.trim()) {
+			errors.push({ field: 'contactEmail', message: 'Email is required' });
+		}
+		if (!formData.contactPhone?.trim()) {
+			errors.push({ field: 'contactPhone', message: 'Phone number is required' });
+		}
 
-    // Token Mint validation
-    if (!formData.tokenName?.trim()) {
-      errors.push({ field: 'tokenName', message: 'Token name is required' });
-    }
-    if (!formData.tokenTicker?.trim()) {
-      errors.push({ field: 'tokenTicker', message: 'Token ticker is required' });
-    }
-    if (!formData.tokenChain?.trim()) {
-      errors.push({ field: 'tokenChain', message: 'Token chain is required' });
-    }
-    if (!formData.tokenDecimals?.trim()) {
-      errors.push({ field: 'tokenDecimals', message: 'Token decimals is required' });
-    }
-    if (!formData.targetPrice?.trim()) {
-      errors.push({ field: 'targetPrice', message: 'Target price is required' });
-    }
-    if (!formData.treasuryAddress?.trim()) {
-      errors.push({ field: 'treasuryAddress', message: 'Treasury address is required' });
-    }
+		// Token Mint validation
+		if (!formData.tokenName?.trim()) {
+			errors.push({ field: 'tokenName', message: 'Token name is required' });
+		}
+		if (!formData.tokenTicker?.trim()) {
+			errors.push({ field: 'tokenTicker', message: 'Token ticker is required' });
+		}
+		if (!formData.tokenChain?.trim()) {
+			errors.push({ field: 'tokenChain', message: 'Token chain is required' });
+		}
+		if (!formData.tokenDecimals?.trim()) {
+			errors.push({ field: 'tokenDecimals', message: 'Token decimals is required' });
+		}
+		if (!formData.targetPrice?.trim()) {
+			errors.push({ field: 'targetPrice', message: 'Target price is required' });
+		}
+		if (!formData.treasuryAddress?.trim()) {
+			errors.push({ field: 'treasuryAddress', message: 'Treasury address is required' });
+		}
 
-    return errors;
-  };
+		return errors;
+	};
 
-  const validateOptionalSections = (formData: any): ValidationError[] => {
-    const errors: ValidationError[] = [];
+	const validateOptionalSections = (formData: any): ValidationError[] => {
+		const errors: ValidationError[] = [];
 
-    // Token Features validation - if any features are selected
-    if (formData.tokenFeatures?.length > 0) {
-      // Features are valid if at least one is selected
-    }
+		// Token Features validation - if any features are selected
+		if (formData.tokenFeatures?.length > 0) {
+			// Features are valid if at least one is selected
+		}
 
-    // Letterhead validation - always enabled, just check guidelines if needed
-    
-    // Raise Document validation - if regions are selected, other fields should be filled
-    if (formData.raiseDocumentRegions?.length > 0) {
-      if (!formData.raiseDocumentCompany?.trim()) {
-        errors.push({ field: 'raiseDocumentCompany', message: 'Company name is required when raise document regions are selected' });
-      }
-      if (!formData.raiseDocumentContactName?.trim()) {
-        errors.push({ field: 'raiseDocumentContactName', message: 'Contact name is required when raise document regions are selected' });
-      }
-      if (!formData.raiseDocumentEmail?.trim()) {
-        errors.push({ field: 'raiseDocumentEmail', message: 'Email is required when raise document regions are selected' });
-      }
-    }
+		// Letterhead validation - always enabled, just check guidelines if needed
 
-    // White Paper validation - if pages are selected, guidelines should be provided
-    if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
-      if (!formData.whitePaperGuidelines?.trim()) {
-        errors.push({ field: 'whitePaperGuidelines', message: 'Guidelines are required when white paper pages are selected' });
-      }
-    }
+		// Raise Document validation - if regions are selected, other fields should be filled
+		if (formData.raiseDocumentRegions?.length > 0) {
+			if (!formData.raiseDocumentCompany?.trim()) {
+				errors.push({ field: 'raiseDocumentCompany', message: 'Company name is required when raise document regions are selected' });
+			}
+			if (!formData.raiseDocumentContactName?.trim()) {
+				errors.push({ field: 'raiseDocumentContactName', message: 'Contact name is required when raise document regions are selected' });
+			}
+			if (!formData.raiseDocumentEmail?.trim()) {
+				errors.push({ field: 'raiseDocumentEmail', message: 'Email is required when raise document regions are selected' });
+			}
+		}
 
-    // Website Plan validation - if enabled, guidelines should be provided
-    if (formData.websitePlanEnabled) {
-      if (!formData.websitePlanGuidelines?.trim()) {
-        errors.push({ field: 'websitePlanGuidelines', message: 'Guidelines are required when website plan is enabled' });
-      }
-    }
+		// White Paper validation - if pages are selected, guidelines should be provided
+		if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
+			if (!formData.whitePaperGuidelines?.trim()) {
+				errors.push({ field: 'whitePaperGuidelines', message: 'Guidelines are required when white paper pages are selected' });
+			}
+		}
 
-    // Exchange Listings validation - if exchanges are selected
-    if (formData.exchangeListings?.length > 0) {
-      // Valid if at least one exchange is selected
-    }
+		// Website Plan validation - if enabled, guidelines should be provided
+		if (formData.websitePlanEnabled) {
+			if (!formData.websitePlanGuidelines?.trim()) {
+				errors.push({ field: 'websitePlanGuidelines', message: 'Guidelines are required when website plan is enabled' });
+			}
+		}
 
-    // Legal Documents validation - if documents are selected
-    if (formData.legalDocuments?.length > 0) {
-      // Valid if at least one document is selected
-    }
+		// Exchange Listings validation - if exchanges are selected
+		if (formData.exchangeListings?.length > 0) {
+			// Valid if at least one exchange is selected
+		}
 
-    return errors;
-  };
+		// Legal Documents validation - if documents are selected
+		if (formData.legalDocuments?.length > 0) {
+			// Valid if at least one document is selected
+		}
 
-  const submitForm = async (data: FormSubmissionData) => {
-    setIsSubmitting(true);
+		return errors;
+	};
 
-    try {
-      console.log('Submitting form data:', data);
+	const submitForm = async (data: FormSubmissionData) => {
+		setIsSubmitting(true);
 
-      // First check if the tables exist
-      const { error: testError } = await supabase
-        .from('form_submissions')
-        .select('id')
-        .limit(1);
+		try {
+			console.log('Submitting form data:', data);
 
-      if (testError) {
-        console.error('Database tables not found:', testError);
-        toast({
-          title: "Database Error",
-          description: "Database tables are not set up. Please run the database migrations first.",
-          variant: "destructive",
-        });
-        throw new Error('Database tables not found. Please run migrations.');
-      }
+			// First check if the tables exist
+			const { error: testError } = await supabase
+				.from('form_submissions')
+				.select('id')
+				.limit(1);
 
-      // Insert main form submission
-      const { data: submission, error: submissionError } = await supabase
-        .from('form_submissions')
-        .insert(data.main)
-        .select()
-        .single();
+			if (testError) {
+				console.error('Database tables not found:', testError);
+				toast({
+					title: "Database Error",
+					description: "Database tables are not set up. Please run the database migrations first.",
+					variant: "destructive",
+				});
+				throw new Error('Database tables not found. Please run migrations.');
+			}
 
-      if (submissionError) {
-        console.error('Submission error:', submissionError);
-        throw submissionError;
-      }
+			// Insert main form submission
+			const { data: submission, error: submissionError } = await supabase
+				.from('form_submissions')
+				.insert(data.main)
+				.select()
+				.single();
 
-      const submissionId = submission.id;
-      console.log('Created submission with ID:', submissionId);
+			if (submissionError) {
+				console.error('Submission error:', submissionError);
+				throw submissionError;
+			}
 
-      // Insert optional sections data
-      if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
-        const tokenFeatures = data.tokenFeatures.features.map((feature: string) => ({
-          submission_id: submissionId,
-          feature_name: feature
-        }));
-        
-        const { error: featuresError } = await supabase
-          .from('token_features')
-          .insert(tokenFeatures);
-        
-        if (featuresError) {
-          console.error('Features error:', featuresError);
-          throw featuresError;
-        }
-      }
+			const submissionId = submission.id;
+			console.log('Created submission with ID:', submissionId);
 
-      if (data.letterhead && data.letterhead.enabled) {
-        const { error: letterheadError } = await supabase
-          .from('letterhead_services')
-          .insert({
-            submission_id: submissionId,
-            enabled: data.letterhead.enabled,
-            guidelines: data.letterhead.guidelines
-          });
-        
-        if (letterheadError) {
-          console.error('Letterhead error:', letterheadError);
-          throw letterheadError;
-        }
-      }
+			// Insert optional sections data
+			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
+				const tokenFeatures = data.tokenFeatures.features.map((feature: string) => ({
+					submission_id: submissionId,
+					feature_name: feature
+				}));
 
-      if (data.raiseDocument && data.raiseDocument.regions?.length > 0) {
-        const regions = data.raiseDocument.regions.map((region: string) => ({
-          submission_id: submissionId,
-          region: region
-        }));
-        
-        const { error: regionsError } = await supabase
-          .from('raise_document_regions')
-          .insert(regions);
-        
-        if (regionsError) {
-          console.error('Regions error:', regionsError);
-          throw regionsError;
-        }
+				const { error: featuresError } = await supabase
+					.from('token_features')
+					.insert(tokenFeatures);
 
-        // Insert raise document details
-        const { error: raiseDocError } = await supabase
-          .from('raise_documents')
-          .insert({
-            submission_id: submissionId,
-            company: data.raiseDocument.company,
-            contact_name: data.raiseDocument.contact_name,
-            contact_person: data.raiseDocument.contact_person,
-            position: data.raiseDocument.position,
-            email: data.raiseDocument.email,
-            phone: data.raiseDocument.phone,
-            address: data.raiseDocument.address,
-            website: data.raiseDocument.website
-          });
-        
-        if (raiseDocError) {
-          console.error('Raise document error:', raiseDocError);
-          throw raiseDocError;
-        }
-      }
+				if (featuresError) {
+					console.error('Features error:', featuresError);
+					throw featuresError;
+				}
+			}
 
-      if (data.whitepaper && data.whitepaper.pages && data.whitepaper.pages !== 'none') {
-        const { error: whitepaperError } = await supabase
-          .from('whitepapers')
-          .insert({
-            submission_id: submissionId,
-            pages: data.whitepaper.pages,
-            guidelines: data.whitepaper.guidelines
-          });
-        
-        if (whitepaperError) {
-          console.error('Whitepaper error:', whitepaperError);
-          throw whitepaperError;
-        }
-      }
+			if (data.letterhead && data.letterhead.enabled) {
+				const { error: letterheadError } = await supabase
+					.from('letterhead_services')
+					.insert({
+						submission_id: submissionId,
+						enabled: data.letterhead.enabled,
+						guidelines: data.letterhead.guidelines
+					});
 
-      if (data.websitePlan && data.websitePlan.enabled) {
-        const { error: websiteError } = await supabase
-          .from('website_plans')
-          .insert({
-            submission_id: submissionId,
-            enabled: data.websitePlan.enabled,
-            guidelines: data.websitePlan.guidelines
-          });
-        
-        if (websiteError) {
-          console.error('Website plan error:', websiteError);
-          throw websiteError;
-        }
-      }
+				if (letterheadError) {
+					console.error('Letterhead error:', letterheadError);
+					throw letterheadError;
+				}
+			}
 
-      if (data.exchangeListings && data.exchangeListings.exchanges?.length > 0) {
-        const exchanges = data.exchangeListings.exchanges.map((exchange: string) => ({
-          submission_id: submissionId,
-          exchange_name: exchange
-        }));
-        
-        const { error: exchangesError } = await supabase
-          .from('exchange_listings')
-          .insert(exchanges);
-        
-        if (exchangesError) {
-          console.error('Exchanges error:', exchangesError);
-          throw exchangesError;
-        }
-      }
+			if (data.raiseDocument && data.raiseDocument.regions?.length > 0) {
+				const regions = data.raiseDocument.regions.map((region: string) => ({
+					submission_id: submissionId,
+					region: region
+				}));
 
-      if (data.legalDocuments && data.legalDocuments.documents?.length > 0) {
-        const documents = data.legalDocuments.documents.map((doc: string) => ({
-          submission_id: submissionId,
-          document_type: doc
-        }));
-        
-        const { error: documentsError } = await supabase
-          .from('legal_documents')
-          .insert(documents);
-        
-        if (documentsError) {
-          console.error('Documents error:', documentsError);
-          throw documentsError;
-        }
+				const { error: regionsError } = await supabase
+					.from('raise_document_regions')
+					.insert(regions);
 
-        // Insert legal document preferences
-        const { error: legalPrefError } = await supabase
-          .from('legal_document_preferences')
-          .insert({
-            submission_id: submissionId,
-            preferences: data.legalDocuments.preferences
-          });
-        
-        if (legalPrefError) {
-          console.error('Legal preferences error:', legalPrefError);
-          throw legalPrefError;
-        }
-      }
+				if (regionsError) {
+					console.error('Regions error:', regionsError);
+					throw regionsError;
+				}
 
-      toast({
-        title: "Success!",
-        description: "Your form has been submitted successfully.",
-      });
+				// Insert raise document details
+				const { error: raiseDocError } = await supabase
+					.from('raise_documents')
+					.insert({
+						submission_id: submissionId,
+						company: data.raiseDocument.company,
+						contact_name: data.raiseDocument.contact_name,
+						contact_person: data.raiseDocument.contact_person,
+						position: data.raiseDocument.position,
+						email: data.raiseDocument.email,
+						phone: data.raiseDocument.phone,
+						address: data.raiseDocument.address,
+						website: data.raiseDocument.website
+					});
 
-      return { success: true, submissionId };
-    } catch (error) {
-      console.error('Form submission error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to submit form",
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+				if (raiseDocError) {
+					console.error('Raise document error:', raiseDocError);
+					throw raiseDocError;
+				}
+			}
 
-  const validateAndSubmit = async (formData: any) => {
-    // Validate required fields
-    const requiredErrors = validateRequiredFields(formData);
-    const optionalErrors = validateOptionalSections(formData);
-    
-    const allErrors = [...requiredErrors, ...optionalErrors];
-    
-    if (allErrors.length > 0) {
-      const errorMessages = allErrors.map(error => error.message).join('\n');
-      toast({
-        title: "Validation Error",
-        description: errorMessages,
-        variant: "destructive",
-      });
-      return { success: false, errors: allErrors };
-    }
+			if (data.whitepaper && data.whitepaper.pages && data.whitepaper.pages !== 'none') {
+				const { error: whitepaperError } = await supabase
+					.from('whitepapers')
+					.insert({
+						submission_id: submissionId,
+						pages: data.whitepaper.pages,
+						guidelines: data.whitepaper.guidelines
+					});
 
-    // Prepare structured submission data
-    const submissionData: FormSubmissionData = {
-      main: {
-        type: 'Decentralized' as const,
-        contact_email: formData.contactEmail,
-        contact_phone: formData.contactPhone,
-        token_name: formData.tokenName,
-        token_ticker: formData.tokenTicker,
-        token_chain: formData.tokenChain,
-        token_decimals: formData.tokenDecimals,
-        target_price: formData.targetPrice,
-        treasury_address: formData.treasuryAddress,
-      }
-    };
+				if (whitepaperError) {
+					console.error('Whitepaper error:', whitepaperError);
+					throw whitepaperError;
+				}
+			}
 
-    // Add optional sections only if they have data
-    if (formData.tokenFeatures?.length > 0) {
-      submissionData.tokenFeatures = {
-        features: formData.tokenFeatures
-      };
-    }
+			if (data.websitePlan && data.websitePlan.enabled) {
+				const { error: websiteError } = await supabase
+					.from('website_plans')
+					.insert({
+						submission_id: submissionId,
+						enabled: data.websitePlan.enabled,
+						guidelines: data.websitePlan.guidelines
+					});
 
-    if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
-      submissionData.letterhead = {
-        enabled: formData.letterheadEnabled,
-        guidelines: formData.letterheadGuidelines || ''
-      };
-    }
+				if (websiteError) {
+					console.error('Website plan error:', websiteError);
+					throw websiteError;
+				}
+			}
 
-    if (formData.raiseDocumentRegions?.length > 0) {
-      submissionData.raiseDocument = {
-        regions: formData.raiseDocumentRegions,
-        company: formData.raiseDocumentCompany || '',
-        contact_name: formData.raiseDocumentContactName || '',
-        contact_person: formData.raiseDocumentContactPerson || '',
-        position: formData.raiseDocumentPosition || '',
-        email: formData.raiseDocumentEmail || '',
-        phone: formData.raiseDocumentPhone || '',
-        address: formData.raiseDocumentAddress || '',
-        website: formData.raiseDocumentWebsite || ''
-      };
-    }
+			if (data.exchangeListings && data.exchangeListings.exchanges?.length > 0) {
+				const exchanges = data.exchangeListings.exchanges.map((exchange: string) => ({
+					submission_id: submissionId,
+					exchange_name: exchange
+				}));
 
-    if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
-      submissionData.whitepaper = {
-        pages: formData.whitePaperPages,
-        guidelines: formData.whitePaperGuidelines || ''
-      };
-    }
+				const { error: exchangesError } = await supabase
+					.from('exchange_listings')
+					.insert(exchanges);
 
-    if (formData.websitePlanEnabled) {
-      submissionData.websitePlan = {
-        enabled: formData.websitePlanEnabled,
-        guidelines: formData.websitePlanGuidelines || ''
-      };
-    }
+				if (exchangesError) {
+					console.error('Exchanges error:', exchangesError);
+					throw exchangesError;
+				}
+			}
 
-    if (formData.exchangeListings?.length > 0) {
-      submissionData.exchangeListings = {
-        exchanges: formData.exchangeListings
-      };
-    }
+			if (data.legalDocuments && data.legalDocuments.documents?.length > 0) {
+				const documents = data.legalDocuments.documents.map((doc: string) => ({
+					submission_id: submissionId,
+					document_type: doc
+				}));
 
-    if (formData.legalDocuments?.length > 0) {
-      submissionData.legalDocuments = {
-        documents: formData.legalDocuments,
-        preferences: formData.legalDocumentsPreferences || ''
-      };
-    }
+				const { error: documentsError } = await supabase
+					.from('legal_documents')
+					.insert(documents);
 
-    return await submitForm(submissionData);
-  };
+				if (documentsError) {
+					console.error('Documents error:', documentsError);
+					throw documentsError;
+				}
 
-  return { submitForm, validateAndSubmit, isSubmitting };
+				// Insert legal document preferences
+				const { error: legalPrefError } = await supabase
+					.from('legal_document_preferences')
+					.insert({
+						submission_id: submissionId,
+						preferences: data.legalDocuments.preferences
+					});
+
+				if (legalPrefError) {
+					console.error('Legal preferences error:', legalPrefError);
+					throw legalPrefError;
+				}
+			}
+
+			toast({
+				title: "Success!",
+				description: "Your form has been submitted successfully.",
+			});
+
+			return { success: true, submissionId };
+		} catch (error) {
+			console.error('Form submission error:', error);
+			toast({
+				title: "Error",
+				description: error instanceof Error ? error.message : "Failed to submit form",
+				variant: "destructive",
+			});
+			throw error;
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const validateAndSubmit = async (formData: any, type: string) => {
+		// Validate required fields
+		const requiredErrors = validateRequiredFields(formData);
+		const optionalErrors = validateOptionalSections(formData);
+
+		const allErrors = [...requiredErrors, ...optionalErrors];
+
+		if (allErrors.length > 0) {
+			const errorMessages = allErrors.map(error => error.message).join('\n');
+			toast({
+				title: "Validation Error",
+				description: errorMessages,
+				variant: "destructive",
+			});
+			return { success: false, errors: allErrors };
+		}
+
+		// Prepare structured submission data
+		const submissionData: FormSubmissionData = {
+			main: {
+				type: type,
+				contact_email: formData.contactEmail,
+				contact_phone: formData.contactPhone,
+				token_name: formData.tokenName,
+				token_ticker: formData.tokenTicker,
+				token_chain: formData.tokenChain,
+				token_decimals: formData.tokenDecimals,
+				target_price: formData.targetPrice,
+				treasury_address: formData.treasuryAddress,
+				kycFullName: formData.kycFullName,
+				kycIdNumber: formData.kycIdNumber,
+				// kycDateOfBirth: formData.kycDateOfBirth,
+				// kycNationality: formData.kycNationality,
+				// kycAddress: formData.kycAddress,
+				// kycOccupation: formData.kycOccupation,
+				// kycEmployer: formData.kycEmployer,
+				// kycIncomeSource: formData.kycIncomeSource,
+				// kycNetWorth: formData.,
+				// kycInvestmentExperience: formData.,
+				// kycRiskTolerance: formData.,
+				// kycInvestmentObjectives: formData.,
+				custodianName: formData.custodianName,
+				custodianContact: formData.custodianContact,
+				custodianRegistration: formData.custodianRegistration,
+				// custodianAddress: formData.,
+				// custodianServices: formData.,
+				issuerEntityName: formData.issuerEntityName,
+				issuerJurisdiction: formData.issuerJurisdiction,
+				issuerContactPerson: formData.issuerContactPerson,
+				issuerContactInfo: formData.issuerContactInfo,
+				// issuerAddress: formData.,
+				// issuerBusinessType: formData.,
+				// issuerRegistrationNumber: formData.,
+				businessPlanType: formData.businessPlanType || {},
+				businessPlanGuidelines: formData.businessPlanGuidelines || '',
+				// businessPlanExecutiveSummary: formData.,
+				// businessPlanMarketAnalysis: formData.,
+				// businessPlanFinancialProjections: formData.,
+			}
+		};
+
+		// Add optional sections only if they have data
+		if (formData.tokenFeatures?.length > 0) {
+			submissionData.tokenFeatures = {
+				features: formData.tokenFeatures
+			};
+		}
+
+		if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
+			submissionData.letterhead = {
+				enabled: formData.letterheadEnabled,
+				guidelines: formData.letterheadGuidelines || ''
+			};
+		}
+
+		if (formData.raiseDocumentRegions?.length > 0) {
+			submissionData.raiseDocument = {
+				regions: formData.raiseDocumentRegions,
+				company: formData.raiseDocumentCompany || '',
+				contact_name: formData.raiseDocumentContactName || '',
+				contact_person: formData.raiseDocumentContactPerson || '',
+				position: formData.raiseDocumentPosition || '',
+				email: formData.raiseDocumentEmail || '',
+				phone: formData.raiseDocumentPhone || '',
+				address: formData.raiseDocumentAddress || '',
+				website: formData.raiseDocumentWebsite || ''
+			};
+		}
+
+		if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
+			submissionData.whitepaper = {
+				pages: formData.whitePaperPages,
+				guidelines: formData.whitePaperGuidelines || ''
+			};
+		}
+
+		if (formData.websitePlanEnabled) {
+			submissionData.websitePlan = {
+				enabled: formData.websitePlanEnabled,
+				guidelines: formData.websitePlanGuidelines || ''
+			};
+		}
+
+		if (formData.exchangeListings?.length > 0) {
+			submissionData.exchangeListings = {
+				exchanges: formData.exchangeListings
+			};
+		}
+
+		if (formData.legalDocuments?.length > 0) {
+			submissionData.legalDocuments = {
+				documents: formData.legalDocuments,
+				preferences: formData.legalDocumentsPreferences || ''
+			};
+		}
+
+		return await submitForm(submissionData);
+	};
+
+	return { submitForm, validateAndSubmit, isSubmitting };
 };

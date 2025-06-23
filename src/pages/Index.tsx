@@ -17,119 +17,118 @@ import { FormProvider, useFormContext } from '../contexts/FormContext';
 import { useFormSubmission } from '../hooks/useFormSubmission';
 
 interface IndexProps {
-  isDarkMode: boolean;
-  onThemeToggle: () => void;
+	isDarkMode: boolean;
+	onThemeToggle: () => void;
 }
 
 const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
-  const [showPayment, setShowPayment] = useState(false);
-  const [selectedServices, setSelectedServices] = useState({
-    mintToken: false,
-    features: [] as string[],
-    letterhead: true, // Always enabled for letterhead
-    raiseDocument: [] as string[],
-    whitePaper: [] as string[],
-    websitePlan: false,
-    exchangeListing: [] as string[],
-    legalDocuments: [] as string[]
-  });
+	const [showPayment, setShowPayment] = useState(false);
+	const [selectedServices, setSelectedServices] = useState({
+		mintToken: false,
+		features: [] as string[],
+		letterhead: true, // Always enabled for letterhead
+		raiseDocument: [] as string[],
+		whitePaper: [] as string[],
+		websitePlan: false,
+		exchangeListing: [] as string[],
+		legalDocuments: [] as string[]
+	});
 
-  const { formData } = useFormContext();
-  const { validateAndSubmit, isSubmitting } = useFormSubmission();
+	const { formData } = useFormContext();
+	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
-  const handleCheckout = () => {
-    setShowPayment(true);
-  };
+	const handleCheckout = () => {
+		setShowPayment(true);
+	};
 
-  const handlePayNow = async () => {
-    try {
-      const result = await validateAndSubmit(formData);
-      if (result.success) {
-        setShowPayment(false);
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
-  };
+	const handlePayNow = async () => {
+		try {
+			const result = await validateAndSubmit(formData, 'Decentralized');
+			if (result.success) {
+				setShowPayment(false);
+			}
+		} catch (error) {
+			console.error('Form submission error:', error);
+		}
+	};
 
-  const handleClosePayment = () => {
-    setShowPayment(false);
-  };
+	const handleClosePayment = () => {
+		setShowPayment(false);
+	};
 
-  return (
-    <div className={`w-full min-h-screen relative overflow-x-hidden bg-bg-primary ${!isDarkMode ? 'light' : ''}`}>
-      <Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
-      
-      <main>
-        <HeroSection />
-        
-        <div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 pb-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
-          <form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
-            <ContactInformationSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <TokenMintForm />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <FeaturesSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <LetterheadSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <RaiseDocumentSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <WhitePaperSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <WebsitePlanSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <ExchangeListingSection />
-            
-            <div className="w-full h-px bg-border-primary my-8" />
-            <LegalDocumentsSection />
-            
-          </form>
-          
-          <div className="flex-[3] min-w-0 relative">
-            <div className="sticky top-4">
-              <ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
-            </div>
-          </div>
-        </div>
-      </main>
+	return (
+		<div className={`w-full min-h-screen relative overflow-x-hidden bg-bg-primary ${!isDarkMode ? 'light' : ''}`}>
+			<Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
 
-      {/* Payment Sidebar - positioned fixed from the right */}
-      <div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${
-        showPayment ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        <PaymentSidebar 
-          isVisible={showPayment} 
-          onClose={handleClosePayment}
-          onPayNow={handlePayNow}
-          isSubmitting={isSubmitting}
-        />
-      </div>
+			<main>
+				<HeroSection />
 
-      {/* Overlay when payment is open */}
-      {showPayment && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={handleClosePayment}
-        />
-      )}
-    </div>
-  );
+				<div className="flex flex-col xl:flex-row gap-4 xl:gap-7 mb-[100px] px-4 pb-4 md:px-8 xl:px-16 xl:absolute right-0 w-full">
+					<form className="flex-[7] border bg-bg-secondary p-4 md:p-7 rounded-3xl border-border-primary">
+						<ContactInformationSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<TokenMintForm />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<FeaturesSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<LetterheadSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<RaiseDocumentSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<WhitePaperSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<WebsitePlanSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<ExchangeListingSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<LegalDocumentsSection />
+
+					</form>
+
+					<div className="flex-[3] min-w-0 relative">
+						<div className="sticky top-4">
+							<ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
+						</div>
+					</div>
+				</div>
+			</main>
+
+			{/* Payment Sidebar - positioned fixed from the right */}
+			<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${showPayment ? 'translate-x-0' : 'translate-x-full'
+				}`}>
+				<PaymentSidebar
+					isVisible={showPayment}
+					onClose={handleClosePayment}
+					onPayNow={handlePayNow}
+					isSubmitting={isSubmitting}
+				/>
+			</div>
+
+			{/* Overlay when payment is open */}
+			{showPayment && (
+				<div
+					className="fixed inset-0 bg-black bg-opacity-50 z-40"
+					onClick={handleClosePayment}
+				/>
+			)}
+		</div>
+	);
 };
 
 const Index: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
-  return (
-    <FormProvider>
-      <IndexContent isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
-    </FormProvider>
-  );
+	return (
+		<FormProvider>
+			<IndexContent isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
+		</FormProvider>
+	);
 };
 
 export default Index;
