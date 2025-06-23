@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
@@ -367,7 +366,7 @@ export const useFormSubmission = () => {
 			return { success: false, errors: allErrors };
 		}
 
-		// Prepare structured submission data
+		// Prepare structured submission data with proper field mapping
 		const submissionData: FormSubmissionData = {
 			main: {
 				type: type,
@@ -379,35 +378,32 @@ export const useFormSubmission = () => {
 				token_decimals: formData.tokenDecimals,
 				target_price: formData.targetPrice,
 				treasury_address: formData.treasuryAddress,
-				kycFullName: formData.kycFullName,
-				kycIdNumber: formData.kycIdNumber,
-				// kycDateOfBirth: formData.kycDateOfBirth,
-				// kycNationality: formData.kycNationality,
-				// kycAddress: formData.kycAddress,
-				// kycOccupation: formData.kycOccupation,
-				// kycEmployer: formData.kycEmployer,
-				// kycIncomeSource: formData.kycIncomeSource,
-				// kycNetWorth: formData.,
-				// kycInvestmentExperience: formData.,
-				// kycRiskTolerance: formData.,
-				// kycInvestmentObjectives: formData.,
-				custodianName: formData.custodianName,
-				custodianContact: formData.custodianContact,
-				custodianRegistration: formData.custodianRegistration,
-				// custodianAddress: formData.,
-				// custodianServices: formData.,
-				issuerEntityName: formData.issuerEntityName,
-				issuerJurisdiction: formData.issuerJurisdiction,
-				issuerContactPerson: formData.issuerContactPerson,
-				issuerContactInfo: formData.issuerContactInfo,
-				// issuerAddress: formData.,
-				// issuerBusinessType: formData.,
-				// issuerRegistrationNumber: formData.,
-				businessPlanType: formData.businessPlanType || {},
-				businessPlanGuidelines: formData.businessPlanGuidelines || '',
-				// businessPlanExecutiveSummary: formData.,
-				// businessPlanMarketAnalysis: formData.,
-				// businessPlanFinancialProjections: formData.,
+				// Map Knightsbridge-specific fields to snake_case database columns
+				kyc_full_name: formData.kycFullName,
+				kyc_id_number: formData.kycIdNumber,
+				kyc_date_of_birth: formData.kycDateOfBirth,
+				kyc_nationality: formData.kycNationality,
+				kyc_address: formData.kycAddress,
+				kyc_occupation: formData.kycOccupation,
+				kyc_employer: formData.kycEmployer,
+				kyc_income_source: formData.kycIncomeSource,
+				custodian_name: formData.custodianName,
+				custodian_contact: formData.custodianContact,
+				custodian_registration: formData.custodianRegistration,
+				custodian_address: formData.custodianAddress,
+				custodian_services: formData.custodianServices,
+				issuer_entity_name: formData.issuerEntityName,
+				issuer_jurisdiction: formData.issuerJurisdiction,
+				issuer_contact_person: formData.issuerContactPerson,
+				issuer_contact_info: formData.issuerContactInfo,
+				issuer_address: formData.issuerAddress,
+				issuer_business_type: formData.issuerBusinessType,
+				issuer_registration_number: formData.issuerRegistrationNumber,
+				business_plan_type: typeof formData.businessPlanType === 'object' ? JSON.stringify(formData.businessPlanType) : formData.businessPlanType,
+				business_plan_guidelines: formData.businessPlanGuidelines,
+				business_plan_executive_summary: formData.businessPlanExecutiveSummary,
+				business_plan_market_analysis: formData.businessPlanMarketAnalysis,
+				business_plan_financial_projections: formData.businessPlanFinancialProjections
 			}
 		};
 
