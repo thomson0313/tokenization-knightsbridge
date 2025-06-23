@@ -35,7 +35,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
   });
 
   const { formData } = useFormContext();
-  const { submitForm, isSubmitting } = useFormSubmission();
+  const { submitKnightsbridgeForm, isSubmitting } = useFormSubmission();
 
   const handleCheckout = () => {
     setShowPayment(true);
@@ -43,66 +43,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
   const handlePayNow = async () => {
     try {
-      // Prepare structured form data for submission
-      const submissionData: any = {
-        main: {
-          type: 'Knightsbridge' as const,
-          contact_email: formData.contactEmail,
-          contact_phone: formData.contactPhone,
-          kyc_full_name: formData.kycFullName,
-          kyc_id_number: formData.kycIdNumber,
-          kyc_date_of_birth: formData.kycDateOfBirth,
-          kyc_nationality: formData.kycNationality,
-          kyc_address: formData.kycAddress,
-          kyc_occupation: formData.kycOccupation,
-          kyc_employer: formData.kycEmployer,
-          kyc_income_source: formData.kycIncomeSource,
-          custodian_name: formData.custodianName,
-          custodian_contact: formData.custodianContact,
-          custodian_registration: formData.custodianRegistration,
-          custodian_address: formData.custodianAddress,
-          custodian_services: formData.custodianServices,
-          issuer_entity_name: formData.issuerEntityName,
-          issuer_jurisdiction: formData.issuerJurisdiction,
-          issuer_contact_person: formData.issuerContactPerson,
-          issuer_contact_info: formData.issuerContactInfo,
-          issuer_address: formData.issuerAddress,
-          issuer_business_type: formData.issuerBusinessType,
-          issuer_registration_number: formData.issuerRegistrationNumber,
-          business_plan_type: JSON.stringify(formData.businessPlanType || {}),
-          business_plan_guidelines: formData.businessPlanGuidelines,
-          business_plan_executive_summary: formData.businessPlanExecutiveSummary,
-          business_plan_market_analysis: formData.businessPlanMarketAnalysis,
-          business_plan_financial_projections: formData.businessPlanFinancialProjections,
-          token_name: formData.tokenName,
-          token_ticker: formData.tokenTicker,
-          token_chain: formData.tokenChain,
-          token_decimals: formData.tokenDecimals,
-          target_price: formData.targetPrice,
-          treasury_address: formData.treasuryAddress,
-          payment_amount: 15000,
-          status: 'Pending'
-        }
-      };
-
-      // Add optional sections only if they have data
-      if (formData.tokenFeatures?.length > 0) {
-        submissionData.tokenFeatures = formData.tokenFeatures;
-      }
-
-      if (formData.raiseDocumentRegions?.length > 0) {
-        submissionData.raiseDocumentRegions = formData.raiseDocumentRegions;
-      }
-
-      if (formData.exchangeListings?.length > 0) {
-        submissionData.exchangeListings = formData.exchangeListings;
-      }
-
-      if (formData.legalDocuments?.length > 0) {
-        submissionData.legalDocuments = formData.legalDocuments;
-      }
-
-      await submitForm(submissionData);
+      await submitKnightsbridgeForm(formData);
       setShowPayment(false);
     } catch (error) {
       console.error('Form submission error:', error);
