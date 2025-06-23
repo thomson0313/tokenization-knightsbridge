@@ -112,7 +112,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
     try {
       console.log('Fetching submissions from Supabase...');
 
-      // Fetch all submissions with related data
+      // Fetch all submissions with ALL related data including service tables
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
         .select(`
@@ -120,7 +120,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           token_features(feature_name),
           raise_document_regions(region),
           exchange_listings(exchange_name),
-          legal_documents(document_type)
+          legal_documents(document_type),
+          letterhead_services(enabled, guidelines),
+          raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
+          whitepapers(pages, guidelines),
+          website_plans(enabled, guidelines),
+          legal_document_preferences(preferences)
         `)
         .order('created_at', { ascending: false });
 
@@ -146,14 +151,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       // Transform the data to match the frontend interface
       const transformedSubmissions = (submissionsData || []).map(submission => {
         console.log('=== Processing submission:', submission.id, 'Type:', submission.type, '===');
-        console.log('Raw boolean fields from DB:', {
-          features_enabled: submission.features_enabled,
-          letterhead_enabled: submission.letterhead_enabled,
-          raise_document_enabled: submission.raise_document_enabled,
-          white_paper_enabled: submission.white_paper_enabled,
-          website_plan_enabled: submission.website_plan_enabled,
-          legal_documents_enabled: submission.legal_documents_enabled
-        });
         
         // Extract related data arrays
         const tokenFeatures = submission.token_features?.map((f: any) => f.feature_name) || [];
@@ -161,72 +158,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
         const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
         
-        console.log('Related data arrays:', {
-          tokenFeatures,
-          raiseDocumentRegions,
-          exchangeListings,
-          legalDocuments
-        });
-
-        console.log('Service-related fields from DB:', {
-          features_guidelines: submission.features_guidelines,
-          letterhead_guidelines: submission.letterhead_guidelines,
-          white_paper_pages: submission.white_paper_pages,
-          white_paper_guidelines: submission.white_paper_guidelines,
-          website_plan_guidelines: submission.website_plan_guidelines,
-          legal_documents_preferences: submission.legal_documents_preferences,
-          raise_document_company: submission.raise_document_company,
-          raise_document_contact_name: submission.raise_document_contact_name,
-          raise_document_email: submission.raise_document_email
+        // Extract service data from dedicated tables
+        const letterheadService = submission.letterhead_services?.[0];
+        const raiseDocumentService = submission.raise_documents?.[0];
+        const whitepaperService = submission.whitepapers?.[0];
+        const websitePlanService = submission.website_plans?.[0];
+        const legalDocumentPreferences = submission.legal_document_preferences?.[0];
+        
+        console.log('Service data from dedicated tables:', {
+          letterheadService,
+          raiseDocumentService,
+          whitepaperService,
+          websitePlanService,
+          legalDocumentPreferences
         });
         
-        // Enhanced service detection logic - check for actual data presence OR boolean flags
-        const featuresEnabled = toBool(submission.features_enabled) || tokenFeatures.length > 0 || !!submission.features_guidelines;
-        const letterheadEnabled = toBool(submission.letterhead_enabled) || !!submission.letterhead_guidelines;
-        const raiseDocumentEnabled = toBool(submission.raise_document_enabled) || raiseDocumentRegions.length > 0 || 
-          !!submission.raise_document_company || !!submission.raise_document_contact_name || !!submission.raise_document_email;
-        const whitePaperEnabled = toBool(submission.white_paper_enabled) || !!submission.white_paper_pages || !!submission.white_paper_guidelines;
-        const websitePlanEnabled = toBool(submission.website_plan_enabled) || !!submission.website_plan_guidelines;
-        const legalDocumentsEnabled = toBool(submission.legal_documents_enabled) || legalDocuments.length > 0 || !!submission.legal_documents_preferences;
+        // Determine service enablement based on actual data presence
+        const featuresEnabled = tokenFeatures.length > 0;
+        const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
+        const raiseDocumentEnabled = raiseDocumentRegions.length > 0 || !!raiseDocumentService;
+        const whitePaperEnabled = !!whitepaperService;
+        const websitePlanEnabled = websitePlanService ? toBool(websitePlanService.enabled) : false;
+        const legalDocumentsEnabled = legalDocuments.length > 0;
         
-        // Detailed logging for service enablement determination
         console.log('Final service enablement results:', {
-          featuresEnabled: { 
-            dbFlag: toBool(submission.features_enabled), 
-            hasFeatures: tokenFeatures.length > 0, 
-            hasGuidelines: !!submission.features_guidelines,
-            finalResult: featuresEnabled 
-          },
-          letterheadEnabled: { 
-            dbFlag: toBool(submission.letterhead_enabled), 
-            hasGuidelines: !!submission.letterhead_guidelines, 
-            finalResult: letterheadEnabled 
-          },
-          raiseDocumentEnabled: { 
-            dbFlag: toBool(submission.raise_document_enabled), 
-            hasRegions: raiseDocumentRegions.length > 0,
-            hasCompany: !!submission.raise_document_company,
-            hasContact: !!submission.raise_document_contact_name,
-            hasEmail: !!submission.raise_document_email,
-            finalResult: raiseDocumentEnabled 
-          },
-          whitePaperEnabled: { 
-            dbFlag: toBool(submission.white_paper_enabled), 
-            hasPages: !!submission.white_paper_pages,
-            hasGuidelines: !!submission.white_paper_guidelines,
-            finalResult: whitePaperEnabled 
-          },
-          websitePlanEnabled: { 
-            dbFlag: toBool(submission.website_plan_enabled), 
-            hasGuidelines: !!submission.website_plan_guidelines, 
-            finalResult: websitePlanEnabled 
-          },
-          legalDocumentsEnabled: { 
-            dbFlag: toBool(submission.legal_documents_enabled), 
-            hasDocuments: legalDocuments.length > 0,
-            hasPreferences: !!submission.legal_documents_preferences,
-            finalResult: legalDocumentsEnabled 
-          }
+          featuresEnabled,
+          letterheadEnabled,
+          raiseDocumentEnabled,
+          whitePaperEnabled,
+          websitePlanEnabled,
+          legalDocumentsEnabled
         });
         
         return {
@@ -281,38 +242,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - Using enhanced detection logic
+          // Features and services - Using data from dedicated tables
           featuresEnabled,
-          featuresGuidelines: submission.features_guidelines || undefined,
+          featuresGuidelines: undefined, // Not stored in separate table
           wantMoreFeatures: tokenFeatures,
           features: tokenFeatures,
           
           letterheadEnabled,
-          letterheadGuidelines: submission.letterhead_guidelines || undefined,
+          letterheadGuidelines: letterheadService?.guidelines || undefined,
           
           raiseDocumentEnabled,
           raiseDocumentRegions,
-          raiseDocumentCompany: submission.raise_document_company || undefined,
-          raiseDocumentContactName: submission.raise_document_contact_name || undefined,
-          raiseDocumentContactPerson: submission.raise_document_contact_person || undefined,
-          raiseDocumentPosition: submission.raise_document_position || undefined,
-          raiseDocumentEmail: submission.raise_document_email || undefined,
-          raiseDocumentPhone: submission.raise_document_phone || undefined,
-          raiseDocumentAddress: submission.raise_document_address || undefined,
-          raiseDocumentWebsite: submission.raise_document_website || undefined,
+          raiseDocumentCompany: raiseDocumentService?.company || undefined,
+          raiseDocumentContactName: raiseDocumentService?.contact_name || undefined,
+          raiseDocumentContactPerson: raiseDocumentService?.contact_person || undefined,
+          raiseDocumentPosition: raiseDocumentService?.position || undefined,
+          raiseDocumentEmail: raiseDocumentService?.email || undefined,
+          raiseDocumentPhone: raiseDocumentService?.phone || undefined,
+          raiseDocumentAddress: raiseDocumentService?.address || undefined,
+          raiseDocumentWebsite: raiseDocumentService?.website || undefined,
           
           whitePaperEnabled,
-          whitePaperPages: submission.white_paper_pages || undefined,
-          whitePaperGuidelines: submission.white_paper_guidelines || undefined,
+          whitePaperPages: whitepaperService?.pages || undefined,
+          whitePaperGuidelines: whitepaperService?.guidelines || undefined,
           
           websitePlanEnabled,
-          websitePlanGuidelines: submission.website_plan_guidelines || undefined,
+          websitePlanGuidelines: websitePlanService?.guidelines || undefined,
           
           exchangeListings,
           
           legalDocumentsEnabled,
           legalDocuments,
-          legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
+          legalDocumentsPreferences: legalDocumentPreferences?.preferences || undefined,
           
           paymentAmount: submission.payment_amount || 0,
           status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending'
