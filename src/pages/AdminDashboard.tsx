@@ -131,6 +131,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
 
       console.log('Raw submissions data:', submissionsData);
 
+      // Helper function to convert various boolean representations to actual boolean
+      const toBool = (value: any): boolean => {
+        if (value === null || value === undefined) return false;
+        if (typeof value === 'boolean') return value;
+        if (typeof value === 'string') {
+          const lower = value.toLowerCase();
+          return lower === 'true' || lower === 'yes' || lower === '1';
+        }
+        if (typeof value === 'number') return value !== 0;
+        return Boolean(value);
+      };
+
       // Transform the data to match the frontend interface
       const transformedSubmissions = (submissionsData || []).map(submission => {
         console.log('Processing submission:', submission.id, 'Type:', submission.type);
@@ -144,6 +156,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           white_paper_enabled: submission.white_paper_enabled,
           website_plan_enabled: submission.website_plan_enabled,
           legal_documents_enabled: submission.legal_documents_enabled
+        });
+
+        // Log converted boolean values
+        console.log('Converted boolean fields for submission', submission.id, ':', {
+          featuresEnabled: toBool(submission.features_enabled),
+          letterheadEnabled: toBool(submission.letterhead_enabled),
+          raiseDocumentEnabled: toBool(submission.raise_document_enabled),
+          whitePaperEnabled: toBool(submission.white_paper_enabled),
+          websitePlanEnabled: toBool(submission.website_plan_enabled),
+          legalDocumentsEnabled: toBool(submission.legal_documents_enabled)
         });
         
         return {
@@ -198,16 +220,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - More explicit boolean handling
-          featuresEnabled: submission.features_enabled === true || submission.features_enabled === 'true',
+          // Features and services - Using the robust toBool helper
+          featuresEnabled: toBool(submission.features_enabled),
           featuresGuidelines: submission.features_guidelines || undefined,
           wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
           features: submission.token_features?.map((f: any) => f.feature_name) || [],
           
-          letterheadEnabled: submission.letterhead_enabled === true || submission.letterhead_enabled === 'true',
+          letterheadEnabled: toBool(submission.letterhead_enabled),
           letterheadGuidelines: submission.letterhead_guidelines || undefined,
           
-          raiseDocumentEnabled: submission.raise_document_enabled === true || submission.raise_document_enabled === 'true',
+          raiseDocumentEnabled: toBool(submission.raise_document_enabled),
           raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
           raiseDocumentCompany: submission.raise_document_company || undefined,
           raiseDocumentContactName: submission.raise_document_contact_name || undefined,
@@ -218,16 +240,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raiseDocumentAddress: submission.raise_document_address || undefined,
           raiseDocumentWebsite: submission.raise_document_website || undefined,
           
-          whitePaperEnabled: submission.white_paper_enabled === true || submission.white_paper_enabled === 'true',
+          whitePaperEnabled: toBool(submission.white_paper_enabled),
           whitePaperPages: submission.white_paper_pages || undefined,
           whitePaperGuidelines: submission.white_paper_guidelines || undefined,
           
-          websitePlanEnabled: submission.website_plan_enabled === true || submission.website_plan_enabled === 'true',
+          websitePlanEnabled: toBool(submission.website_plan_enabled),
           websitePlanGuidelines: submission.website_plan_guidelines || undefined,
           
           exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
           
-          legalDocumentsEnabled: submission.legal_documents_enabled === true || submission.legal_documents_enabled === 'true',
+          legalDocumentsEnabled: toBool(submission.legal_documents_enabled),
           legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
           legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
           
