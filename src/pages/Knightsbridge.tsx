@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -44,7 +45,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
   const handlePayNow = async () => {
     try {
       // Prepare structured form data for submission
-      const submissionData = {
+      const submissionData: any = {
         main: {
           type: 'Knightsbridge' as const,
           contact_email: formData.contactEmail,
@@ -264,3 +265,4 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
 };
 
 export default Knightsbridge;
+
