@@ -6,14 +6,7 @@ import { UploadButton } from '../../ui/UploadButton';
 import { useFormContext } from '../../../contexts/FormContext';
 
 export const BusinessPlanSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
-
-  const businessPlanTypes = formData.businessPlanType || {};
-
-  const updateBusinessPlanType = (type: string, checked: boolean) => {
-    const updatedTypes = { ...businessPlanTypes, [type]: checked };
-    updateFormData('businessPlanType', updatedTypes);
-  };
+  const { formData, updateArrayField, updateFormData } = useFormContext();
 
   const handleUploadPlanGuide = (file: File) => {
     console.log('Business plan guide uploaded:', file.name);
@@ -43,28 +36,28 @@ export const BusinessPlanSection: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <CheckboxField
           label="Utility Token"
-          checked={businessPlanTypes.utility || false}
-          onChange={(checked) => updateBusinessPlanType('utility', checked)}
+          checked={formData.businessPlanType.includes('Utility Token')}
+          onChange={(checked) => updateArrayField('businessPlanType', 'Utility Token', checked)}
         />
         <CheckboxField
           label="Security Token"
-          checked={businessPlanTypes.security || false}
-          onChange={(checked) => updateBusinessPlanType('security', checked)}
+          checked={formData.businessPlanType.includes('Security Token')}
+          onChange={(checked) => updateArrayField('businessPlanType', 'Security Token', checked)}
         />
         <CheckboxField
           label="Governance Token"
-          checked={businessPlanTypes.governance || false}
-          onChange={(checked) => updateBusinessPlanType('governance', checked)}
+          checked={formData.businessPlanType.includes('Governance Token')}
+          onChange={(checked) => updateArrayField('businessPlanType', 'Governance Token', checked)}
         />
         <CheckboxField
           label="Payment Token"
-          checked={businessPlanTypes.payment || false}
-          onChange={(checked) => updateBusinessPlanType('payment', checked)}
+          checked={formData.businessPlanType.includes('Payment Token')}
+          onChange={(checked) => updateArrayField('businessPlanType', 'Payment Token', checked)}
         />
         <CheckboxField
           label="Reward Token"
-          checked={businessPlanTypes.reward || false}
-          onChange={(checked) => updateBusinessPlanType('reward', checked)}
+          checked={formData.businessPlanType.includes('Reward Token')}
+          onChange={(checked) => updateArrayField('businessPlanType', 'Reward Token', checked)}
         />
         <div className="flex items-center justify-center">
           <UploadButton

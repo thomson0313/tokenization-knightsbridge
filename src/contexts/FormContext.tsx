@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface FormData {
@@ -36,14 +35,8 @@ interface FormData {
   issuerBusinessType: string;
   issuerRegistrationNumber: string;
   
-  // Business Plan
-  businessPlanType: {
-    utility?: boolean;
-    security?: boolean;
-    governance?: boolean;
-    payment?: boolean;
-    reward?: boolean;
-  };
+  // Business Plan - Changed from object to array
+  businessPlanType: string[];
   businessPlanGuidelines: string;
   businessPlanExecutiveSummary: string;
   businessPlanMarketAnalysis: string;
@@ -131,7 +124,7 @@ const initialFormData: FormData = {
   issuerAddress: '',
   issuerBusinessType: '',
   issuerRegistrationNumber: '',
-  businessPlanType: {},
+  businessPlanType: [], // Changed from {} to []
   businessPlanGuidelines: '',
   businessPlanExecutiveSummary: '',
   businessPlanMarketAnalysis: '',
