@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
@@ -104,48 +103,65 @@ export const useFormSubmission = () => {
 	const validateOptionalSections = (formData: any): ValidationError[] => {
 		const errors: ValidationError[] = [];
 
-		// Token Features validation - if any features are selected
-		if (formData.tokenFeatures?.length > 0) {
-			// Features are valid if at least one is selected
+		// Token Features validation - if category is enabled, at least one feature should be selected
+		if (formData.featuresEnabled) {
+			if (!formData.tokenFeatures?.length) {
+				errors.push({ field: 'tokenFeatures', message: 'At least one feature must be selected when Features category is enabled' });
+			}
 		}
 
-		// Letterhead validation - always enabled, just check guidelines if needed
+		// Letterhead validation - if category is enabled, guidelines should be provided
+		if (formData.letterheadEnabled) {
+			if (!formData.letterheadGuidelines?.trim()) {
+				errors.push({ field: 'letterheadGuidelines', message: 'Guidelines are required when Letterhead category is enabled' });
+			}
+		}
 
-		// Raise Document validation - if regions are selected, other fields should be filled
-		if (formData.raiseDocumentRegions?.length > 0) {
+		// Raise Document validation - if category is enabled, regions and other fields should be filled
+		if (formData.raiseDocumentEnabled) {
+			if (!formData.raiseDocumentRegions?.length) {
+				errors.push({ field: 'raiseDocumentRegions', message: 'At least one region must be selected when Raise Document category is enabled' });
+			}
 			if (!formData.raiseDocumentCompany?.trim()) {
-				errors.push({ field: 'raiseDocumentCompany', message: 'Company name is required when raise document regions are selected' });
+				errors.push({ field: 'raiseDocumentCompany', message: 'Company name is required when Raise Document category is enabled' });
 			}
 			if (!formData.raiseDocumentContactName?.trim()) {
-				errors.push({ field: 'raiseDocumentContactName', message: 'Contact name is required when raise document regions are selected' });
+				errors.push({ field: 'raiseDocumentContactName', message: 'Contact name is required when Raise Document category is enabled' });
 			}
 			if (!formData.raiseDocumentEmail?.trim()) {
-				errors.push({ field: 'raiseDocumentEmail', message: 'Email is required when raise document regions are selected' });
+				errors.push({ field: 'raiseDocumentEmail', message: 'Email is required when Raise Document category is enabled' });
 			}
 		}
 
-		// White Paper validation - if pages are selected, guidelines should be provided
-		if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
+		// White Paper validation - if category is enabled, pages and guidelines should be provided
+		if (formData.whitePaperEnabled) {
+			if (!formData.whitePaperPages?.trim() || formData.whitePaperPages === 'none') {
+				errors.push({ field: 'whitePaperPages', message: 'Page count must be selected when White Paper category is enabled' });
+			}
 			if (!formData.whitePaperGuidelines?.trim()) {
-				errors.push({ field: 'whitePaperGuidelines', message: 'Guidelines are required when white paper pages are selected' });
+				errors.push({ field: 'whitePaperGuidelines', message: 'Guidelines are required when White Paper category is enabled' });
 			}
 		}
 
-		// Website Plan validation - if enabled, guidelines should be provided
+		// Website Plan validation - if category is enabled, guidelines should be provided
 		if (formData.websitePlanEnabled) {
 			if (!formData.websitePlanGuidelines?.trim()) {
-				errors.push({ field: 'websitePlanGuidelines', message: 'Guidelines are required when website plan is enabled' });
+				errors.push({ field: 'websitePlanGuidelines', message: 'Guidelines are required when Website Plan category is enabled' });
 			}
 		}
 
-		// Exchange Listings validation - if exchanges are selected
-		if (formData.exchangeListings?.length > 0) {
-			// Valid if at least one exchange is selected
+		// Exchange Listings validation - if category is enabled, at least one exchange should be selected
+		if (formData.exchangeListingEnabled) {
+			if (!formData.exchangeListings?.length) {
+				errors.push({ field: 'exchangeListings', message: 'At least one exchange must be selected when Exchange Listing category is enabled' });
+			}
 		}
 
-		// Legal Documents validation - if documents are selected
-		if (formData.legalDocuments?.length > 0) {
-			// Valid if at least one document is selected
+		// Legal Documents validation - if category is enabled, at least one document should be selected
+		if (formData.legalDocumentsEnabled) {
+			if (!formData.legalDocuments?.length) {
+				errors.push({ field: 'legalDocuments', message: 'At least one legal document must be selected when Legal Documents category is enabled' });
+			}
 		}
 
 		return errors;

@@ -26,11 +26,23 @@ export const ExchangeListingSection: React.FC = () => {
     updateFormData('exchangeListings', updatedExchanges);
   };
 
+  const handleCheckboxChange = (enabled: boolean) => {
+    updateFormData('exchangeListingEnabled', enabled);
+    if (!enabled) {
+      updateFormData('exchangeListings', []);
+    }
+  };
+
+  const isEnabled = formData.exchangeListingEnabled || (formData.exchangeListings && formData.exchangeListings.length > 0);
+
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
         title="Listings on Exchange"
         description="Choose your preference for listing"
+        hasCheckbox={true}
+        checked={isEnabled}
+        onCheckboxChange={handleCheckboxChange}
         rightContent={
           <div className="flex gap-[72px] max-sm:flex-wrap max-sm:gap-[15px]">
             {exchangeOptions.map((option) => (
