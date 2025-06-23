@@ -88,6 +88,7 @@ interface FormData {
   websitePlanGuidelines: string;
   
   // Exchange Listings
+  exchangeListingEnabled: boolean;
   exchangeListings: string[];
   
   // Legal Documents
@@ -162,6 +163,7 @@ const initialFormData: FormData = {
   whitePaperGuidelines: '',
   websitePlanEnabled: false,
   websitePlanGuidelines: '',
+  exchangeListingEnabled: false,
   exchangeListings: [],
   legalDocumentsEnabled: false,
   legalDocuments: [],
