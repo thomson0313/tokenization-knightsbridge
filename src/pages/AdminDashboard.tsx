@@ -154,22 +154,52 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
         const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
         
-        // Determine if services are enabled based on data presence OR boolean flags
-        const featuresEnabled = toBool(submission.features_enabled) || tokenFeatures.length > 0;
+        // Improved service detection logic - check for actual data presence
+        const featuresEnabled = toBool(submission.features_enabled) || tokenFeatures.length > 0 || !!submission.features_guidelines;
         const letterheadEnabled = toBool(submission.letterhead_enabled) || !!submission.letterhead_guidelines;
-        const raiseDocumentEnabled = toBool(submission.raise_document_enabled) || raiseDocumentRegions.length > 0;
+        const raiseDocumentEnabled = toBool(submission.raise_document_enabled) || raiseDocumentRegions.length > 0 || 
+          !!submission.raise_document_company || !!submission.raise_document_contact_name || !!submission.raise_document_email;
         const whitePaperEnabled = toBool(submission.white_paper_enabled) || !!submission.white_paper_pages || !!submission.white_paper_guidelines;
         const websitePlanEnabled = toBool(submission.website_plan_enabled) || !!submission.website_plan_guidelines;
-        const legalDocumentsEnabled = toBool(submission.legal_documents_enabled) || legalDocuments.length > 0;
+        const legalDocumentsEnabled = toBool(submission.legal_documents_enabled) || legalDocuments.length > 0 || !!submission.legal_documents_preferences;
         
-        // Log the determination logic
+        // Log the determination logic for debugging
         console.log('Service enablement for submission', submission.id, ':', {
-          featuresEnabled: { flag: toBool(submission.features_enabled), hasFeatures: tokenFeatures.length > 0, final: featuresEnabled },
-          letterheadEnabled: { flag: toBool(submission.letterhead_enabled), hasGuidelines: !!submission.letterhead_guidelines, final: letterheadEnabled },
-          raiseDocumentEnabled: { flag: toBool(submission.raise_document_enabled), hasRegions: raiseDocumentRegions.length > 0, final: raiseDocumentEnabled },
-          whitePaperEnabled: { flag: toBool(submission.white_paper_enabled), hasContent: !!submission.white_paper_pages || !!submission.white_paper_guidelines, final: whitePaperEnabled },
-          websitePlanEnabled: { flag: toBool(submission.website_plan_enabled), hasGuidelines: !!submission.website_plan_guidelines, final: websitePlanEnabled },
-          legalDocumentsEnabled: { flag: toBool(submission.legal_documents_enabled), hasDocuments: legalDocuments.length > 0, final: legalDocumentsEnabled }
+          featuresEnabled: { 
+            flag: toBool(submission.features_enabled), 
+            hasFeatures: tokenFeatures.length > 0, 
+            hasGuidelines: !!submission.features_guidelines,
+            final: featuresEnabled 
+          },
+          letterheadEnabled: { 
+            flag: toBool(submission.letterhead_enabled), 
+            hasGuidelines: !!submission.letterhead_guidelines, 
+            final: letterheadEnabled 
+          },
+          raiseDocumentEnabled: { 
+            flag: toBool(submission.raise_document_enabled), 
+            hasRegions: raiseDocumentRegions.length > 0,
+            hasCompany: !!submission.raise_document_company,
+            hasContact: !!submission.raise_document_contact_name,
+            final: raiseDocumentEnabled 
+          },
+          whitePaperEnabled: { 
+            flag: toBool(submission.white_paper_enabled), 
+            hasPages: !!submission.white_paper_pages,
+            hasGuidelines: !!submission.white_paper_guidelines,
+            final: whitePaperEnabled 
+          },
+          websitePlanEnabled: { 
+            flag: toBool(submission.website_plan_enabled), 
+            hasGuidelines: !!submission.website_plan_guidelines, 
+            final: websitePlanEnabled 
+          },
+          legalDocumentsEnabled: { 
+            flag: toBool(submission.legal_documents_enabled), 
+            hasDocuments: legalDocuments.length > 0,
+            hasPreferences: !!submission.legal_documents_preferences,
+            final: legalDocumentsEnabled 
+          }
         });
         
         return {
@@ -224,7 +254,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
-          // Features and services - Using smart logic based on data presence
+          // Features and services - Using improved detection logic
           featuresEnabled,
           featuresGuidelines: submission.features_guidelines || undefined,
           wantMoreFeatures: tokenFeatures,
