@@ -1,29 +1,29 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const LegalDocumentsSection: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [documents, setDocuments] = useState({
-    offeringMemorandum: false,
-    smartContractLegalOpinion: false,
-    nonDisclosureAgreement: false,
-    securityTokenOffering: false,
-    tokenPurchaseAgreement: false,
-    sada: false,
-    nda: false,
-    smartContractAudit: false,
-    tokenomicsWhitepaper: false,
-    mutualNda: false,
-    all: false
-  });
-
-  const [preferences, setPreferences] = useState('');
+  const { formData, updateFormData, updateArrayField } = useFormContext();
 
   const updateDocument = (document: string, checked: boolean) => {
-    setDocuments(prev => ({ ...prev, [document]: checked }));
+    updateArrayField('legalDocuments', document, checked);
   };
+
+  const handleCheckboxChange = (enabled: boolean) => {
+    updateFormData('legalDocumentsEnabled', enabled);
+    if (!enabled) {
+      updateFormData('legalDocuments', []);
+      updateFormData('legalDocumentsPreferences', '');
+    }
+  };
+
+  const handlePreferencesChange = (preferences: string) => {
+    updateFormData('legalDocumentsPreferences', preferences);
+  };
+
+  const isEnabled = formData.legalDocumentsEnabled || (formData.legalDocuments && formData.legalDocuments.length > 0);
 
   return (
     <section className="box-border m-0 p-0">
@@ -32,7 +32,7 @@ export const LegalDocumentsSection: React.FC = () => {
         description="Legal Document Templates design"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={setIsEnabled}
+        onCheckboxChange={handleCheckboxChange}
       />
       
       <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -40,63 +40,63 @@ export const LegalDocumentsSection: React.FC = () => {
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Offering Memorandum"
-              checked={documents.offeringMemorandum}
+              checked={(formData.legalDocuments || []).includes('offeringMemorandum')}
               onChange={(checked) => updateDocument('offeringMemorandum', checked)}
             />
             <CheckboxField
               label="Smart Contract Legal Opinion"
-              checked={documents.smartContractLegalOpinion}
+              checked={(formData.legalDocuments || []).includes('smartContractLegalOpinion')}
               onChange={(checked) => updateDocument('smartContractLegalOpinion', checked)}
             />
             <CheckboxField
               label="Non-disclosure Agreement"
-              checked={documents.nonDisclosureAgreement}
+              checked={(formData.legalDocuments || []).includes('nonDisclosureAgreement')}
               onChange={(checked) => updateDocument('nonDisclosureAgreement', checked)}
             />
           </div>
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Security Token Offering"
-              checked={documents.securityTokenOffering}
+              checked={(formData.legalDocuments || []).includes('securityTokenOffering')}
               onChange={(checked) => updateDocument('securityTokenOffering', checked)}
             />
             <CheckboxField
               label="Token Purchase Agreement"
-              checked={documents.tokenPurchaseAgreement}
+              checked={(formData.legalDocuments || []).includes('tokenPurchaseAgreement')}
               onChange={(checked) => updateDocument('tokenPurchaseAgreement', checked)}
             />
             <CheckboxField
               label="SADA"
-              checked={documents.sada}
+              checked={(formData.legalDocuments || []).includes('sada')}
               onChange={(checked) => updateDocument('sada', checked)}
             />
           </div>
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="NDA"
-              checked={documents.nda}
+              checked={(formData.legalDocuments || []).includes('nda')}
               onChange={(checked) => updateDocument('nda', checked)}
             />
             <CheckboxField
               label="Smart Contract Audit"
-              checked={documents.smartContractAudit}
+              checked={(formData.legalDocuments || []).includes('smartContractAudit')}
               onChange={(checked) => updateDocument('smartContractAudit', checked)}
             />
             <CheckboxField
               label="Tokenomics Whitepaper"
-              checked={documents.tokenomicsWhitepaper}
+              checked={(formData.legalDocuments || []).includes('tokenomicsWhitepaper')}
               onChange={(checked) => updateDocument('tokenomicsWhitepaper', checked)}
             />
           </div>
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Mutual NDA"
-              checked={documents.mutualNda}
+              checked={(formData.legalDocuments || []).includes('mutualNda')}
               onChange={(checked) => updateDocument('mutualNda', checked)}
             />
             <CheckboxField
               label="All?"
-              checked={documents.all}
+              checked={(formData.legalDocuments || []).includes('all')}
               onChange={(checked) => updateDocument('all', checked)}
             />
           </div>
@@ -107,8 +107,8 @@ export const LegalDocumentsSection: React.FC = () => {
           </label>
           <div className="box-border h-[200px] border relative m-0 px-[27px] py-[23px] rounded-xl border-solid border-[#535353]">
             <textarea
-              value={preferences}
-              onChange={(e) => setPreferences(e.target.value)}
+              value={formData.legalDocumentsPreferences || ''}
+              onChange={(e) => handlePreferencesChange(e.target.value)}
               placeholder="e.g what you want etc"
               className="box-border w-full h-full bg-transparent text-white placeholder-white placeholder-opacity-50 text-[15px] font-normal resize-none border-none outline-none m-0 p-0"
               maxLength={500}

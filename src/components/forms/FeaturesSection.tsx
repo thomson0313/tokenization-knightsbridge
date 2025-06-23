@@ -1,34 +1,29 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { CategoryHeader } from '../ui/CategoryHeader';
+import { useFormContext } from '../../contexts/FormContext';
 
 export const FeaturesSection: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [features, setFeatures] = useState({
-    ableToMint: false,
-    ableToBurn: false,
-    others: false,
-    revokeOwnership1: false,
-    revokeOwnership2: false,
-    liquidityFee: false,
-    pausable: false,
-    fees: false,
-    deflationary: false,
-    blacklist: false,
-    transactionLimits: false,
-    superchain: false,
-    walletLimits: false,
-    marketingFee: false,
-    interoperability: false,
-    verifyContract: false
-  });
-
-  const [guidelines, setGuidelines] = useState('');
+  const { formData, updateFormData, updateArrayField } = useFormContext();
 
   const updateFeature = (feature: string, checked: boolean) => {
-    setFeatures(prev => ({ ...prev, [feature]: checked }));
+    updateArrayField('tokenFeatures', feature, checked);
   };
+
+  const handleCheckboxChange = (enabled: boolean) => {
+    updateFormData('featuresEnabled', enabled);
+    if (!enabled) {
+      updateFormData('tokenFeatures', []);
+      updateFormData('featuresGuidelines', '');
+    }
+  };
+
+  const handleGuidelinesChange = (guidelines: string) => {
+    updateFormData('featuresGuidelines', guidelines);
+  };
+
+  const isEnabled = formData.featuresEnabled || (formData.tokenFeatures && formData.tokenFeatures.length > 0);
 
   return (
     <section className="box-border m-0 p-0">
@@ -37,24 +32,24 @@ export const FeaturesSection: React.FC = () => {
         description="Upgrade to access advanced tools and exclusive benefits"
         hasCheckbox={true}
         checked={isEnabled}
-        onCheckboxChange={setIsEnabled}
+        onCheckboxChange={handleCheckboxChange}
         rightContent={
           <div className="flex flex-col gap-[10px]">
             <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
               <CheckboxField
                 label="Able to mint?"
-                checked={features.ableToMint}
+                checked={(formData.tokenFeatures || []).includes('ableToMint')}
                 onChange={(checked) => updateFeature('ableToMint', checked)}
               />
               <CheckboxField
                 label="Able to Burn?"
-                checked={features.ableToBurn}
+                checked={(formData.tokenFeatures || []).includes('ableToBurn')}
                 onChange={(checked) => updateFeature('ableToBurn', checked)}
               />
             </div>
             <CheckboxField
               label="Others ?"
-              checked={features.others}
+              checked={(formData.tokenFeatures || []).includes('others')}
               onChange={(checked) => updateFeature('others', checked)}
             />
           </div>
@@ -67,17 +62,17 @@ export const FeaturesSection: React.FC = () => {
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Revoke ownership"
-                checked={features.revokeOwnership1}
-                onChange={(checked) => updateFeature('revokeOwnership1', checked)}
+                checked={(formData.tokenFeatures || []).includes('revokeOwnership')}
+                onChange={(checked) => updateFeature('revokeOwnership', checked)}
               />
               <CheckboxField
                 label="Liquidity Fee"
-                checked={features.liquidityFee}
+                checked={(formData.tokenFeatures || []).includes('liquidityFee')}
                 onChange={(checked) => updateFeature('liquidityFee', checked)}
               />
               <CheckboxField
                 label="Pausable"
-                checked={features.pausable}
+                checked={(formData.tokenFeatures || []).includes('pausable')}
                 onChange={(checked) => updateFeature('pausable', checked)}
               />
             </div>
@@ -85,17 +80,17 @@ export const FeaturesSection: React.FC = () => {
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Fees"
-                checked={features.fees}
+                checked={(formData.tokenFeatures || []).includes('fees')}
                 onChange={(checked) => updateFeature('fees', checked)}
               />
               <CheckboxField
                 label="Deflationary"
-                checked={features.deflationary}
+                checked={(formData.tokenFeatures || []).includes('deflationary')}
                 onChange={(checked) => updateFeature('deflationary', checked)}
               />
               <CheckboxField
                 label="Blacklist"
-                checked={features.blacklist}
+                checked={(formData.tokenFeatures || []).includes('blacklist')}
                 onChange={(checked) => updateFeature('blacklist', checked)}
               />
             </div>
@@ -103,17 +98,17 @@ export const FeaturesSection: React.FC = () => {
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Transaction Limits"
-                checked={features.transactionLimits}
+                checked={(formData.tokenFeatures || []).includes('transactionLimits')}
                 onChange={(checked) => updateFeature('transactionLimits', checked)}
               />
               <CheckboxField
                 label="Superchain"
-                checked={features.superchain}
+                checked={(formData.tokenFeatures || []).includes('superchain')}
                 onChange={(checked) => updateFeature('superchain', checked)}
               />
               <CheckboxField
                 label="Wallet Limits"
-                checked={features.walletLimits}
+                checked={(formData.tokenFeatures || []).includes('walletLimits')}
                 onChange={(checked) => updateFeature('walletLimits', checked)}
               />
             </div>
@@ -121,17 +116,17 @@ export const FeaturesSection: React.FC = () => {
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Marketing Fee"
-                checked={features.marketingFee}
+                checked={(formData.tokenFeatures || []).includes('marketingFee')}
                 onChange={(checked) => updateFeature('marketingFee', checked)}
               />
               <CheckboxField
                 label="Interoperability"
-                checked={features.interoperability}
+                checked={(formData.tokenFeatures || []).includes('interoperability')}
                 onChange={(checked) => updateFeature('interoperability', checked)}
               />
               <CheckboxField
                 label="Verify Contract"
-                checked={features.verifyContract}
+                checked={(formData.tokenFeatures || []).includes('verifyContract')}
                 onChange={(checked) => updateFeature('verifyContract', checked)}
               />
             </div>
@@ -142,8 +137,8 @@ export const FeaturesSection: React.FC = () => {
               Guidelines
             </label>
             <textarea
-              value={guidelines}
-              onChange={(e) => setGuidelines(e.target.value)}
+              value={formData.featuresGuidelines || ''}
+              onChange={(e) => handleGuidelinesChange(e.target.value)}
               placeholder="Enter guidelines"
               className="box-border w-full h-[144px] border bg-bg-secondary text-text-primary placeholder:text-text-secondary text-[17px] font-normal m-0 px-[19px] py-[11px] rounded-xl border-solid border-border-primary focus:outline-none focus:border-blue-500 resize-none"
             />

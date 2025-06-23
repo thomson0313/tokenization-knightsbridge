@@ -58,7 +58,9 @@ interface FormData {
   treasuryAddress: string;
   
   // Features
+  featuresEnabled: boolean;
   tokenFeatures: string[];
+  featuresGuidelines: string;
   
   // Services
   letterheadEnabled: boolean;
@@ -89,6 +91,7 @@ interface FormData {
   exchangeListings: string[];
   
   // Legal Documents
+  legalDocumentsEnabled: boolean;
   legalDocuments: string[];
   legalDocumentsPreferences: string;
 }
@@ -139,7 +142,9 @@ const initialFormData: FormData = {
   tokenDecimals: '',
   targetPrice: '',
   treasuryAddress: '',
+  featuresEnabled: false,
   tokenFeatures: [],
+  featuresGuidelines: '',
   letterheadEnabled: false,
   letterheadGuidelines: '',
   raiseDocumentEnabled: false,
@@ -158,6 +163,7 @@ const initialFormData: FormData = {
   websitePlanEnabled: false,
   websitePlanGuidelines: '',
   exchangeListings: [],
+  legalDocumentsEnabled: false,
   legalDocuments: [],
   legalDocumentsPreferences: '',
 };
