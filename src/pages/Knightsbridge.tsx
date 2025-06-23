@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -44,8 +43,6 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
   const handlePayNow = async () => {
     try {
-      console.log('Current form data before submission:', formData);
-      
       // Prepare structured form data for submission
       const submissionData: any = {
         main: {
@@ -60,10 +57,6 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
           kyc_occupation: formData.kycOccupation,
           kyc_employer: formData.kycEmployer,
           kyc_income_source: formData.kycIncomeSource,
-          kyc_net_worth: formData.kycNetWorth,
-          kyc_investment_experience: formData.kycInvestmentExperience,
-          kyc_risk_tolerance: formData.kycRiskTolerance,
-          kyc_investment_objectives: formData.kycInvestmentObjectives,
           custodian_name: formData.custodianName,
           custodian_contact: formData.custodianContact,
           custodian_registration: formData.custodianRegistration,
@@ -94,60 +87,21 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
       // Add optional sections only if they have data
       if (formData.tokenFeatures?.length > 0) {
-        submissionData.tokenFeatures = {
-          features: formData.tokenFeatures
-        };
-      }
-
-      if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
-        submissionData.letterhead = {
-          enabled: formData.letterheadEnabled || false,
-          guidelines: formData.letterheadGuidelines || ''
-        };
+        submissionData.tokenFeatures = formData.tokenFeatures;
       }
 
       if (formData.raiseDocumentRegions?.length > 0) {
-        submissionData.raiseDocument = {
-          regions: formData.raiseDocumentRegions,
-          company: formData.raiseDocumentCompany || '',
-          contact_name: formData.raiseDocumentContactName || '',
-          contact_person: formData.raiseDocumentContactPerson || '',
-          position: formData.raiseDocumentPosition || '',
-          email: formData.raiseDocumentEmail || '',
-          phone: formData.raiseDocumentPhone || '',
-          address: formData.raiseDocumentAddress || '',
-          website: formData.raiseDocumentWebsite || ''
-        };
-      }
-
-      if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
-        submissionData.whitepaper = {
-          pages: formData.whitePaperPages,
-          guidelines: formData.whitePaperGuidelines || ''
-        };
-      }
-
-      if (formData.websitePlanEnabled) {
-        submissionData.websitePlan = {
-          enabled: formData.websitePlanEnabled,
-          guidelines: formData.websitePlanGuidelines || ''
-        };
+        submissionData.raiseDocumentRegions = formData.raiseDocumentRegions;
       }
 
       if (formData.exchangeListings?.length > 0) {
-        submissionData.exchangeListings = {
-          exchanges: formData.exchangeListings
-        };
+        submissionData.exchangeListings = formData.exchangeListings;
       }
 
       if (formData.legalDocuments?.length > 0) {
-        submissionData.legalDocuments = {
-          documents: formData.legalDocuments,
-          preferences: formData.legalDocumentsPreferences || ''
-        };
+        submissionData.legalDocuments = formData.legalDocuments;
       }
 
-      console.log('Prepared submission data:', submissionData);
       await submitForm(submissionData);
       setShowPayment(false);
     } catch (error) {
@@ -268,4 +222,3 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
 };
 
 export default Knightsbridge;
-

@@ -9,12 +9,8 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  console.log('Request method:', req.method)
-  console.log('Request headers:', Object.fromEntries(req.headers.entries()))
-
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    console.log('Handling CORS preflight request')
     return new Response(null, { 
       headers: corsHeaders, 
       status: 200 
@@ -32,21 +28,15 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Creating Supabase client')
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    console.log('Parsing request body')
     const requestBody = await req.text()
-    console.log('Request body:', requestBody)
-    
     const { formData } = JSON.parse(requestBody)
-    console.log('Parsed form data:', JSON.stringify(formData, null, 2))
 
     // Insert main form submission
-    console.log('Inserting main form submission')
     const { data: submission, error: submissionError } = await supabaseClient
       .from('form_submissions')
       .insert(formData.main)
@@ -54,16 +44,13 @@ serve(async (req) => {
       .single()
 
     if (submissionError) {
-      console.error('Submission error:', submissionError)
       throw submissionError
     }
 
     const submissionId = submission.id
-    console.log('Created submission with ID:', submissionId)
 
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
-      console.log('Inserting token features')
       const tokenFeatures = formData.tokenFeatures.map((feature: string) => ({
         submission_id: submissionId,
         feature_name: feature
@@ -74,13 +61,11 @@ serve(async (req) => {
         .insert(tokenFeatures)
       
       if (featuresError) {
-        console.error('Features error:', featuresError)
         throw featuresError
       }
     }
 
     if (formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
-      console.log('Inserting raise document regions')
       const regions = formData.raiseDocumentRegions.map((region: string) => ({
         submission_id: submissionId,
         region: region
@@ -91,13 +76,11 @@ serve(async (req) => {
         .insert(regions)
       
       if (regionsError) {
-        console.error('Regions error:', regionsError)
         throw regionsError
       }
     }
 
     if (formData.exchangeListings && formData.exchangeListings.length > 0) {
-      console.log('Inserting exchange listings')
       const exchanges = formData.exchangeListings.map((exchange: string) => ({
         submission_id: submissionId,
         exchange_name: exchange
@@ -108,13 +91,11 @@ serve(async (req) => {
         .insert(exchanges)
       
       if (exchangesError) {
-        console.error('Exchanges error:', exchangesError)
         throw exchangesError
       }
     }
 
     if (formData.legalDocuments && formData.legalDocuments.length > 0) {
-      console.log('Inserting legal documents')
       const documents = formData.legalDocuments.map((doc: string) => ({
         submission_id: submissionId,
         document_type: doc
@@ -125,12 +106,10 @@ serve(async (req) => {
         .insert(documents)
       
       if (documentsError) {
-        console.error('Documents error:', documentsError)
         throw documentsError
       }
     }
 
-    console.log('Form submission completed successfully')
     return new Response(
       JSON.stringify({ success: true, submissionId }),
       { 
