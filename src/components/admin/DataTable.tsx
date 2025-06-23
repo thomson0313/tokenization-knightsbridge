@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -8,6 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../ui/pagination';
 import { ChevronDown, ChevronRight, Eye } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
@@ -451,6 +459,8 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 
 export const DataTable: React.FC<DataTableProps> = ({ data }) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const toggleRow = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -462,239 +472,388 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
     setExpandedRows(newExpanded);
   };
 
+  // Calculate pagination
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = data.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setExpandedRows(new Set()); // Clear expanded rows when changing pages
+  };
+
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is small
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              isActive={currentPage === i}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(i);
+              }}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      // Show truncated pagination
+      items.push(
+        <PaginationItem key={1}>
+          <PaginationLink
+            href="#"
+            isActive={currentPage === 1}
+            onClick={(e) => {
+              e.preventDefault();
+              handlePageChange(1);
+            }}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+      );
+
+      if (currentPage > 3) {
+        items.push(
+          <PaginationItem key="ellipsis1">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              isActive={currentPage === i}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(i);
+              }}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      if (currentPage < totalPages - 2) {
+        items.push(
+          <PaginationItem key="ellipsis2">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      if (totalPages > 1) {
+        items.push(
+          <PaginationItem key={totalPages}>
+            <PaginationLink
+              href="#"
+              isActive={currentPage === totalPages}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(totalPages);
+              }}
+            >
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    }
+
+    return items;
+  };
+
   return (
-    <div className="rounded-md border overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead className="min-w-[100px]">Type</TableHead>
-            <TableHead className="min-w-[120px]">Date</TableHead>
-            <TableHead className="min-w-[200px]">Contact Email</TableHead>
-            <TableHead className="min-w-[150px]">Contact Phone</TableHead>
-            <TableHead className="min-w-[150px]">Token/Project</TableHead>
-            <TableHead className="min-w-[120px]">Payment</TableHead>
-            <TableHead className="min-w-[100px]">Status</TableHead>
-            <TableHead className="min-w-[150px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.length === 0 ? (
+    <div className="space-y-4">
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                No submissions found
-              </TableCell>
+              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="min-w-[100px]">Type</TableHead>
+              <TableHead className="min-w-[120px]">Date</TableHead>
+              <TableHead className="min-w-[200px]">Contact Email</TableHead>
+              <TableHead className="min-w-[150px]">Contact Phone</TableHead>
+              <TableHead className="min-w-[150px]">Token/Project</TableHead>
+              <TableHead className="min-w-[120px]">Payment</TableHead>
+              <TableHead className="min-w-[100px]">Status</TableHead>
+              <TableHead className="min-w-[150px]">Actions</TableHead>
             </TableRow>
-          ) : (
-            data.map((submission) => (
-              <React.Fragment key={submission.id}>
-                <TableRow className="hover:bg-muted/50">
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleRow(submission.id)}
-                      className="p-0 h-6 w-6"
-                    >
-                      {expandedRows.has(submission.id) ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      submission.type === 'Knightsbridge' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-green-100 text-green-800'
-                    }`}>
-                      {submission.type}
-                    </span>
-                  </TableCell>
-                  <TableCell>{submission.submissionDate}</TableCell>
-                  <TableCell>{submission.contactEmail}</TableCell>
-                  <TableCell>{submission.contactPhone}</TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="font-medium">{submission.tokenName || 'N/A'}</div>
-                      {submission.tokenTicker && (
-                        <div className="text-xs text-muted-foreground">
-                          {submission.tokenTicker} • {submission.tokenChain}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>${submission.paymentAmount}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      submission.status === 'Completed' 
-                        ? 'bg-green-100 text-green-800'
-                        : submission.status === 'Processing'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {submission.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <SubmissionDetailDialog submission={submission} />
-                  </TableCell>
-                </TableRow>
-                
-                {expandedRows.has(submission.id) && (
-                  <TableRow className="bg-muted/30">
-                    <TableCell colSpan={9} className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Token Details */}
-                        {(submission.tokenName || submission.tokenTicker) && (
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-blue-700 border-b border-blue-200 pb-1">Token Information</h4>
-                            <div className="text-xs space-y-1">
-                              {submission.tokenDecimals && <div><strong>Decimals:</strong> {submission.tokenDecimals}</div>}
-                              {submission.targetPrice && <div><strong>Target Price:</strong> ${submission.targetPrice}</div>}
-                              {submission.treasuryAddress && (
-                                <div><strong>Treasury:</strong> {submission.treasuryAddress.substring(0, 20)}...</div>
-                              )}
-                            </div>
+          </TableHeader>
+          <TableBody>
+            {currentData.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                  No submissions found
+                </TableCell>
+              </TableRow>
+            ) : (
+              currentData.map((submission) => (
+                <React.Fragment key={submission.id}>
+                  <TableRow className="hover:bg-muted/50">
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleRow(submission.id)}
+                        className="p-0 h-6 w-6"
+                      >
+                        {expandedRows.has(submission.id) ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        submission.type === 'Knightsbridge' 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {submission.type}
+                      </span>
+                    </TableCell>
+                    <TableCell>{submission.submissionDate}</TableCell>
+                    <TableCell>{submission.contactEmail}</TableCell>
+                    <TableCell>{submission.contactPhone}</TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="font-medium">{submission.tokenName || 'N/A'}</div>
+                        {submission.tokenTicker && (
+                          <div className="text-xs text-muted-foreground">
+                            {submission.tokenTicker} • {submission.tokenChain}
                           </div>
                         )}
-
-                        {/* Token Features */}
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
-                          <div className="text-xs space-y-1">
-                            <div><strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}</div>
-                            {submission.featuresGuidelines && (
-                              <div className="p-2 bg-gray-50 rounded">
-                                <strong>Guidelines:</strong> {submission.featuresGuidelines}
-                              </div>
-                            )}
-                            {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
-                              <div>
-                                <strong>Selected Features:</strong>
-                                {submission.wantMoreFeatures.map((feature, index) => (
-                                  <div key={index}>• {feature}</div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className="text-gray-500">No additional features selected</div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* KYC & Business Info (Knightsbridge) - Only Essential Fields */}
-                        {submission.type === 'Knightsbridge' && (
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
-                            <div className="text-xs space-y-1">
-                              {submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
-                              {submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Additional Services Section */}
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
-                          <div className="text-xs space-y-2">
-                            <div>
-                              <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
-                              {submission.letterheadEnabled && submission.letterheadGuidelines && (
-                                <div className="mt-1 text-gray-600 italic">
-                                  {submission.letterheadGuidelines}
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <strong>Raise Document:</strong> {submission.raiseDocumentEnabled ? '✓ Yes' : '✗ No'}
-                            </div>
-                            <div>
-                              <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
-                              {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-                                <div className="mt-1 text-gray-600 italic">
-                                  {submission.websitePlanGuidelines}
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
-                              {submission.whitePaperEnabled && submission.whitePaperPages && (
-                                <div className="mt-1 text-gray-600">
-                                  Pages: {submission.whitePaperPages}
-                                </div>
-                              )}
-                              {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
-                                <div className="mt-1 text-gray-600 italic">
-                                  {submission.whitePaperGuidelines}
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <strong>Legal Documents:</strong> {submission.legalDocumentsEnabled ? '✓ Yes' : '✗ No'}
-                            </div>
-                            <div>
-                              <strong>Exchanges:</strong> {submission.exchangeListings && submission.exchangeListings.length > 0 ? submission.exchangeListings.join(', ') : 'None'}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Documents Section */}
-                        <div className="space-y-2 md:col-span-2">
-                          <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Documents</h4>
-                          <div className="text-xs space-y-3">
-                            {/* Raise Documents */}
-                            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
-                              <div>
-                                <div><strong>Raise Documents - Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
-                                <div className="ml-2 mt-1 space-y-0.5">
-                                  {submission.raiseDocumentCompany && <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>}
-                                  {submission.raiseDocumentContactName && <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>}
-                                  {submission.raiseDocumentContactPerson && <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>}
-                                  {submission.raiseDocumentPosition && <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>}
-                                  {submission.raiseDocumentEmail && <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>}
-                                  {submission.raiseDocumentPhone && <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>}
-                                  {submission.raiseDocumentAddress && <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>}
-                                  {submission.raiseDocumentWebsite && <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>}
-                                </div>
-                              </div>
-                            ) : (
-                              <div>
-                                <div><strong>Raise Documents:</strong> None</div>
-                              </div>
-                            )}
-                            
-                            {/* Legal Documents */}
-                            {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
-                              <div>
-                                <div><strong>Legal Documents:</strong></div>
-                                {submission.legalDocumentsPreferences && (
-                                  <div className="mt-1 text-gray-600 italic">
-                                    {submission.legalDocumentsPreferences}
-                                  </div>
-                                )}
-                                <div className="ml-2 mt-1 space-y-0.5">
-                                  {submission.legalDocuments.map((doc, index) => (
-                                    <div key={index}>• {doc}</div>
-                                  ))}
-                                </div>
-                              </div>
-                            ) : (
-                              <div>
-                                <div><strong>Legal Documents:</strong> None</div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
                       </div>
                     </TableCell>
+                    <TableCell>${submission.paymentAmount}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        submission.status === 'Completed' 
+                          ? 'bg-green-100 text-green-800'
+                          : submission.status === 'Processing'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {submission.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <SubmissionDetailDialog submission={submission} />
+                    </TableCell>
                   </TableRow>
-                )}
-              </React.Fragment>
-            ))
-          )}
-        </TableBody>
-      </Table>
+                  
+                  {expandedRows.has(submission.id) && (
+                    <TableRow className="bg-muted/30">
+                      <TableCell colSpan={9} className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {/* Token Details */}
+                          {(submission.tokenName || submission.tokenTicker) && (
+                            <div className="space-y-2">
+                              <h4 className="font-semibold text-sm text-blue-700 border-b border-blue-200 pb-1">Token Information</h4>
+                              <div className="text-xs space-y-1">
+                                {submission.tokenDecimals && <div><strong>Decimals:</strong> {submission.tokenDecimals}</div>}
+                                {submission.targetPrice && <div><strong>Target Price:</strong> ${submission.targetPrice}</div>}
+                                {submission.treasuryAddress && (
+                                  <div><strong>Treasury:</strong> {submission.treasuryAddress.substring(0, 20)}...</div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Token Features */}
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-sm text-green-700 border-b border-green-200 pb-1">Token Features</h4>
+                            <div className="text-xs space-y-1">
+                              <div><strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}</div>
+                              {submission.featuresGuidelines && (
+                                <div className="p-2 bg-gray-50 rounded">
+                                  <strong>Guidelines:</strong> {submission.featuresGuidelines}
+                                </div>
+                              )}
+                              {submission.wantMoreFeatures && submission.wantMoreFeatures.length > 0 ? (
+                                <div>
+                                  <strong>Selected Features:</strong>
+                                  {submission.wantMoreFeatures.map((feature, index) => (
+                                    <div key={index}>• {feature}</div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-gray-500">No additional features selected</div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* KYC & Business Info (Knightsbridge) - Only Essential Fields */}
+                          {submission.type === 'Knightsbridge' && (
+                            <div className="space-y-2">
+                              <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
+                              <div className="text-xs space-y-1">
+                                {submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
+                                {submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Additional Services Section */}
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
+                            <div className="text-xs space-y-2">
+                              <div>
+                                <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
+                                {submission.letterheadEnabled && submission.letterheadGuidelines && (
+                                  <div className="mt-1 text-gray-600 italic">
+                                    {submission.letterheadGuidelines}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <strong>Raise Document:</strong> {submission.raiseDocumentEnabled ? '✓ Yes' : '✗ No'}
+                              </div>
+                              <div>
+                                <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
+                                {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
+                                  <div className="mt-1 text-gray-600 italic">
+                                    {submission.websitePlanGuidelines}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
+                                {submission.whitePaperEnabled && submission.whitePaperPages && (
+                                  <div className="mt-1 text-gray-600">
+                                    Pages: {submission.whitePaperPages}
+                                  </div>
+                                )}
+                                {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
+                                  <div className="mt-1 text-gray-600 italic">
+                                    {submission.whitePaperGuidelines}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <strong>Legal Documents:</strong> {submission.legalDocumentsEnabled ? '✓ Yes' : '✗ No'}
+                              </div>
+                              <div>
+                                <strong>Exchanges:</strong> {submission.exchangeListings && submission.exchangeListings.length > 0 ? submission.exchangeListings.join(', ') : 'None'}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Documents Section */}
+                          <div className="space-y-2 md:col-span-2">
+                            <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Documents</h4>
+                            <div className="text-xs space-y-3">
+                              {/* Raise Documents */}
+                              {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
+                                <div>
+                                  <div><strong>Raise Documents - Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
+                                  <div className="ml-2 mt-1 space-y-0.5">
+                                    {submission.raiseDocumentCompany && <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>}
+                                    {submission.raiseDocumentContactName && <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>}
+                                    {submission.raiseDocumentContactPerson && <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>}
+                                    {submission.raiseDocumentPosition && <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>}
+                                    {submission.raiseDocumentEmail && <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>}
+                                    {submission.raiseDocumentPhone && <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>}
+                                    {submission.raiseDocumentAddress && <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>}
+                                    {submission.raiseDocumentWebsite && <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <div><strong>Raise Documents:</strong> None</div>
+                                </div>
+                              )}
+                              
+                              {/* Legal Documents */}
+                              {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
+                                <div>
+                                  <div><strong>Legal Documents:</strong></div>
+                                  {submission.legalDocumentsPreferences && (
+                                    <div className="mt-1 text-gray-600 italic">
+                                      {submission.legalDocumentsPreferences}
+                                    </div>
+                                  )}
+                                  <div className="ml-2 mt-1 space-y-0.5">
+                                    {submission.legalDocuments.map((doc, index) => (
+                                      <div key={index}>• {doc}</div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <div><strong>Legal Documents:</strong> None</div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, data.length)} of {data.length} entries
+          </div>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                      handlePageChange(currentPage - 1);
+                    }
+                  }}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+              
+              {renderPaginationItems()}
+              
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                      handlePageChange(currentPage + 1);
+                    }
+                  }}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };
