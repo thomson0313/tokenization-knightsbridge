@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
@@ -381,7 +382,7 @@ export const useFormSubmission = () => {
 				// Map Knightsbridge-specific fields to snake_case database columns
 				kyc_full_name: formData.kycFullName,
 				kyc_id_number: formData.kycIdNumber,
-				kyc_date_of_birth: formData.kycDateOfBirth,
+				kyc_date_of_birth: formData.kycDateOfBirth && formData.kycDateOfBirth.trim() ? formData.kycDateOfBirth : null,
 				kyc_nationality: formData.kycNationality,
 				kyc_address: formData.kycAddress,
 				kyc_occupation: formData.kycOccupation,
