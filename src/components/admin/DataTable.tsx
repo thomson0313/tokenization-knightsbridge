@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Table,
@@ -312,7 +313,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
               <div>
                 <strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}
                 {submission.featuresEnabled && submission.featuresGuidelines && (
-                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
+                  <div className="mt-1 p-2 bg-muted rounded text-xs">
                     {submission.featuresGuidelines}
                   </div>
                 )}
@@ -321,7 +322,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
               <div>
                 <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                 {submission.letterheadEnabled && submission.letterheadGuidelines && (
-                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
+                  <div className="mt-1 p-2 bg-muted rounded text-xs">
                     {submission.letterheadGuidelines}
                   </div>
                 )}
@@ -334,7 +335,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
               <div>
                 <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                 {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
+                  <div className="mt-1 p-2 bg-muted rounded text-xs">
                     {submission.websitePlanGuidelines}
                   </div>
                 )}
@@ -348,7 +349,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                   </div>
                 )}
                 {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
-                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs">
+                  <div className="mt-1 p-2 bg-muted rounded text-xs">
                     {submission.whitePaperGuidelines}
                   </div>
                 )}
@@ -433,7 +434,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                 <h4 className="font-medium text-md mb-2">Legal Documents:</h4>
                 <div className="text-sm space-y-2">
                   {submission.legalDocumentsPreferences && (
-                    <div className="p-2 bg-gray-50 rounded">
+                    <div className="p-2 bg-muted rounded">
                       {submission.legalDocumentsPreferences}
                     </div>
                   )}
@@ -664,11 +665,14 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                     <TableRow className="bg-muted/30">
                       <TableCell colSpan={9} className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          {/* Token Details */}
+                          {/* Token Details - Display ALL token fields */}
                           {(submission.tokenName || submission.tokenTicker) && (
                             <div className="space-y-2">
                               <h4 className="font-semibold text-sm text-blue-700 border-b border-blue-200 pb-1">Token Information</h4>
                               <div className="text-xs space-y-1">
+                                {submission.tokenName && <div><strong>Token Name:</strong> {submission.tokenName}</div>}
+                                {submission.tokenTicker && <div><strong>Ticker:</strong> {submission.tokenTicker}</div>}
+                                {submission.tokenChain && <div><strong>Chain:</strong> {submission.tokenChain}</div>}
                                 {submission.tokenDecimals && <div><strong>Decimals:</strong> {submission.tokenDecimals}</div>}
                                 {submission.targetPrice && <div><strong>Target Price:</strong> ${submission.targetPrice}</div>}
                                 {submission.treasuryAddress && (
@@ -684,7 +688,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             <div className="text-xs space-y-1">
                               <div><strong>Features Enabled:</strong> {submission.featuresEnabled ? '✓ Yes' : '✗ No'}</div>
                               {submission.featuresGuidelines && (
-                                <div className="p-2 bg-gray-50 rounded">
+                                <div className="p-2 bg-muted rounded">
                                   <strong>Guidelines:</strong> {submission.featuresGuidelines}
                                 </div>
                               )}
@@ -701,13 +705,47 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             </div>
                           </div>
 
-                          {/* KYC & Business Info (Knightsbridge) - Only Essential Fields */}
+                          {/* KYC & Business Info (Knightsbridge) - Display ALL data */}
                           {submission.type === 'Knightsbridge' && (
                             <div className="space-y-2">
                               <h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
                               <div className="text-xs space-y-1">
+                                {/* KYC Data */}
                                 {submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
                                 {submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
+                                {submission.kycDateOfBirth && <div><strong>Date of Birth:</strong> {submission.kycDateOfBirth}</div>}
+                                {submission.kycNationality && <div><strong>Nationality:</strong> {submission.kycNationality}</div>}
+                                {submission.kycAddress && <div><strong>Address:</strong> {submission.kycAddress}</div>}
+                                {submission.kycOccupation && <div><strong>Occupation:</strong> {submission.kycOccupation}</div>}
+                                {submission.kycEmployer && <div><strong>Employer:</strong> {submission.kycEmployer}</div>}
+                                {submission.kycIncomeSource && <div><strong>Income Source:</strong> {submission.kycIncomeSource}</div>}
+                                {submission.kycNetWorth && <div><strong>Net Worth:</strong> {submission.kycNetWorth}</div>}
+                                {submission.kycInvestmentExperience && <div><strong>Investment Experience:</strong> {submission.kycInvestmentExperience}</div>}
+                                {submission.kycRiskTolerance && <div><strong>Risk Tolerance:</strong> {submission.kycRiskTolerance}</div>}
+                                {submission.kycInvestmentObjectives && <div><strong>Investment Objectives:</strong> {submission.kycInvestmentObjectives}</div>}
+                                
+                                {/* Custodian Data */}
+                                {submission.custodianName && <div><strong>Custodian Name:</strong> {submission.custodianName}</div>}
+                                {submission.custodianContact && <div><strong>Custodian Contact:</strong> {submission.custodianContact}</div>}
+                                {submission.custodianRegistration && <div><strong>Custodian Registration:</strong> {submission.custodianRegistration}</div>}
+                                {submission.custodianAddress && <div><strong>Custodian Address:</strong> {submission.custodianAddress}</div>}
+                                {submission.custodianServices && <div><strong>Custodian Services:</strong> {submission.custodianServices}</div>}
+                                
+                                {/* Issuer Data */}
+                                {submission.issuerEntityName && <div><strong>Issuer Entity:</strong> {submission.issuerEntityName}</div>}
+                                {submission.issuerJurisdiction && <div><strong>Issuer Jurisdiction:</strong> {submission.issuerJurisdiction}</div>}
+                                {submission.issuerContactPerson && <div><strong>Issuer Contact:</strong> {submission.issuerContactPerson}</div>}
+                                {submission.issuerContactInfo && <div><strong>Issuer Contact Info:</strong> {submission.issuerContactInfo}</div>}
+                                {submission.issuerAddress && <div><strong>Issuer Address:</strong> {submission.issuerAddress}</div>}
+                                {submission.issuerBusinessType && <div><strong>Business Type:</strong> {submission.issuerBusinessType}</div>}
+                                {submission.issuerRegistrationNumber && <div><strong>Registration Number:</strong> {submission.issuerRegistrationNumber}</div>}
+                                
+                                {/* Business Plan Data */}
+                                {submission.businessPlanType && <div><strong>Business Plan Type:</strong> {submission.businessPlanType}</div>}
+                                {submission.businessPlanGuidelines && <div><strong>Business Plan Guidelines:</strong> {submission.businessPlanGuidelines}</div>}
+                                {submission.businessPlanExecutiveSummary && <div><strong>Executive Summary:</strong> {submission.businessPlanExecutiveSummary}</div>}
+                                {submission.businessPlanMarketAnalysis && <div><strong>Market Analysis:</strong> {submission.businessPlanMarketAnalysis}</div>}
+                                {submission.businessPlanFinancialProjections && <div><strong>Financial Projections:</strong> {submission.businessPlanFinancialProjections}</div>}
                               </div>
                             </div>
                           )}
@@ -719,7 +757,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               <div>
                                 <strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
                                 {submission.letterheadEnabled && submission.letterheadGuidelines && (
-                                  <div className="mt-1 text-gray-600 italic">
+                                  <div className="mt-1 p-2 bg-muted rounded">
                                     {submission.letterheadGuidelines}
                                   </div>
                                 )}
@@ -730,7 +768,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               <div>
                                 <strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
                                 {submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-                                  <div className="mt-1 text-gray-600 italic">
+                                  <div className="mt-1 p-2 bg-muted rounded">
                                     {submission.websitePlanGuidelines}
                                   </div>
                                 )}
@@ -738,12 +776,12 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                               <div>
                                 <strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
                                 {submission.whitePaperEnabled && submission.whitePaperPages && (
-                                  <div className="mt-1 text-gray-600">
+                                  <div className="mt-1 text-muted-foreground">
                                     Pages: {submission.whitePaperPages}
                                   </div>
                                 )}
                                 {submission.whitePaperEnabled && submission.whitePaperGuidelines && (
-                                  <div className="mt-1 text-gray-600 italic">
+                                  <div className="mt-1 p-2 bg-muted rounded">
                                     {submission.whitePaperGuidelines}
                                   </div>
                                 )}
@@ -787,7 +825,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                                 <div>
                                   <div><strong>Legal Documents:</strong></div>
                                   {submission.legalDocumentsPreferences && (
-                                    <div className="mt-1 text-gray-600 italic">
+                                    <div className="mt-1 p-2 bg-muted rounded">
                                       {submission.legalDocumentsPreferences}
                                     </div>
                                   )}
