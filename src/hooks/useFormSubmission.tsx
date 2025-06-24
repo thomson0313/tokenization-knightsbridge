@@ -55,6 +55,12 @@ interface FormSubmissionData {
 		documents: string[];
 		preferences: string;
 	};
+	uploadedDocuments?: Record<string, {
+		originalFilename: string;
+		filePath: string;
+		fileSize: number;
+		mimeType: string;
+	}>;
 }
 
 interface ValidationError {
