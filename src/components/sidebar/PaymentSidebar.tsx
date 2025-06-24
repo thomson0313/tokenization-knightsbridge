@@ -25,6 +25,10 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     setIsProcessingCrypto(true);
     
     try {
+      // First submit the form data
+      await onPayNow();
+      
+      // Only proceed with crypto payment if form submission was successful
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       const { data, error } = await supabase.functions.invoke('create-nowpayment', {
@@ -52,10 +56,10 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         throw new Error('Failed to create payment');
       }
     } catch (error) {
-      console.error('Crypto payment error:', error);
+      console.error('Payment process error:', error);
       toast({
         title: "Payment Error",
-        description: "Failed to create crypto payment. Please try again.",
+        description: "Failed to process payment. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -67,7 +71,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     if (selectedPayment === 'btc' || selectedPayment === 'usdt') {
       await handleCryptoPayment(selectedPayment);
     } else {
-      // Handle Stripe payment
+      // Handle Stripe payment - submit form first, then proceed with Stripe
       await onPayNow();
     }
   };
@@ -162,11 +166,11 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         disabled={isSubmitting || isProcessingCrypto}
         className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessingCrypto ? 'Opening Payment Page...' : 
-         isSubmitting ? 'Processing Payment...' : 
-         selectedPayment === 'stripe' ? 'Pay with Stripe' :
-         selectedPayment === 'btc' ? `Pay ${totalAmount} USD in Bitcoin` :
-         `Pay ${totalAmount} USD in USDT`}
+        {isProcessingCrypto ? 'Processing...' : 
+         isSubmitting ? 'Submitting Data...' : 
+         selectedPayment === 'stripe' ? 'Submit & Pay with Stripe' :
+         selectedPayment === 'btc' ? `Submit & Pay ${totalAmount} USD in Bitcoin` :
+         `Submit & Pay ${totalAmount} USD in USDT`}
       </button>
     </div>
   );
