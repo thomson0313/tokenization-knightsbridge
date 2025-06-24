@@ -49,9 +49,13 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 			const result = await validateAndSubmit(formData, 'Knightsbridge');
 			if (result.success) {
 				setShowPayment(false);
+				// Only access submissionId if success is true
+				return (result as { success: true; submissionId: any }).submissionId;
 			}
+			return null; // explicitly return null if not successful
 		} catch (error) {
 			console.error('Form submission error:', error);
+			return null; // explicitly return null on error
 		}
 	};
 
