@@ -42,12 +42,12 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
       }
 
       if (data.success && data.payment) {
-        // Open payment URL in new window
-        window.open(data.payment.payment_url, '_blank');
+        // Redirect to payment URL in current window
+        window.location.href = data.payment.payment_url;
         
         toast({
-          title: "Payment Created",
-          description: `${currency.toUpperCase()} payment created successfully. Complete the payment in the opened window.`,
+          title: "Redirecting to Payment",
+          description: `Redirecting to ${currency.toUpperCase()} payment page...`,
         });
       } else {
         throw new Error('Failed to create payment');
@@ -163,7 +163,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         disabled={isSubmitting || isProcessingCrypto}
         className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessingCrypto ? 'Creating Payment...' : 
+        {isProcessingCrypto ? 'Redirecting to Payment...' : 
          isSubmitting ? 'Processing Payment...' : 
          selectedPayment === 'stripe' ? 'Pay with Stripe' :
          selectedPayment === 'btc' ? `Pay ${totalAmount} USD in Bitcoin` :
