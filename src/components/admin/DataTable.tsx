@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Card,
@@ -75,7 +76,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
               ? 'outline'
               : submission.status === 'Processing'
                 ? 'secondary'
-                : 'success'
+                : 'default'
           }
         >
           {submission.status}
