@@ -43,8 +43,8 @@ serve(async (req) => {
 
     console.log('Making request to NOWPayments with:', requestBody)
 
-    // Create payment with NOWPayments
-    const paymentResponse = await fetch('https://api.nowpayments.io/v1/payment', {
+    // Create payment with NOWPayments using the invoice API
+    const paymentResponse = await fetch('https://api.nowpayments.io/v1/invoice', {
       method: 'POST',
       headers: {
         'x-api-key': nowPaymentsApiKey,
@@ -73,13 +73,15 @@ serve(async (req) => {
     const paymentData = await paymentResponse.json()
     console.log('NOWPayments success:', paymentData)
 
-    // Validate that we have a proper payment URL
-    if (!paymentData.payment_url || paymentData.payment_url.includes('undefined')) {
-      console.error('Invalid payment URL received:', paymentData.payment_url)
+    // Check if we have an invoice_url (for invoice API) or payment_url
+    const redirectUrl = paymentData.invoice_url || paymentData.payment_url
+    
+    if (!redirectUrl) {
+      console.error('No payment URL received from NOWPayments:', paymentData)
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Invalid payment URL received from NOWPayments'
+          error: 'No payment URL received from NOWPayments'
         }),
         {
           status: 400,
@@ -88,10 +90,15 @@ serve(async (req) => {
       )
     }
 
+    console.log('Payment URL to redirect to:', redirectUrl)
+
     return new Response(
       JSON.stringify({
         success: true,
-        payment: paymentData
+        payment: {
+          ...paymentData,
+          payment_url: redirectUrl
+        }
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
