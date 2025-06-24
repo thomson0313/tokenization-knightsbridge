@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
@@ -25,10 +26,9 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     setIsProcessingCrypto(true);
     
     try {
-      // First submit the form data and wait for success
+      // First submit the form data
       console.log('Submitting form data before payment...');
       await onPayNow();
-      console.log('Form submitted successfully, proceeding with payment...');
       
       // After successful form submission, proceed with payment
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -58,22 +58,12 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         throw new Error('Failed to create payment');
       }
     } catch (error) {
-      console.error('Payment process error:', error);
-      
-      // Check if it's a form submission error vs payment creation error
-      if (error instanceof Error && error.message.includes('Validation Error')) {
-        toast({
-          title: "Form Validation Error",
-          description: "Please check your form and try again.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Payment Error",
-          description: "Failed to process payment. Please try again.",
-          variant: "destructive",
-        });
-      }
+      console.error('Crypto payment error:', error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to process payment. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsProcessingCrypto(false);
     }
@@ -85,21 +75,10 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     } else {
       // For Stripe payment, submit form first then proceed
       try {
-        console.log('Submitting form data for Stripe payment...');
         await onPayNow();
-        console.log('Form submitted successfully for Stripe payment');
         // Stripe payment logic would go here
-        toast({
-          title: "Form Submitted",
-          description: "Form submitted successfully. Stripe payment integration coming soon.",
-        });
       } catch (error) {
         console.error('Stripe payment error:', error);
-        toast({
-          title: "Form Submission Error",
-          description: "Failed to submit form. Please check your data and try again.",
-          variant: "destructive",
-        });
       }
     }
   };
