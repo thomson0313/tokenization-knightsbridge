@@ -1,11 +1,21 @@
-
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { DataTable } from '../components/admin/DataTable';
+import { DocumentsCell } from '../components/admin/DocumentsCell';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Header } from '../components/Header';
 import { useToast } from '../hooks/use-toast';
 import { supabase } from '../utils/supabase';
+
+interface Document {
+  id: string;
+  field_name: string;
+  original_filename: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_at: string;
+}
 
 interface FormSubmission {
   id: string;
@@ -94,6 +104,7 @@ interface FormSubmission {
   
   paymentAmount: number;
   status: 'Pending' | 'Completed' | 'Processing';
+  documents?: Document[];
 }
 
 interface AdminDashboardProps {
@@ -122,7 +133,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
           whitepapers(pages, guidelines),
           website_plans(enabled, guidelines),
-          legal_document_preferences(preferences)
+          legal_document_preferences(preferences),
+          uploaded_documents(id, field_name, original_filename, file_path, file_size, mime_type, uploaded_at)
         `)
         .order('created_at', { ascending: false });
 
@@ -146,6 +158,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         const raiseDocumentRegions = submission.raise_document_regions?.map((r: any) => r.region) || [];
         const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
         const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
+        const documents = submission.uploaded_documents || [];
         
         const letterheadService = submission.letterhead_services?.[0];
         const raiseDocumentService = submission.raise_documents?.[0];
@@ -240,7 +253,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           legalDocumentsPreferences: legalDocumentPreferences?.preferences || undefined,
           
           paymentAmount: submission.payment_amount || 0,
-          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending'
+          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending',
+          documents
         };
       });
 
@@ -264,6 +278,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+  };
+
+  const handleDocumentDeleted = () => {
+    fetchSubmissions(); // Refresh data after document deletion
   };
 
   const totalSubmissions = submissions.length;
@@ -355,7 +373,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
                   <div className="text-text-secondary">Loading submissions...</div>
                 </div>
               ) : (
-                <DataTable data={submissions} />
+                <div className="space-y-4">
+                  <DataTable 
+                    data={submissions} 
+                    renderDocuments={(submission) => (
+                      <DocumentsCell
+                        submissionId={submission.id}
+                        documents={submission.documents || []}
+                        onDocumentDeleted={handleDocumentDeleted}
+                      />
+                    )}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>

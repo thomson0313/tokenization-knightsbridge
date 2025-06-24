@@ -204,6 +204,56 @@ export const useFormSubmission = () => {
 			const submissionId = submission.id;
 			console.log('Created submission with ID:', submissionId);
 
+			// Update any temporary documents to link them to this submission
+			const { error: updateDocsError } = await supabase
+				.from('uploaded_documents')
+				.update({ submission_id: submissionId })
+				.like('file_path', 'temp/%');
+
+			if (updateDocsError) {
+				console.error('Error updating document submissions:', updateDocsError);
+			}
+
+			// Move files from temp folder to submission folder in storage
+			try {
+				const { data: tempDocs } = await supabase
+					.from('uploaded_documents')
+					.select('*')
+					.eq('submission_id', submissionId);
+
+				if (tempDocs) {
+					for (const doc of tempDocs) {
+						if (doc.file_path.startsWith('temp/')) {
+							const newPath = doc.file_path.replace('temp/', `${submissionId}/`);
+							
+							// Copy file to new location
+							const { data: fileData } = await supabase.storage
+								.from('form-documents')
+								.download(doc.file_path);
+
+							if (fileData) {
+								await supabase.storage
+									.from('form-documents')
+									.upload(newPath, fileData);
+
+								// Update database record
+								await supabase
+									.from('uploaded_documents')
+									.update({ file_path: newPath })
+									.eq('id', doc.id);
+
+								// Delete old file
+								await supabase.storage
+									.from('form-documents')
+									.remove([doc.file_path]);
+							}
+						}
+					}
+				}
+			} catch (storageError) {
+				console.error('Error organizing document storage:', storageError);
+			}
+
 			// Insert optional sections data
 			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
 				const tokenFeatures = data.tokenFeatures.features.map((feature: string) => ({
