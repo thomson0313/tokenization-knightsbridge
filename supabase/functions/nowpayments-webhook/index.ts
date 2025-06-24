@@ -18,35 +18,24 @@ serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Map NOWPayments status to our status
-    let paymentStatus = 'pending'
-    if (webhookData.payment_status === 'finished' || webhookData.payment_status === 'confirmed') {
-      paymentStatus = 'completed'
-    } else if (webhookData.payment_status === 'expired' || webhookData.payment_status === 'failed') {
-      paymentStatus = 'failed'
-    } else if (webhookData.payment_status === 'refunded') {
-      paymentStatus = 'refunded'
-    }
-
     // Update form submission with payment status
-    const { error } = await supabaseClient
-      .from('form_submissions')
-      .update({ 
-        payment_status: paymentStatus,
-        payment_id: webhookData.payment_id || webhookData.id,
-        updated_at: new Date().toISOString()
-      })
-      .eq('order_id', webhookData.order_id)
+    if (webhookData.payment_status === 'finished') {
+      const { error } = await supabaseClient
+        .from('form_submissions')
+        .update({ 
+          payment_status: 'completed',
+          payment_id: webhookData.payment_id,
+          updated_at: new Date().toISOString()
+        })
+        .eq('order_id', webhookData.order_id)
 
-    if (error) {
-      console.error('Error updating payment status:', error)
-      throw error
+      if (error) {
+        console.error('Error updating payment status:', error)
+      }
     }
-
-    console.log(`Payment status updated to: ${paymentStatus} for order: ${webhookData.order_id}`)
 
     return new Response(
       JSON.stringify({ success: true }),
