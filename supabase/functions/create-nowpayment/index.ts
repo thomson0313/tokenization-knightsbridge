@@ -27,16 +27,18 @@ serve(async (req) => {
       throw new Error('NOWPayments API key not configured')
     }
 
+    // Get the origin for callback URLs
+    const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/$/, '') || 'https://your-domain.com'
+    console.log('Origin for callbacks:', origin)
+
     const requestBody = {
       price_amount: amount,
       price_currency: 'USD',
-      payout_address: 'bc1q5x3ryzuqg52d90l9ns3z0xtmq7leac06g6x6xs',
       pay_currency: currency, // BTC or USDTTRC20
       order_id: orderId,
       order_description: orderDescription,
-      ipn_callback_url: `${req.headers.get('origin')}/api/nowpayments-webhook`,
-      success_url: `${req.headers.get('origin')}/payment-success`,
-      cancel_url: `${req.headers.get('origin')}/payment-cancelled`,
+      success_url: `${origin}/payment-success`,
+      cancel_url: `${origin}/payment-cancelled`,
     }
 
     console.log('Making request to NOWPayments with:', requestBody)
@@ -70,6 +72,21 @@ serve(async (req) => {
 
     const paymentData = await paymentResponse.json()
     console.log('NOWPayments success:', paymentData)
+
+    // Validate that we have a proper payment URL
+    if (!paymentData.payment_url || paymentData.payment_url.includes('undefined')) {
+      console.error('Invalid payment URL received:', paymentData.payment_url)
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Invalid payment URL received from NOWPayments'
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    }
 
     return new Response(
       JSON.stringify({
