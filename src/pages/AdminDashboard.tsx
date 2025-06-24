@@ -120,19 +120,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
+      // First, fetch form submissions with basic relations that we know exist
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
         .select(`
           *,
-          token_features(feature_name),
-          raise_document_regions(region),
-          exchange_listings(exchange_name),
-          legal_documents(document_type),
-          letterhead_services(enabled, guidelines),
-          raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
-          whitepapers(pages, guidelines),
-          website_plans(enabled, guidelines),
-          legal_document_preferences(preferences),
           uploaded_documents(id, document_type, file_url, uploaded_at)
         `)
         .order('created_at', { ascending: false });
@@ -140,6 +132,33 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       if (submissionsError) {
         throw submissionsError;
       }
+
+      // Then fetch related data separately to avoid relation errors
+      const submissionIds = (submissionsData || []).map(s => s.id);
+      
+      // Fetch token features
+      const { data: tokenFeatures } = await supabase
+        .from('token_features')
+        .select('submission_id, feature_name')
+        .in('submission_id', submissionIds);
+
+      // Fetch raise document regions
+      const { data: raiseRegions } = await supabase
+        .from('raise_document_regions')
+        .select('submission_id, region')
+        .in('submission_id', submissionIds);
+
+      // Fetch exchange listings
+      const { data: exchangeListings } = await supabase
+        .from('exchange_listings')
+        .select('submission_id, exchange_name')
+        .in('submission_id', submissionIds);
+
+      // Fetch legal documents
+      const { data: legalDocuments } = await supabase
+        .from('legal_documents')
+        .select('submission_id, document_type')
+        .in('submission_id', submissionIds);
 
       const toBool = (value: any): boolean => {
         if (value === null || value === undefined) return false;
@@ -153,24 +172,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       };
 
       const transformedSubmissions = (submissionsData || []).map(submission => {
-        const tokenFeatures = submission.token_features?.map((f: any) => f.feature_name) || [];
-        const raiseDocumentRegions = submission.raise_document_regions?.map((r: any) => r.region) || [];
-        const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
-        const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
+        // Group related data by submission_id
+        const submissionTokenFeatures = (tokenFeatures || [])
+          .filter(tf => tf.submission_id === submission.id)
+          .map(tf => tf.feature_name);
+        
+        const submissionRaiseRegions = (raiseRegions || [])
+          .filter(rr => rr.submission_id === submission.id)
+          .map(rr => rr.region);
+        
+        const submissionExchangeListings = (exchangeListings || [])
+          .filter(el => el.submission_id === submission.id)
+          .map(el => el.exchange_name);
+        
+        const submissionLegalDocuments = (legalDocuments || [])
+          .filter(ld => ld.submission_id === submission.id)
+          .map(ld => ld.document_type);
+
         const uploadedDocuments = submission.uploaded_documents || [];
         
-        const letterheadService = submission.letterhead_services?.[0];
-        const raiseDocumentService = submission.raise_documents?.[0];
-        const whitepaperService = submission.whitepapers?.[0];
-        const websitePlanService = submission.website_plans?.[0];
-        const legalDocumentPreferences = submission.legal_document_preferences?.[0];
-        
-        const featuresEnabled = tokenFeatures.length > 0;
-        const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
-        const raiseDocumentEnabled = raiseDocumentRegions.length > 0 || !!raiseDocumentService;
-        const whitePaperEnabled = !!whitepaperService;
-        const websitePlanEnabled = websitePlanService ? toBool(websitePlanService.enabled) : false;
-        const legalDocumentsEnabled = legalDocuments.length > 0;
+        const featuresEnabled = submissionTokenFeatures.length > 0;
+        const letterheadEnabled = toBool(submission.letterhead_enabled);
+        const raiseDocumentEnabled = submissionRaiseRegions.length > 0;
+        const whitePaperEnabled = !!submission.white_paper_pages;
+        const websitePlanEnabled = toBool(submission.website_plan_enabled);
+        const legalDocumentsEnabled = submissionLegalDocuments.length > 0;
         
         return {
           id: submission.id,
@@ -179,6 +205,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           contactEmail: submission.contact_email || '',
           contactPhone: submission.contact_phone || '',
           
+          // KYC fields
           kycFullName: submission.kyc_full_name || undefined,
           kycIdNumber: submission.kyc_id_number || undefined,
           kycDateOfBirth: submission.kyc_date_of_birth || undefined,
@@ -192,12 +219,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           kycRiskTolerance: submission.kyc_risk_tolerance || undefined,
           kycInvestmentObjectives: submission.kyc_investment_objectives || undefined,
           
+          // Custodian fields
           custodianName: submission.custodian_name || undefined,
           custodianContact: submission.custodian_contact || undefined,
           custodianRegistration: submission.custodian_registration || undefined,
           custodianAddress: submission.custodian_address || undefined,
           custodianServices: submission.custodian_services || undefined,
           
+          // Issuer fields
           issuerEntityName: submission.issuer_entity_name || undefined,
           issuerJurisdiction: submission.issuer_jurisdiction || undefined,
           issuerContactPerson: submission.issuer_contact_person || undefined,
@@ -206,12 +235,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           issuerBusinessType: submission.issuer_business_type || undefined,
           issuerRegistrationNumber: submission.issuer_registration_number || undefined,
           
+          // Business plan fields
           businessPlanType: submission.business_plan_type || undefined,
           businessPlanGuidelines: submission.business_plan_guidelines || undefined,
           businessPlanExecutiveSummary: submission.business_plan_executive_summary || undefined,
           businessPlanMarketAnalysis: submission.business_plan_market_analysis || undefined,
           businessPlanFinancialProjections: submission.business_plan_financial_projections || undefined,
           
+          // Token fields
           tokenName: submission.token_name || undefined,
           tokenTicker: submission.token_ticker || undefined,
           tokenChain: submission.token_chain || undefined,
@@ -219,37 +250,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           targetPrice: submission.target_price || undefined,
           treasuryAddress: submission.treasury_address || undefined,
           
+          // Features
           featuresEnabled,
           featuresGuidelines: undefined,
-          wantMoreFeatures: tokenFeatures,
-          features: tokenFeatures,
+          wantMoreFeatures: submissionTokenFeatures,
+          features: submissionTokenFeatures,
           
+          // Services
           letterheadEnabled,
-          letterheadGuidelines: letterheadService?.guidelines || undefined,
+          letterheadGuidelines: submission.letterhead_guidelines || undefined,
           
           raiseDocumentEnabled,
-          raiseDocumentRegions,
-          raiseDocumentCompany: raiseDocumentService?.company || undefined,
-          raiseDocumentContactName: raiseDocumentService?.contact_name || undefined,
-          raiseDocumentContactPerson: raiseDocumentService?.contact_person || undefined,
-          raiseDocumentPosition: raiseDocumentService?.position || undefined,
-          raiseDocumentEmail: raiseDocumentService?.email || undefined,
-          raiseDocumentPhone: raiseDocumentService?.phone || undefined,
-          raiseDocumentAddress: raiseDocumentService?.address || undefined,
-          raiseDocumentWebsite: raiseDocumentService?.website || undefined,
+          raiseDocumentRegions: submissionRaiseRegions,
+          raiseDocumentCompany: submission.raise_document_company || undefined,
+          raiseDocumentContactName: submission.raise_document_contact_name || undefined,
+          raiseDocumentContactPerson: submission.raise_document_contact_person || undefined,
+          raiseDocumentPosition: submission.raise_document_position || undefined,
+          raiseDocumentEmail: submission.raise_document_email || undefined,
+          raiseDocumentPhone: submission.raise_document_phone || undefined,
+          raiseDocumentAddress: submission.raise_document_address || undefined,
+          raiseDocumentWebsite: submission.raise_document_website || undefined,
           
           whitePaperEnabled,
-          whitePaperPages: whitepaperService?.pages || undefined,
-          whitePaperGuidelines: whitepaperService?.guidelines || undefined,
+          whitePaperPages: submission.white_paper_pages || undefined,
+          whitePaperGuidelines: submission.white_paper_guidelines || undefined,
           
           websitePlanEnabled,
-          websitePlanGuidelines: websitePlanService?.guidelines || undefined,
+          websitePlanGuidelines: submission.website_plan_guidelines || undefined,
           
-          exchangeListings,
+          exchangeListings: submissionExchangeListings,
           
           legalDocumentsEnabled,
-          legalDocuments,
-          legalDocumentsPreferences: legalDocumentPreferences?.preferences || undefined,
+          legalDocuments: submissionLegalDocuments,
+          legalDocumentsPreferences: submission.legal_documents_preferences || undefined,
           
           paymentAmount: submission.payment_amount || 0,
           status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending',
@@ -260,6 +293,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
 
       setSubmissions(transformedSubmissions);
     } catch (error) {
+      console.error('Error fetching submissions:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to fetch submissions",

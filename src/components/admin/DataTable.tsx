@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -17,7 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '../ui/pagination';
-import { ChevronDown, ChevronRight, Eye } from 'lucide-react';
+import { ChevronDown, ChevronRight, Eye, Download, FileText } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -26,6 +25,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
+
+interface UploadedDocument {
+  id: string;
+  document_type: string;
+  file_url: string;
+  uploaded_at: string;
+}
 
 interface FormSubmission {
   id: string;
@@ -113,6 +119,9 @@ interface FormSubmission {
   
   paymentAmount: number;
   status: 'Pending' | 'Completed' | 'Processing';
+  
+  // Uploaded documents
+  uploadedDocuments?: UploadedDocument[];
 }
 
 interface DataTableProps {
@@ -120,6 +129,10 @@ interface DataTableProps {
 }
 
 const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ submission }) => {
+  const handleDownloadDocument = (fileUrl: string, documentType: string) => {
+    window.open(fileUrl, '_blank');
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -386,6 +399,40 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             </div>
           </div>
 
+          {/* Uploaded Documents */}
+          <div className="space-y-4 md:col-span-2">
+            <h3 className="font-semibold text-lg border-b pb-2">Uploaded Documents</h3>
+            <div className="text-sm">
+              {submission.uploadedDocuments && submission.uploadedDocuments.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {submission.uploadedDocuments.map((doc) => (
+                    <div key={doc.id} className="border rounded-lg p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-blue-500" />
+                        <div>
+                          <div className="font-medium">{doc.document_type}</div>
+                          <div className="text-xs text-gray-500">
+                            Uploaded: {new Date(doc.uploaded_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadDocument(doc.file_url, doc.document_type)}
+                      >
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-500">No documents uploaded</div>
+              )}
+            </div>
+          </div>
+
           {/* Documents */}
           <div className="space-y-4 md:col-span-2">
             <h3 className="font-semibold text-lg border-b pb-2">Documents</h3>
@@ -594,13 +641,14 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
               <TableHead className="min-w-[150px]">Token/Project</TableHead>
               <TableHead className="min-w-[120px]">Payment</TableHead>
               <TableHead className="min-w-[100px]">Status</TableHead>
+              <TableHead className="min-w-[100px]">Documents</TableHead>
               <TableHead className="min-w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
                   No submissions found
                 </TableCell>
               </TableRow>
@@ -657,13 +705,21 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                       </span>
                     </TableCell>
                     <TableCell>
+                      <div className="flex items-center gap-1">
+                        <FileText className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm">
+                          {submission.uploadedDocuments?.length || 0}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <SubmissionDetailDialog submission={submission} />
                     </TableCell>
                   </TableRow>
                   
                   {expandedRows.has(submission.id) && (
                     <TableRow className="bg-muted/30">
-                      <TableCell colSpan={9} className="p-6">
+                      <TableCell colSpan={10} className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {/* Token Details - Display ALL token fields */}
                           {(submission.tokenName || submission.tokenTicker) && (
@@ -839,6 +895,40 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                                 <div>
                                   <div><strong>Legal Documents:</strong> None</div>
                                 </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Uploaded Documents Section */}
+                          <div className="space-y-2 md:col-span-2">
+                            <h4 className="font-semibold text-sm text-blue-700 border-b border-blue-200 pb-1">Uploaded Documents</h4>
+                            <div className="text-xs space-y-2">
+                              {submission.uploadedDocuments && submission.uploadedDocuments.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {submission.uploadedDocuments.map((doc) => (
+                                    <div key={doc.id} className="border rounded p-3 flex items-center justify-between bg-white">
+                                      <div className="flex items-center gap-2">
+                                        <FileText className="h-4 w-4 text-blue-500" />
+                                        <div>
+                                          <div className="font-medium text-sm">{doc.document_type}</div>
+                                          <div className="text-xs text-gray-500">
+                                            {new Date(doc.uploaded_at).toLocaleDateString()}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => window.open(doc.file_url, '_blank')}
+                                        className="h-7 px-2"
+                                      >
+                                        <Download className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-gray-500">No documents uploaded</div>
                               )}
                             </div>
                           </div>
