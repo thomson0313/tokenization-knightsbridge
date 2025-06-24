@@ -114,7 +114,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           value={phoneNumber}
           onChange={(e) => handlePhoneNumberChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 box-border h-[40px] border bg-input-bg text-text-primary placeholder:text-text-secondary text-[14px] font-normal m-0 px-3 py-0 rounded-md border-solid border-input-border focus:outline-none focus:border-blue-500"
+          className="flex-1 box-border h-[40px] w-full border bg-input-bg text-text-primary placeholder:text-text-secondary text-[14px] font-normal m-0 px-3 py-0 rounded-md border-solid border-input-border focus:outline-none focus:border-blue-500"
         />
       </div>
     </div>
