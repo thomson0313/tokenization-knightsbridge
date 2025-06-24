@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
@@ -26,17 +25,12 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     setIsProcessingCrypto(true);
     
     try {
-      // First submit the form data
-      console.log('Submitting form data before payment...');
-      await onPayNow();
-      
-      // After successful form submission, proceed with payment
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       const { data, error } = await supabase.functions.invoke('create-nowpayment', {
         body: {
           amount: totalAmount,
-          currency: currency === 'btc' ? 'BTC' : 'USDT',
+          currency: currency === 'btc' ? 'BTC' : 'USDTTRC20',
           orderId: orderId,
           orderDescription: `Token Services Payment - ${currency.toUpperCase()}`
         }
@@ -61,7 +55,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
       console.error('Crypto payment error:', error);
       toast({
         title: "Payment Error",
-        description: "Failed to process payment. Please try again.",
+        description: "Failed to create crypto payment. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -73,13 +67,8 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
     if (selectedPayment === 'btc' || selectedPayment === 'usdt') {
       await handleCryptoPayment(selectedPayment);
     } else {
-      // For Stripe payment, submit form first then proceed
-      try {
-        await onPayNow();
-        // Stripe payment logic would go here
-      } catch (error) {
-        console.error('Stripe payment error:', error);
-      }
+      // Handle Stripe payment
+      await onPayNow();
     }
   };
 
@@ -148,7 +137,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
           <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4">
             <span className="text-white text-xl font-bold">₮</span>
           </div>
-          <span className="text-text-primary text-xl font-normal flex-1">USDT</span>
+          <span className="text-text-primary text-xl font-normal flex-1">USDT (TRC20)</span>
           <div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${
             selectedPayment === 'usdt' ? 'border-text-primary bg-text-primary' : 'border-border-primary'
           }`}>
@@ -173,8 +162,8 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         disabled={isSubmitting || isProcessingCrypto}
         className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessingCrypto ? 'Processing...' : 
-         isSubmitting ? 'Submitting Form...' : 
+        {isProcessingCrypto ? 'Opening Payment Page...' : 
+         isSubmitting ? 'Processing Payment...' : 
          selectedPayment === 'stripe' ? 'Pay with Stripe' :
          selectedPayment === 'btc' ? `Pay ${totalAmount} USD in Bitcoin` :
          `Pay ${totalAmount} USD in USDT`}
