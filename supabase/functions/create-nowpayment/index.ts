@@ -15,13 +15,13 @@ serve(async (req) => {
 
   try {
     console.log('NOWPayments function called')
-    
+
     const { amount, currency, orderId, orderDescription } = await req.json()
     console.log('Request data:', { amount, currency, orderId, orderDescription })
-    
+
     const nowPaymentsApiKey = Deno.env.get('NOWPAYMENTS_API_KEY')
     console.log('API key exists:', !!nowPaymentsApiKey)
-    
+
     if (!nowPaymentsApiKey) {
       console.error('NOWPayments API key not found in environment')
       throw new Error('NOWPayments API key not configured')
@@ -30,6 +30,7 @@ serve(async (req) => {
     const requestBody = {
       price_amount: amount,
       price_currency: 'USD',
+      payout_address: 'bc1q5x3ryzuqg52d90l9ns3z0xtmq7leac06g6x6xs',
       pay_currency: currency, // BTC or USDTTRC20
       order_id: orderId,
       order_description: orderDescription,
@@ -37,7 +38,7 @@ serve(async (req) => {
       success_url: `${req.headers.get('origin')}/payment-success`,
       cancel_url: `${req.headers.get('origin')}/payment-cancelled`,
     }
-    
+
     console.log('Making request to NOWPayments with:', requestBody)
 
     // Create payment with NOWPayments
