@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
@@ -107,25 +106,14 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 				</div>
 			</main>
 
-			{/* Payment Sidebar - positioned fixed from the right */}
-			<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${showPayment ? 'translate-x-0' : 'translate-x-full'
-				}`}>
-				<PaymentSidebar
-					isVisible={showPayment}
-					onClose={handleClosePayment}
-					onPayNow={handlePayNow}
-					isSubmitting={isSubmitting}
-					totalAmount={totalAmount}
-				/>
-			</div>
-
-			{/* Overlay when payment is open */}
-			{showPayment && (
-				<div
-					className="fixed inset-0 bg-black bg-opacity-50 z-40"
-					onClick={handleClosePayment}
-				/>
-			)}
+			{/* Payment Sidebar - now handles its own positioning and mobile responsiveness */}
+			<PaymentSidebar
+				isVisible={showPayment}
+				onClose={handleClosePayment}
+				onPayNow={handlePayNow}
+				isSubmitting={isSubmitting}
+				totalAmount={totalAmount}
+			/>
 		</div>
 	);
 };

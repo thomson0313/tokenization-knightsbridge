@@ -1,11 +1,14 @@
+
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { X } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface PaymentSidebarProps {
 	isVisible: boolean;
 	onClose: () => void;
-	onPayNow: () => Promise<void>;
+	onPayNow: () => Promise<any>;
 	isSubmitting?: boolean;
 	totalAmount?: number;
 }
@@ -80,8 +83,8 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 		}
 	};
 
-	return (
-		<div className="h-full w-full bg-bg-secondary border-l border-border-primary p-5">
+	const PaymentContent = () => (
+		<div className="h-full w-full bg-bg-secondary p-5">
 			<div className="border-l-4 border-white pl-4 mb-8">
 				<h2 className="text-text-primary text-[35px] font-normal mb-2">
 					Select Payment
@@ -171,5 +174,48 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 								`Pay ${totalAmount} USD in USDT`}
 			</button>
 		</div>
+	);
+
+	return (
+		<>
+			{/* Mobile: Use Sheet component */}
+			<div className="block md:hidden">
+				<Sheet open={isVisible} onOpenChange={onClose}>
+					<SheetContent side="bottom" className="h-[90vh] bg-bg-secondary border-border-primary">
+						<SheetHeader className="pb-4">
+							<SheetTitle className="text-text-primary text-left">Payment Options</SheetTitle>
+						</SheetHeader>
+						<div className="overflow-y-auto h-full">
+							<PaymentContent />
+						</div>
+					</SheetContent>
+				</Sheet>
+			</div>
+
+			{/* Desktop: Use fixed sidebar */}
+			<div className="hidden md:block">
+				<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'
+					}`}>
+					<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
+						<button
+							onClick={onClose}
+							className="absolute top-4 right-4 z-10 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+							aria-label="Close payment panel"
+						>
+							<X className="w-5 h-5 text-text-primary" />
+						</button>
+						<PaymentContent />
+					</div>
+				</div>
+
+				{/* Desktop overlay */}
+				{isVisible && (
+					<div
+						className="fixed inset-0 bg-black bg-opacity-50 z-40"
+						onClick={onClose}
+					/>
+				)}
+			</div>
+		</>
 	);
 };
