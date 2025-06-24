@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { z } from "zod";
@@ -47,27 +46,24 @@ export const useFormSubmission = () => {
         return;
       }
 
-      // Prepare base submission data that exists for both types
-      const baseSubmissionData = {
-        type: formData.type,
-        submission_date: new Date().toISOString(),
-        contact_email: formData.contactEmail,
-        contact_phone: formData.contactPhone,
-        token_name: formData.tokenName,
-        token_ticker: formData.tokenTicker,
-        token_chain: formData.tokenChain,
-        token_decimals: formData.tokenDecimals,
-        target_price: formData.targetPrice,
-        treasury_address: formData.treasuryAddress,
-        payment_amount: formData.paymentAmount,
-        status: 'Pending' as const
-      };
-
-      // Add Knightsbridge-specific fields if it's a Knightsbridge submission
-      let submissionData = baseSubmissionData;
+      // Create submission data based on type
+      let submissionData: any;
+      
       if (formData.type === 'Knightsbridge') {
         submissionData = {
-          ...baseSubmissionData,
+          type: formData.type,
+          submission_date: new Date().toISOString(),
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          token_name: formData.tokenName,
+          token_ticker: formData.tokenTicker,
+          token_chain: formData.tokenChain,
+          token_decimals: formData.tokenDecimals,
+          target_price: formData.targetPrice,
+          treasury_address: formData.treasuryAddress,
+          payment_amount: formData.paymentAmount,
+          status: 'Pending' as const,
+          // Knightsbridge-specific fields
           kyc_full_name: formData.kycFullName,
           kyc_id_number: formData.kycIdNumber,
           kyc_date_of_birth: formData.kycDateOfBirth,
@@ -93,6 +89,21 @@ export const useFormSubmission = () => {
           business_plan_executive_summary: formData.businessPlanExecutiveSummary,
           business_plan_market_analysis: formData.businessPlanMarketAnalysis,
           business_plan_financial_projections: formData.businessPlanFinancialProjections,
+        };
+      } else {
+        submissionData = {
+          type: formData.type,
+          submission_date: new Date().toISOString(),
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+          token_name: formData.tokenName,
+          token_ticker: formData.tokenTicker,
+          token_chain: formData.tokenChain,
+          token_decimals: formData.tokenDecimals,
+          target_price: formData.targetPrice,
+          treasury_address: formData.treasuryAddress,
+          payment_amount: formData.paymentAmount,
+          status: 'Pending' as const
         };
       }
 
