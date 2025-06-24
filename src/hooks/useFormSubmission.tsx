@@ -59,21 +59,6 @@ export const useFormSubmission = () => {
         token_decimals: formData.tokenDecimals,
         target_price: formData.targetPrice,
         treasury_address: formData.treasuryAddress,
-        letterhead_enabled: formData.letterheadEnabled,
-        letterhead_guidelines: formData.letterheadGuidelines,
-        raise_document_company: formData.raiseDocumentCompany,
-        raise_document_contact_name: formData.raiseDocumentContactName,
-        raise_document_contact_person: formData.raiseDocumentContactPerson,
-        raise_document_position: formData.raiseDocumentPosition,
-        raise_document_email: formData.raiseDocumentEmail,
-        raise_document_phone: formData.raiseDocumentPhone,
-        raise_document_address: formData.raiseDocumentAddress,
-        raise_document_website: formData.raiseDocumentWebsite,
-        white_paper_pages: formData.whitePaperPages,
-        white_paper_guidelines: formData.whitePaperGuidelines,
-        website_plan_enabled: formData.websitePlanEnabled,
-        website_plan_guidelines: formData.websitePlanGuidelines,
-        legal_documents_preferences: formData.legalDocumentsPreferences,
         payment_amount: formData.paymentAmount,
         status: 'Pending' as const
       };
@@ -91,10 +76,6 @@ export const useFormSubmission = () => {
           kyc_occupation: formData.kycOccupation,
           kyc_employer: formData.kycEmployer,
           kyc_income_source: formData.kycIncomeSource,
-          kyc_net_worth: formData.kycNetWorth,
-          kyc_investment_experience: formData.kycInvestmentExperience,
-          kyc_risk_tolerance: formData.kycRiskTolerance,
-          kyc_investment_objectives: formData.kycInvestmentObjectives,
           custodian_name: formData.custodianName,
           custodian_contact: formData.custodianContact,
           custodian_registration: formData.custodianRegistration,
@@ -214,6 +195,86 @@ export const useFormSubmission = () => {
 
         if (documentsError) {
           console.error('Error storing legal documents:', documentsError);
+        }
+      }
+
+      // Store letterhead services for both types
+      if (formData.letterheadEnabled !== undefined) {
+        const { error: letterheadError } = await supabase
+          .from('letterhead_services')
+          .insert([{
+            submission_id: submissionId,
+            enabled: formData.letterheadEnabled,
+            guidelines: formData.letterheadGuidelines
+          }]);
+
+        if (letterheadError) {
+          console.error('Error storing letterhead services:', letterheadError);
+        }
+      }
+
+      // Store raise document details
+      if (formData.raiseDocumentCompany) {
+        const { error: raiseDocError } = await supabase
+          .from('raise_documents')
+          .insert([{
+            submission_id: submissionId,
+            company: formData.raiseDocumentCompany,
+            contact_name: formData.raiseDocumentContactName,
+            contact_person: formData.raiseDocumentContactPerson,
+            position: formData.raiseDocumentPosition,
+            email: formData.raiseDocumentEmail,
+            phone: formData.raiseDocumentPhone,
+            address: formData.raiseDocumentAddress,
+            website: formData.raiseDocumentWebsite
+          }]);
+
+        if (raiseDocError) {
+          console.error('Error storing raise document details:', raiseDocError);
+        }
+      }
+
+      // Store whitepaper details
+      if (formData.whitePaperPages) {
+        const { error: whitepaperError } = await supabase
+          .from('whitepapers')
+          .insert([{
+            submission_id: submissionId,
+            pages: formData.whitePaperPages,
+            guidelines: formData.whitePaperGuidelines
+          }]);
+
+        if (whitepaperError) {
+          console.error('Error storing whitepaper details:', whitepaperError);
+        }
+      }
+
+      // Store website plan
+      if (formData.websitePlanEnabled !== undefined) {
+        const { error: websiteError } = await supabase
+          .from('website_plans')
+          .insert([{
+            submission_id: submissionId,
+            enabled: formData.websitePlanEnabled,
+            guidelines: formData.websitePlanGuidelines
+          }]);
+
+        if (websiteError) {
+          console.error('Error storing website plan:', websiteError);
+        }
+      }
+
+      // Store legal document preferences
+      if (formData.legalDocumentsPreferences) {
+        const { error: legalPrefError } = await supabase
+          .from('legal_document_preferences')
+          .insert([{
+            submission_id: submissionId,
+            preferences: formData.legalDocumentsPreferences
+          }]);
+
+        if (legalPrefError) {
+          console.error('Error storing legal document preferences:', legalPrefError);
         }
       }
 
