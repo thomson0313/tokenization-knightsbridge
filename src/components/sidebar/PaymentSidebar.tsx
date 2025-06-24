@@ -178,44 +178,44 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 
 	return (
 		<>
-			{/* Mobile: Use Sheet component */}
-			<div className="block md:hidden">
-				<Sheet open={isVisible} onOpenChange={onClose}>
-					<SheetContent side="bottom" className="h-[90vh] bg-bg-secondary border-border-primary">
-						<SheetHeader className="pb-4">
-							<SheetTitle className="text-text-primary text-left">Payment Options</SheetTitle>
-						</SheetHeader>
-						<div className="overflow-y-auto h-full">
-							<PaymentContent />
-						</div>
-					</SheetContent>
-				</Sheet>
-			</div>
-
-			{/* Desktop: Use fixed sidebar */}
-			<div className="hidden md:block">
-				<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'
-					}`}>
-					<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
-						<button
-							onClick={onClose}
-							className="absolute top-4 right-4 z-10 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors"
-							aria-label="Close payment panel"
-						>
-							<X className="w-5 h-5 text-text-primary" />
-						</button>
+			{/* Mobile: Use Sheet component - only show on mobile */}
+			<Sheet open={isVisible} onOpenChange={onClose}>
+				<SheetContent 
+					side="bottom" 
+					className="h-[90vh] bg-bg-secondary border-border-primary md:hidden"
+				>
+					<SheetHeader className="pb-4">
+						<SheetTitle className="text-text-primary text-left">Payment Options</SheetTitle>
+					</SheetHeader>
+					<div className="overflow-y-auto h-full">
 						<PaymentContent />
 					</div>
-				</div>
+				</SheetContent>
+			</Sheet>
 
-				{/* Desktop overlay */}
-				{isVisible && (
+			{/* Desktop: Use fixed sidebar - only show on desktop */}
+			{isVisible && (
+				<>
+					<div className="hidden md:block fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out translate-x-0">
+						<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
+							<button
+								onClick={onClose}
+								className="absolute top-4 right-4 z-10 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+								aria-label="Close payment panel"
+							>
+								<X className="w-5 h-5 text-text-primary" />
+							</button>
+							<PaymentContent />
+						</div>
+					</div>
+
+					{/* Desktop overlay */}
 					<div
-						className="fixed inset-0 bg-black bg-opacity-50 z-40"
+						className="hidden md:block fixed inset-0 bg-black bg-opacity-50 z-40"
 						onClick={onClose}
 					/>
-				)}
-			</div>
+				</>
+			)}
 		</>
 	);
 };
