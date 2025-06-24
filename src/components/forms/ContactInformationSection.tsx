@@ -2,6 +2,7 @@
 import React from 'react';
 import { CategoryHeader } from '../ui/CategoryHeader';
 import { FormInput } from '../ui/FormInput';
+import { PhoneInput } from '../ui/PhoneInput';
 import { useFormContext } from '../../contexts/FormContext';
 
 export const ContactInformationSection: React.FC = () => {
@@ -21,7 +22,7 @@ export const ContactInformationSection: React.FC = () => {
           value={formData.contactEmail}
           onChange={(value) => updateFormData('contactEmail', value)}
         />
-        <FormInput
+        <PhoneInput
           label="Phone Number"
           placeholder="Enter your phone number"
           value={formData.contactPhone}

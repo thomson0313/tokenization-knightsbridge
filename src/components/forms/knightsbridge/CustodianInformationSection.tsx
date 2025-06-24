@@ -2,6 +2,7 @@
 import React from 'react';
 import { CategoryHeader } from '../../ui/CategoryHeader';
 import { FormInput } from '../../ui/FormInput';
+import { PhoneInput } from '../../ui/PhoneInput';
 import { useFormContext } from '../../../contexts/FormContext';
 
 export const CustodianInformationSection: React.FC = () => {
@@ -22,7 +23,7 @@ export const CustodianInformationSection: React.FC = () => {
           onChange={(value) => updateFormData('custodianName', value)}
         />
         
-        <FormInput
+        <PhoneInput
           label="Contact"
           placeholder="eg +1-555-0199"
           value={formData.custodianContact}

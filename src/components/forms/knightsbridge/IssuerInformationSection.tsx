@@ -2,6 +2,7 @@
 import React from 'react';
 import { CategoryHeader } from '../../ui/CategoryHeader';
 import { FormInput } from '../../ui/FormInput';
+import { PhoneInput } from '../../ui/PhoneInput';
 import { useFormContext } from '../../../contexts/FormContext';
 
 export const IssuerInformationSection: React.FC = () => {
@@ -31,7 +32,7 @@ export const IssuerInformationSection: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormInput
+        <PhoneInput
           label="Contact Person"
           placeholder="Phone number"
           value={formData.issuerContactPerson}
