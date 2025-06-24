@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
@@ -42,12 +41,12 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
       }
 
       if (data.success && data.payment) {
-        // Redirect to payment URL in current window
-        window.location.href = data.payment.payment_url;
+        // Open payment URL in new tab
+        window.open(data.payment.payment_url, '_blank');
         
         toast({
-          title: "Redirecting to Payment",
-          description: `Redirecting to ${currency.toUpperCase()} payment page...`,
+          title: "Payment Page Opened",
+          description: `${currency.toUpperCase()} payment page opened in new tab.`,
         });
       } else {
         throw new Error('Failed to create payment');
@@ -163,7 +162,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
         disabled={isSubmitting || isProcessingCrypto}
         className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isProcessingCrypto ? 'Redirecting to Payment...' : 
+        {isProcessingCrypto ? 'Opening Payment Page...' : 
          isSubmitting ? 'Processing Payment...' : 
          selectedPayment === 'stripe' ? 'Pay with Stripe' :
          selectedPayment === 'btc' ? `Pay ${totalAmount} USD in Bitcoin` :
