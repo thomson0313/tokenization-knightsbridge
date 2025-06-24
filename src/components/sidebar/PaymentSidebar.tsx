@@ -193,10 +193,17 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 				</SheetContent>
 			</Sheet>
 
-			{/* Desktop: Use fixed sidebar - only show on desktop */}
+			{/* Desktop: Use fixed sidebar - only show on desktop and when visible */}
 			{isVisible && (
-				<>
-					<div className="hidden md:block fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out translate-x-0">
+				<div className="hidden md:flex">
+					{/* Desktop overlay */}
+					<div
+						className="fixed inset-0 bg-black bg-opacity-50 z-40"
+						onClick={onClose}
+					/>
+					
+					{/* Desktop sidebar */}
+					<div className="fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out translate-x-0">
 						<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
 							<button
 								onClick={onClose}
@@ -208,13 +215,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 							<PaymentContent />
 						</div>
 					</div>
-
-					{/* Desktop overlay */}
-					<div
-						className="hidden md:block fixed inset-0 bg-black bg-opacity-50 z-40"
-						onClick={onClose}
-					/>
-				</>
+				</div>
 			)}
 		</>
 	);
