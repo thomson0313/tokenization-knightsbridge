@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -34,7 +35,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 	});
 	const [totalAmount, setTotalAmount] = useState(200); // Start with Knightsbridge Service + Mint Token
 
-	const { formData } = useFormContext();
+	const { formData, fileUpload } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
 	const handleCheckout = (amount: number) => {
@@ -44,7 +45,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
 	const handlePayNow = async () => {
 		try {
-			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount);
+			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount, fileUpload);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true

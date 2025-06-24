@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
@@ -34,7 +35,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 	});
 	const [totalAmount, setTotalAmount] = useState(100); // Start with Mint Token
 
-	const { formData } = useFormContext();
+	const { formData, fileUpload } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
 	const handleCheckout = (amount: number) => {
@@ -44,7 +45,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
 	const handlePayNow = async () => {
 		try {
-			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount);
+			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount, fileUpload);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true

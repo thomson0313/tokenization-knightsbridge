@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
 import { useToast } from './use-toast';
+import { supabase } from '../utils/supabase';
 
 interface UploadedFile {
   file: File;
   url: string;
   uploadedAt: Date;
+  supabasePath?: string;
 }
 
 export const useFileUpload = () => {
@@ -17,7 +19,7 @@ export const useFileUpload = () => {
     setUploading(prev => ({ ...prev, [fieldName]: true }));
     
     try {
-      // Create object URL for preview (in a real app, you'd upload to a server)
+      // Create object URL for immediate preview
       const url = URL.createObjectURL(file);
       
       const uploadedFile: UploadedFile = {
@@ -46,6 +48,49 @@ export const useFileUpload = () => {
     }
   };
 
+  const uploadToSupabase = async (submissionId: string): Promise<Record<string, string>> => {
+    const supabaseUrls: Record<string, string> = {};
+    
+    for (const [fieldName, uploadedFile] of Object.entries(uploadedFiles)) {
+      try {
+        const fileExtension = uploadedFile.file.name.split('.').pop();
+        const fileName = `${submissionId}/${fieldName}.${fileExtension}`;
+        
+        const { data, error } = await supabase.storage
+          .from('documents')
+          .upload(fileName, uploadedFile.file, {
+            cacheControl: '3600',
+            upsert: true
+          });
+
+        if (error) {
+          console.error(`Error uploading ${fieldName}:`, error);
+          continue;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('documents')
+          .getPublicUrl(fileName);
+
+        supabaseUrls[fieldName] = urlData.publicUrl;
+        
+        // Update local file with Supabase path
+        setUploadedFiles(prev => ({
+          ...prev,
+          [fieldName]: {
+            ...prev[fieldName],
+            supabasePath: fileName
+          }
+        }));
+        
+      } catch (error) {
+        console.error(`Error uploading ${fieldName} to Supabase:`, error);
+      }
+    }
+    
+    return supabaseUrls;
+  };
+
   const removeFile = (fieldName: string) => {
     const file = uploadedFiles[fieldName];
     if (file) {
@@ -63,6 +108,7 @@ export const useFileUpload = () => {
 
   return {
     uploadFile,
+    uploadToSupabase,
     removeFile,
     getFile,
     isUploading,

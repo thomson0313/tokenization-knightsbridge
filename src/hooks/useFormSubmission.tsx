@@ -167,7 +167,7 @@ export const useFormSubmission = () => {
 		return errors;
 	};
 
-	const submitForm = async (data: FormSubmissionData) => {
+	const submitForm = async (data: FormSubmissionData, uploadedDocuments?: Record<string, string>) => {
 		setIsSubmitting(true);
 
 		try {
@@ -203,6 +203,25 @@ export const useFormSubmission = () => {
 
 			const submissionId = submission.id;
 			console.log('Created submission with ID:', submissionId);
+
+			// Store uploaded documents if any
+			if (uploadedDocuments && Object.keys(uploadedDocuments).length > 0) {
+				const documentsToInsert = Object.entries(uploadedDocuments).map(([fieldName, url]) => ({
+					submission_id: submissionId,
+					document_type: fieldName,
+					file_url: url,
+					uploaded_at: new Date().toISOString()
+				}));
+
+				const { error: documentsError } = await supabase
+					.from('uploaded_documents')
+					.insert(documentsToInsert);
+
+				if (documentsError) {
+					console.error('Documents storage error:', documentsError);
+					// Don't throw error for documents, just log it
+				}
+			}
 
 			// Insert optional sections data
 			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
@@ -366,7 +385,7 @@ export const useFormSubmission = () => {
 		}
 	};
 
-	const validateAndSubmit = async (formData: any, type: string, amount: number) => {
+	const validateAndSubmit = async (formData: any, type: string, amount: number, fileUpload?: any) => {
 		// Validate required fields
 		const requiredErrors = validateRequiredFields(formData);
 		const optionalErrors = validateOptionalSections(formData);
@@ -480,7 +499,29 @@ export const useFormSubmission = () => {
 			};
 		}
 
-		return await submitForm(submissionData);
+		// Upload files to Supabase and get URLs
+		let uploadedDocuments: Record<string, string> = {};
+		if (fileUpload && Object.keys(fileUpload.uploadedFiles).length > 0) {
+			try {
+				// First submit the form to get submission ID
+				const result = await submitForm(submissionData);
+				if (result.success) {
+					// Then upload files with the submission ID
+					uploadedDocuments = await fileUpload.uploadToSupabase(result.submissionId);
+					
+					// Update the submission with document URLs if any were uploaded
+					if (Object.keys(uploadedDocuments).length > 0) {
+						await submitForm(submissionData, uploadedDocuments);
+					}
+				}
+				return result;
+			} catch (error) {
+				console.error('Error during file upload:', error);
+				// Still try to submit the form without files
+			}
+		}
+
+		return await submitForm(submissionData, uploadedDocuments);
 	};
 
 	return { submitForm, validateAndSubmit, isSubmitting };

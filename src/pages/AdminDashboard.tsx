@@ -7,6 +7,13 @@ import { Header } from '../components/Header';
 import { useToast } from '../hooks/use-toast';
 import { supabase } from '../utils/supabase';
 
+interface UploadedDocument {
+  id: string;
+  document_type: string;
+  file_url: string;
+  uploaded_at: string;
+}
+
 interface FormSubmission {
   id: string;
   type: 'Knightsbridge' | 'Decentralized';
@@ -94,6 +101,9 @@ interface FormSubmission {
   
   paymentAmount: number;
   status: 'Pending' | 'Completed' | 'Processing';
+  
+  // Uploaded documents
+  uploadedDocuments?: UploadedDocument[];
 }
 
 interface AdminDashboardProps {
@@ -122,7 +132,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
           whitepapers(pages, guidelines),
           website_plans(enabled, guidelines),
-          legal_document_preferences(preferences)
+          legal_document_preferences(preferences),
+          uploaded_documents(id, document_type, file_url, uploaded_at)
         `)
         .order('created_at', { ascending: false });
 
@@ -146,6 +157,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         const raiseDocumentRegions = submission.raise_document_regions?.map((r: any) => r.region) || [];
         const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
         const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
+        const uploadedDocuments = submission.uploaded_documents || [];
         
         const letterheadService = submission.letterhead_services?.[0];
         const raiseDocumentService = submission.raise_documents?.[0];
@@ -240,7 +252,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           legalDocumentsPreferences: legalDocumentPreferences?.preferences || undefined,
           
           paymentAmount: submission.payment_amount || 0,
-          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending'
+          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending',
+          
+          uploadedDocuments: uploadedDocuments
         };
       });
 
