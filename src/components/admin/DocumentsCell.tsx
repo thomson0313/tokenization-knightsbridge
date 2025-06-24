@@ -28,11 +28,11 @@ export const DocumentsCell: React.FC<DocumentsCellProps> = ({
 }) => {
   const { toast } = useToast();
 
-  const handleDownload = async (document: Document) => {
+  const handleDownload = async (doc: Document) => {
     try {
       const { data, error } = await supabase.storage
         .from('form-documents')
-        .download(document.file_path);
+        .download(doc.file_path);
 
       if (error) {
         throw error;
@@ -41,7 +41,7 @@ export const DocumentsCell: React.FC<DocumentsCellProps> = ({
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = document.original_filename;
+      a.download = doc.original_filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -56,11 +56,11 @@ export const DocumentsCell: React.FC<DocumentsCellProps> = ({
     }
   };
 
-  const handleView = async (document: Document) => {
+  const handleView = async (doc: Document) => {
     try {
       const { data } = supabase.storage
         .from('form-documents')
-        .getPublicUrl(document.file_path);
+        .getPublicUrl(doc.file_path);
 
       window.open(data.publicUrl, '_blank');
     } catch (error) {
@@ -73,8 +73,8 @@ export const DocumentsCell: React.FC<DocumentsCellProps> = ({
     }
   };
 
-  const handleDelete = async (document: Document) => {
-    if (!confirm(`Are you sure you want to delete ${document.original_filename}?`)) {
+  const handleDelete = async (doc: Document) => {
+    if (!confirm(`Are you sure you want to delete ${doc.original_filename}?`)) {
       return;
     }
 
@@ -82,17 +82,17 @@ export const DocumentsCell: React.FC<DocumentsCellProps> = ({
       // Delete from storage
       await supabase.storage
         .from('form-documents')
-        .remove([document.file_path]);
+        .remove([doc.file_path]);
 
       // Delete from database
       await supabase
         .from('uploaded_documents')
         .delete()
-        .eq('id', document.id);
+        .eq('id', doc.id);
 
       toast({
         title: "File deleted",
-        description: `${document.original_filename} has been deleted.`,
+        description: `${doc.original_filename} has been deleted.`,
       });
 
       onDocumentDeleted();
