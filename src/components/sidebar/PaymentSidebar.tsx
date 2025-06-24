@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { X } from 'lucide-react';
@@ -13,6 +12,23 @@ interface PaymentSidebarProps {
 	totalAmount?: number;
 }
 
+// Hook to detect if screen is mobile
+const useIsMobile = () => {
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+
+		handleResize(); // initial check
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	return isMobile;
+};
+
 export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 	isVisible,
 	onClose,
@@ -23,38 +39,31 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 	const [selectedPayment, setSelectedPayment] = useState('btc');
 	const [isProcessingCrypto, setIsProcessingCrypto] = useState(false);
 	const { toast } = useToast();
+	const isMobile = useIsMobile();
 
 	const handleCryptoPayment = async (currency: string) => {
 		setIsProcessingCrypto(true);
 
 		try {
-			// First submit the form data
 			const submissionDataResult: any = await onPayNow();
 
-			if (!submissionDataResult) {
-				throw new Error('Form submission failed');
-			}
+			if (!submissionDataResult) throw new Error('Form submission failed');
 
-			// Only proceed with crypto payment if form submission was successful
 			const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 			const { data, error } = await supabase.functions.invoke('create-nowpayment', {
 				body: {
 					amount: totalAmount,
 					currency: currency === 'btc' ? 'BTC' : 'USDTTRC20',
-					orderId: orderId,
+					orderId,
 					orderDescription: `Token Services Payment - ${currency.toUpperCase()}`
 				}
 			});
 
-			if (error) {
-				throw error;
-			}
+			if (error) throw error;
 
 			if (data.success && data.payment) {
-				// Open payment URL in new tab
 				window.open(data.payment.payment_url, '_blank');
-
 				toast({
 					title: "Payment Page Opened",
 					description: `${currency.toUpperCase()} payment page opened in new tab.`,
@@ -78,7 +87,6 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 		if (selectedPayment === 'btc' || selectedPayment === 'usdt') {
 			await handleCryptoPayment(selectedPayment);
 		} else {
-			// Handle Stripe payment - submit form first, then proceed with Stripe
 			await onPayNow();
 		}
 	};
@@ -95,62 +103,46 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 			</div>
 
 			<div className="space-y-4">
-				<div
-					className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'stripe'
-						? 'border-text-primary bg-[rgba(255,255,255,0.05)]'
-						: 'border-border-primary hover:border-text-primary'
-						}`}
-					onClick={() => setSelectedPayment('stripe')}
-				>
-					<div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mr-4">
-						<span className="text-white text-xl font-bold">S</span>
-					</div>
-					<span className="text-text-primary text-xl font-normal flex-1">Stripe</span>
-					<div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedPayment === 'stripe' ? 'border-text-primary bg-text-primary' : 'border-border-primary'
-						}`}>
-						{selectedPayment === 'stripe' && (
-							<div className="w-3 h-3 bg-bg-primary rounded-full"></div>
-						)}
-					</div>
-				</div>
+				{['stripe', 'btc', 'usdt'].map((method) => {
+					const labelMap: Record<string, string> = {
+						stripe: 'Stripe',
+						btc: 'Bitcoin',
+						usdt: 'USDT (TRC20)',
+					};
 
-				<div
-					className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'btc'
-						? 'border-text-primary bg-[rgba(255,255,255,0.05)]'
-						: 'border-border-primary hover:border-text-primary'
-						}`}
-					onClick={() => setSelectedPayment('btc')}
-				>
-					<div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center mr-4">
-						<span className="text-white text-xl font-bold">₿</span>
-					</div>
-					<span className="text-text-primary text-xl font-normal flex-1">Bitcoin</span>
-					<div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedPayment === 'btc' ? 'border-text-primary bg-text-primary' : 'border-border-primary'
-						}`}>
-						{selectedPayment === 'btc' && (
-							<div className="w-3 h-3 bg-bg-primary rounded-full"></div>
-						)}
-					</div>
-				</div>
+					const symbolMap: Record<string, string> = {
+						stripe: 'S',
+						btc: '₿',
+						usdt: '₮',
+					};
 
-				<div
-					className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'usdt'
-						? 'border-text-primary bg-[rgba(255,255,255,0.05)]'
-						: 'border-border-primary hover:border-text-primary'
-						}`}
-					onClick={() => setSelectedPayment('usdt')}
-				>
-					<div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4">
-						<span className="text-white text-xl font-bold">₮</span>
-					</div>
-					<span className="text-text-primary text-xl font-normal flex-1">USDT (TRC20)</span>
-					<div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedPayment === 'usdt' ? 'border-text-primary bg-text-primary' : 'border-border-primary'
-						}`}>
-						{selectedPayment === 'usdt' && (
-							<div className="w-3 h-3 bg-bg-primary rounded-full"></div>
-						)}
-					</div>
-				</div>
+					const colorMap: Record<string, string> = {
+						stripe: 'bg-blue-600',
+						btc: 'bg-orange-500',
+						usdt: 'bg-green-500',
+					};
+
+					return (
+						<div
+							key={method}
+							className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${selectedPayment === method
+								? 'border-text-primary bg-[rgba(255,255,255,0.05)]'
+								: 'border-border-primary hover:border-text-primary'
+								}`}
+							onClick={() => setSelectedPayment(method)}
+						>
+							<div className={`w-12 h-12 ${colorMap[method]} rounded-xl flex items-center justify-center mr-4`}>
+								<span className="text-white text-xl font-bold">{symbolMap[method]}</span>
+							</div>
+							<span className="text-text-primary text-xl font-normal flex-1">{labelMap[method]}</span>
+							<div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center ${selectedPayment === method ? 'border-text-primary bg-text-primary' : 'border-border-primary'}`}>
+								{selectedPayment === method && (
+									<div className="w-3 h-3 bg-bg-primary rounded-full"></div>
+								)}
+							</div>
+						</div>
+					);
+				})}
 			</div>
 
 			{totalAmount > 0 && (
@@ -167,19 +159,22 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 				disabled={isSubmitting || isProcessingCrypto}
 				className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isProcessingCrypto ? 'Processing...' :
-					isSubmitting ? 'Submitting Data...' :
-						selectedPayment === 'stripe' ? 'Pay with Stripe' :
-							selectedPayment === 'btc' ? `Pay ${totalAmount} USD in Bitcoin` :
-								`Pay ${totalAmount} USD in USDT`}
+				{isProcessingCrypto
+					? 'Processing...'
+					: isSubmitting
+						? 'Submitting Data...'
+						: selectedPayment === 'stripe'
+							? 'Pay with Stripe'
+							: `Pay ${totalAmount} USD in ${selectedPayment === 'btc' ? 'Bitcoin' : 'USDT'}`
+				}
 			</button>
 		</div>
 	);
 
+	// Render based on screen size
 	return (
 		<>
-			{/* Mobile: Use Sheet component */}
-			<div className="block md:hidden">
+			{isMobile ? (
 				<Sheet open={isVisible} onOpenChange={onClose}>
 					<SheetContent side="bottom" className="h-[90vh] bg-bg-secondary border-border-primary">
 						<SheetHeader className="pb-4">
@@ -190,32 +185,28 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 						</div>
 					</SheetContent>
 				</Sheet>
-			</div>
-
-			{/* Desktop: Use fixed sidebar */}
-			<div className="hidden md:block">
-				<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'
-					}`}>
-					<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
-						<button
-							onClick={onClose}
-							className="absolute top-4 right-4 z-10 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors"
-							aria-label="Close payment panel"
-						>
-							<X className="w-5 h-5 text-text-primary" />
-						</button>
-						<PaymentContent />
+			) : (
+				<>
+					<div className={`fixed inset-y-0 right-0 z-50 w-96 transform transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'}`}>
+						<div className="h-full w-full bg-bg-secondary border-l border-border-primary relative">
+							<button
+								onClick={onClose}
+								className="absolute top-4 right-4 z-10 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+								aria-label="Close payment panel"
+							>
+								<X className="w-5 h-5 text-text-primary" />
+							</button>
+							<PaymentContent />
+						</div>
 					</div>
-				</div>
-
-				{/* Desktop overlay */}
-				{isVisible && (
-					<div
-						className="fixed inset-0 bg-black bg-opacity-50 z-40"
-						onClick={onClose}
-					/>
-				)}
-			</div>
+					{isVisible && (
+						<div
+							className="fixed inset-0 bg-black bg-opacity-50 z-40"
+							onClick={onClose}
+						/>
+					)}
+				</>
+			)}
 		</>
 	);
 };
