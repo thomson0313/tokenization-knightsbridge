@@ -55,6 +55,7 @@ interface FormSubmissionData {
 		documents: string[];
 		preferences: string;
 	};
+	uploadedFiles?: Record<string, any>;
 }
 
 interface ValidationError {
@@ -203,6 +204,29 @@ export const useFormSubmission = () => {
 
 			const submissionId = submission.id;
 			console.log('Created submission with ID:', submissionId);
+
+			// Store uploaded documents metadata
+			if (data.uploadedFiles) {
+				const documentInserts = Object.entries(data.uploadedFiles).map(([fieldName, fileData]) => ({
+					submission_id: submissionId,
+					file_name: fileData.file.name,
+					file_path: fileData.filePath || '',
+					file_size: fileData.file.size,
+					mime_type: fileData.file.type,
+					field_name: fieldName
+				}));
+
+				if (documentInserts.length > 0) {
+					const { error: documentsError } = await supabase
+						.from('uploaded_documents')
+						.insert(documentInserts);
+
+					if (documentsError) {
+						console.error('Documents metadata error:', documentsError);
+						throw documentsError;
+					}
+				}
+			}
 
 			// Insert optional sections data
 			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
@@ -366,7 +390,7 @@ export const useFormSubmission = () => {
 		}
 	};
 
-	const validateAndSubmit = async (formData: any, type: string, amount: number) => {
+	const validateAndSubmit = async (formData: any, type: string, amount: number, uploadedFiles?: Record<string, any>) => {
 		// Validate required fields
 		const requiredErrors = validateRequiredFields(formData);
 		const optionalErrors = validateOptionalSections(formData);
@@ -422,7 +446,8 @@ export const useFormSubmission = () => {
 				business_plan_market_analysis: formData.businessPlanMarketAnalysis,
 				business_plan_financial_projections: formData.businessPlanFinancialProjections,
 				payment_amount: amount.toString() // Store amount as string for consistency
-			}
+			},
+			uploadedFiles
 		};
 
 		// Add optional sections only if they have data

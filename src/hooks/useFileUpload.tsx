@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
 import { useToast } from './use-toast';
+import { supabase } from '../utils/supabase';
 
 interface UploadedFile {
   file: File;
   url: string;
   uploadedAt: Date;
+  filePath?: string;
 }
 
 export const useFileUpload = () => {
@@ -17,13 +19,31 @@ export const useFileUpload = () => {
     setUploading(prev => ({ ...prev, [fieldName]: true }));
     
     try {
-      // Create object URL for preview (in a real app, you'd upload to a server)
-      const url = URL.createObjectURL(file);
+      // Create unique file path
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `form-documents/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('form-documents')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('form-documents')
+        .getPublicUrl(filePath);
       
       const uploadedFile: UploadedFile = {
         file,
-        url,
-        uploadedAt: new Date()
+        url: publicUrl,
+        uploadedAt: new Date(),
+        filePath
       };
       
       setUploadedFiles(prev => ({ ...prev, [fieldName]: uploadedFile }));
@@ -33,8 +53,9 @@ export const useFileUpload = () => {
         description: `${file.name} has been uploaded.`,
       });
       
-      return url;
+      return publicUrl;
     } catch (error) {
+      console.error('Upload failed:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload file. Please try again.",
@@ -46,10 +67,23 @@ export const useFileUpload = () => {
     }
   };
 
-  const removeFile = (fieldName: string) => {
+  const removeFile = async (fieldName: string) => {
     const file = uploadedFiles[fieldName];
     if (file) {
-      URL.revokeObjectURL(file.url);
+      // Remove from Supabase Storage if it was uploaded there
+      if (file.filePath) {
+        try {
+          await supabase.storage
+            .from('form-documents')
+            .remove([file.filePath]);
+        } catch (error) {
+          console.error('Error removing file from storage:', error);
+        }
+      } else {
+        // For locally created object URLs
+        URL.revokeObjectURL(file.url);
+      }
+      
       setUploadedFiles(prev => {
         const newFiles = { ...prev };
         delete newFiles[fieldName];

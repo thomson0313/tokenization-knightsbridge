@@ -122,7 +122,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
           whitepapers(pages, guidelines),
           website_plans(enabled, guidelines),
-          legal_document_preferences(preferences)
+          legal_document_preferences(preferences),
+          uploaded_documents(id, file_name, file_path, file_size, mime_type, field_name, uploaded_at)
         `)
         .order('created_at', { ascending: false });
 
