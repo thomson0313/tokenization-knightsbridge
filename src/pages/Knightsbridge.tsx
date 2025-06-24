@@ -46,7 +46,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
 	const handlePayNow = async () => {
 		try {
-			const result = await validateAndSubmit(formData, 'Knightsbridge');
+			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true

@@ -45,7 +45,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
 	const handlePayNow = async () => {
 		try {
-			const result = await validateAndSubmit(formData, 'Decentralized');
+			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true

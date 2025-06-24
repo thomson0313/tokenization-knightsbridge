@@ -366,7 +366,7 @@ export const useFormSubmission = () => {
 		}
 	};
 
-	const validateAndSubmit = async (formData: any, type: string) => {
+	const validateAndSubmit = async (formData: any, type: string, amount: number) => {
 		// Validate required fields
 		const requiredErrors = validateRequiredFields(formData);
 		const optionalErrors = validateOptionalSections(formData);
@@ -420,7 +420,8 @@ export const useFormSubmission = () => {
 				business_plan_guidelines: formData.businessPlanGuidelines,
 				business_plan_executive_summary: formData.businessPlanExecutiveSummary,
 				business_plan_market_analysis: formData.businessPlanMarketAnalysis,
-				business_plan_financial_projections: formData.businessPlanFinancialProjections
+				business_plan_financial_projections: formData.businessPlanFinancialProjections,
+				payment_amount: amount.toString() // Store amount as string for consistency
 			}
 		};
 
