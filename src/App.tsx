@@ -9,6 +9,8 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Knightsbridge from "./pages/Knightsbridge";
 import AdminDashboard from "./pages/AdminDashboard";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancelled from "./pages/PaymentCancelled";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +49,14 @@ const App = () => {
             <Route 
               path="/admin-dashboard-knightsbridge" 
               element={<AdminDashboard isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
+            />
+            <Route 
+              path="/payment-success" 
+              element={<PaymentSuccess />} 
+            />
+            <Route 
+              path="/payment-cancelled" 
+              element={<PaymentCancelled />} 
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
