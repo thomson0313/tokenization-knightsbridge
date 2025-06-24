@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { DataTable } from '../components/admin/DataTable';
@@ -93,16 +94,6 @@ interface FormSubmission {
   
   paymentAmount: number;
   status: 'Pending' | 'Completed' | 'Processing';
-  
-  // Add uploaded documents
-  uploadedDocuments?: Array<{
-    id: string;
-    fieldName: string;
-    originalFilename: string;
-    filePath: string;
-    fileSize: number;
-    mimeType: string;
-  }>;
 }
 
 interface AdminDashboardProps {
@@ -131,8 +122,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
           whitepapers(pages, guidelines),
           website_plans(enabled, guidelines),
-          legal_document_preferences(preferences),
-          uploaded_documents(id, field_name, original_filename, file_path, file_size, mime_type)
+          legal_document_preferences(preferences)
         `)
         .order('created_at', { ascending: false });
 
@@ -250,17 +240,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           legalDocumentsPreferences: legalDocumentPreferences?.preferences || undefined,
           
           paymentAmount: submission.payment_amount || 0,
-          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending',
-          
-          // Add uploaded documents
-          uploadedDocuments: submission.uploaded_documents?.map((doc: any) => ({
-            id: doc.id,
-            fieldName: doc.field_name,
-            originalFilename: doc.original_filename,
-            filePath: doc.file_path,
-            fileSize: doc.file_size,
-            mimeType: doc.mime_type
-          })) || []
+          status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending'
         };
       });
 

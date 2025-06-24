@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Table,
@@ -16,7 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '../ui/pagination';
-import { ChevronDown, ChevronRight, Eye, Download } from 'lucide-react';
+import { ChevronDown, ChevronRight, Eye } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -25,8 +26,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
-import { supabase } from '../../utils/supabase';
-import { useToast } from '../../hooks/use-toast';
 
 interface FormSubmission {
   id: string;
@@ -114,81 +113,11 @@ interface FormSubmission {
   
   paymentAmount: number;
   status: 'Pending' | 'Completed' | 'Processing';
-  
-  // Add uploaded documents
-  uploadedDocuments?: Array<{
-    id: string;
-    fieldName: string;
-    originalFilename: string;
-    filePath: string;
-    fileSize: number;
-    mimeType: string;
-  }>;
 }
 
 interface DataTableProps {
   data: FormSubmission[];
 }
-
-const DocumentsCell: React.FC<{ documents: FormSubmission['uploadedDocuments'] }> = ({ documents }) => {
-  const { toast } = useToast();
-  
-  const handleDownload = async (filePath: string, filename: string) => {
-    try {
-      const { data, error } = await supabase.storage
-        .from('form-documents')
-        .download(filePath);
-
-      if (error) {
-        throw error;
-      }
-
-      // Create blob URL and trigger download
-      const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      toast({
-        title: "Download started",
-        description: `${filename} is being downloaded.`,
-      });
-    } catch (error) {
-      console.error('Download error:', error);
-      toast({
-        title: "Download failed",
-        description: "Failed to download file. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (!documents || documents.length === 0) {
-    return <span className="text-muted-foreground text-sm">No documents</span>;
-  }
-
-  return (
-    <div className="space-y-1">
-      {documents.map((doc) => (
-        <div key={doc.id} className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDownload(doc.filePath, doc.originalFilename)}
-            className="h-6 px-2 text-xs"
-          >
-            <Download className="h-3 w-3 mr-1" />
-            {doc.originalFilename}
-          </Button>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ submission }) => {
   return (
@@ -665,15 +594,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
               <TableHead className="min-w-[150px]">Token/Project</TableHead>
               <TableHead className="min-w-[120px]">Payment</TableHead>
               <TableHead className="min-w-[100px]">Status</TableHead>
-              <TableHead className="min-w-[100px]">ID</TableHead>
-              <TableHead className="min-w-[200px]">Documents</TableHead>
               <TableHead className="min-w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                   No submissions found
                 </TableCell>
               </TableRow>
@@ -730,21 +657,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-xs font-mono text-muted-foreground">
-                        {submission.id.substring(0, 8)}...
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <DocumentsCell documents={submission.uploadedDocuments} />
-                    </TableCell>
-                    <TableCell>
                       <SubmissionDetailDialog submission={submission} />
                     </TableCell>
                   </TableRow>
                   
                   {expandedRows.has(submission.id) && (
                     <TableRow className="bg-muted/30">
-                      <TableCell colSpan={11} className="p-6">
+                      <TableCell colSpan={9} className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {/* Token Details - Display ALL token fields */}
                           {(submission.tokenName || submission.tokenTicker) && (
