@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useFileUpload } from '../hooks/useFileUpload';
 
 interface FormData {
   // Contact Information
@@ -101,13 +101,17 @@ interface FormContextType {
   formData: FormData;
   updateFormData: (field: string, value: any) => void;
   updateArrayField: (field: string, value: string, checked: boolean) => void;
+  fileUpload: ReturnType<typeof useFileUpload>;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
 const initialFormData: FormData = {
+  // Contact Information
   contactEmail: '',
   contactPhone: '',
+  
+  // KYC Information
   kycFullName: '',
   kycIdNumber: '',
   kycDateOfBirth: '',
@@ -120,11 +124,15 @@ const initialFormData: FormData = {
   kycInvestmentExperience: '',
   kycRiskTolerance: '',
   kycInvestmentObjectives: '',
+  
+  // Custodian Information
   custodianName: '',
   custodianContact: '',
   custodianRegistration: '',
   custodianAddress: '',
   custodianServices: '',
+  
+  // Issuer Information
   issuerEntityName: '',
   issuerJurisdiction: '',
   issuerContactPerson: '',
@@ -132,22 +140,32 @@ const initialFormData: FormData = {
   issuerAddress: '',
   issuerBusinessType: '',
   issuerRegistrationNumber: '',
+  
+  // Business Plan
   businessPlanType: {},
   businessPlanGuidelines: '',
   businessPlanExecutiveSummary: '',
   businessPlanMarketAnalysis: '',
   businessPlanFinancialProjections: '',
+  
+  // Token Information
   tokenName: '',
   tokenTicker: '',
   tokenChain: '',
   tokenDecimals: '',
   targetPrice: '',
   treasuryAddress: '',
+  
+  // Features
   featuresEnabled: false,
   tokenFeatures: [],
   featuresGuidelines: '',
+  
+  // Services
   letterheadEnabled: false,
   letterheadGuidelines: '',
+  
+  // Raise Document
   raiseDocumentEnabled: false,
   raiseDocumentRegions: [],
   raiseDocumentCompany: '',
@@ -158,13 +176,21 @@ const initialFormData: FormData = {
   raiseDocumentPhone: '',
   raiseDocumentAddress: '',
   raiseDocumentWebsite: '',
+  
+  // White Paper
   whitePaperEnabled: false,
   whitePaperPages: '',
   whitePaperGuidelines: '',
+  
+  // Website Plan
   websitePlanEnabled: false,
   websitePlanGuidelines: '',
+  
+  // Exchange Listings
   exchangeListingEnabled: false,
   exchangeListings: [],
+  
+  // Legal Documents
   legalDocumentsEnabled: false,
   legalDocuments: [],
   legalDocumentsPreferences: '',
@@ -172,6 +198,7 @@ const initialFormData: FormData = {
 
 export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const fileUpload = useFileUpload();
 
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -187,7 +214,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <FormContext.Provider value={{ formData, updateFormData, updateArrayField }}>
+    <FormContext.Provider value={{ formData, updateFormData, updateArrayField, fileUpload }}>
       {children}
     </FormContext.Provider>
   );

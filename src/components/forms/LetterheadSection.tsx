@@ -5,17 +5,20 @@ import { UploadButton } from '../ui/UploadButton';
 import { useFormContext } from '../../contexts/FormContext';
 
 export const LetterheadSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const { formData, updateFormData, fileUpload } = useFormContext();
 
-  const handleFileUpload = (file: File) => {
-    console.log('Letterhead file uploaded:', file.name);
-    // File handling logic can be added here
+  const handleFileUpload = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'letterheadBrandGuide');
+    if (url) {
+      updateFormData('letterheadBrandGuideUrl', url);
+    }
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
     updateFormData('letterheadEnabled', enabled);
     if (!enabled) {
       updateFormData('letterheadGuidelines', '');
+      fileUpload.removeFile('letterheadBrandGuide');
     }
   };
 
@@ -35,6 +38,10 @@ export const LetterheadSection: React.FC = () => {
           <UploadButton
             label="Upload Brand guide"
             onFileUpload={handleFileUpload}
+            fieldName="letterheadBrandGuide"
+            uploadedFile={fileUpload.getFile('letterheadBrandGuide')}
+            isUploading={fileUpload.isUploading('letterheadBrandGuide')}
+            onRemoveFile={() => fileUpload.removeFile('letterheadBrandGuide')}
           />
         }
       />

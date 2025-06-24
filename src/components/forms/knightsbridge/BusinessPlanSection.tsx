@@ -6,7 +6,7 @@ import { UploadButton } from '../../ui/UploadButton';
 import { useFormContext } from '../../../contexts/FormContext';
 
 export const BusinessPlanSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const { formData, updateFormData, fileUpload } = useFormContext();
 
   const businessPlanTypes = formData.businessPlanType || {};
 
@@ -15,12 +15,18 @@ export const BusinessPlanSection: React.FC = () => {
     updateFormData('businessPlanType', updatedTypes);
   };
 
-  const handleUploadPlanGuide = (file: File) => {
-    console.log('Business plan guide uploaded:', file.name);
+  const handleUploadPlanGuide = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'businessPlanGuide');
+    if (url) {
+      updateFormData('businessPlanGuideUrl', url);
+    }
   };
 
-  const handleUploadDocument = (file: File) => {
-    console.log('Document uploaded:', file.name);
+  const handleUploadDocument = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'businessPlanDocument');
+    if (url) {
+      updateFormData('businessPlanDocumentUrl', url);
+    }
   };
 
   const handleGuidelinesChange = (guidelines: string) => {
@@ -36,6 +42,10 @@ export const BusinessPlanSection: React.FC = () => {
           <UploadButton
             label="Upload Plan guide"
             onFileUpload={handleUploadPlanGuide}
+            fieldName="businessPlanGuide"
+            uploadedFile={fileUpload.getFile('businessPlanGuide')}
+            isUploading={fileUpload.isUploading('businessPlanGuide')}
+            onRemoveFile={() => fileUpload.removeFile('businessPlanGuide')}
           />
         }
       />
@@ -70,6 +80,10 @@ export const BusinessPlanSection: React.FC = () => {
           <UploadButton
             label="Upload Document"
             onFileUpload={handleUploadDocument}
+            fieldName="businessPlanDocument"
+            uploadedFile={fileUpload.getFile('businessPlanDocument')}
+            isUploading={fileUpload.isUploading('businessPlanDocument')}
+            onRemoveFile={() => fileUpload.removeFile('businessPlanDocument')}
           />
         </div>
       </div>

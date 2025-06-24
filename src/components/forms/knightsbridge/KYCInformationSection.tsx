@@ -6,14 +6,20 @@ import { UploadButton } from '../../ui/UploadButton';
 import { useFormContext } from '../../../contexts/FormContext';
 
 export const KYCInformationSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const { formData, updateFormData, fileUpload } = useFormContext();
 
-  const handleProofOfIdentityUpload = (file: File) => {
-    console.log('Proof of Identity uploaded:', file.name);
+  const handleProofOfIdentityUpload = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'kycProofOfIdentity');
+    if (url) {
+      updateFormData('kycProofOfIdentityUrl', url);
+    }
   };
 
-  const handleProofOfAddressUpload = (file: File) => {
-    console.log('Proof of Address uploaded:', file.name);
+  const handleProofOfAddressUpload = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'kycProofOfAddress');
+    if (url) {
+      updateFormData('kycProofOfAddressUrl', url);
+    }
   };
 
   return (
@@ -47,6 +53,10 @@ export const KYCInformationSection: React.FC = () => {
           <UploadButton
             label="eg file.pdf"
             onFileUpload={handleProofOfIdentityUpload}
+            fieldName="kycProofOfIdentity"
+            uploadedFile={fileUpload.getFile('kycProofOfIdentity')}
+            isUploading={fileUpload.isUploading('kycProofOfIdentity')}
+            onRemoveFile={() => fileUpload.removeFile('kycProofOfIdentity')}
           />
         </div>
         
@@ -57,6 +67,10 @@ export const KYCInformationSection: React.FC = () => {
           <UploadButton
             label="eg file.pdf"
             onFileUpload={handleProofOfAddressUpload}
+            fieldName="kycProofOfAddress"
+            uploadedFile={fileUpload.getFile('kycProofOfAddress')}
+            isUploading={fileUpload.isUploading('kycProofOfAddress')}
+            onRemoveFile={() => fileUpload.removeFile('kycProofOfAddress')}
           />
         </div>
       </div>

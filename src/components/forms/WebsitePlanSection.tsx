@@ -5,17 +5,20 @@ import { UploadButton } from '../ui/UploadButton';
 import { useFormContext } from '../../contexts/FormContext';
 
 export const WebsitePlanSection: React.FC = () => {
-  const { formData, updateFormData } = useFormContext();
+  const { formData, updateFormData, fileUpload } = useFormContext();
 
-  const handleFileUpload = (file: File) => {
-    console.log('Website design guide uploaded:', file.name);
-    // File handling logic can be added here
+  const handleFileUpload = async (file: File) => {
+    const url = await fileUpload.uploadFile(file, 'websitePlanDesignGuide');
+    if (url) {
+      updateFormData('websitePlanDesignGuideUrl', url);
+    }
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
     updateFormData('websitePlanEnabled', enabled);
     if (!enabled) {
       updateFormData('websitePlanGuidelines', '');
+      fileUpload.removeFile('websitePlanDesignGuide');
     }
   };
 
@@ -35,6 +38,10 @@ export const WebsitePlanSection: React.FC = () => {
           <UploadButton
             label="Upload Design guide"
             onFileUpload={handleFileUpload}
+            fieldName="websitePlanDesignGuide"
+            uploadedFile={fileUpload.getFile('websitePlanDesignGuide')}
+            isUploading={fileUpload.isUploading('websitePlanDesignGuide')}
+            onRemoveFile={() => fileUpload.removeFile('websitePlanDesignGuide')}
           />
         }
       />
