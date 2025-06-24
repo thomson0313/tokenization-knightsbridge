@@ -28,7 +28,7 @@ serve(async (req) => {
     }
 
     // Get the origin for callback URLs
-    const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/$/, '') || 'https://your-domain.com'
+    const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/$/, '') || 'https://tokenization-knightsbridge.vercel.app'
     console.log('Origin for callbacks:', origin)
 
     const requestBody = {
