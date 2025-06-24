@@ -184,13 +184,52 @@ const DocumentsCell: React.FC<{ documents: FormSubmission['uploadedDocuments'] }
             <Download className="h-3 w-3 mr-1" />
             {doc.originalFilename}
           </Button>
+          <span className="text-xs text-muted-foreground">
+            ({doc.fieldName})
+          </span>
         </div>
       ))}
     </div>
   );
 };
 
+const getDocumentsByCategory = (documents: FormSubmission['uploadedDocuments']) => {
+  if (!documents) return {};
+  
+  const categorizedDocs: Record<string, typeof documents> = {};
+  
+  documents.forEach(doc => {
+    const category = getCategoryFromFieldName(doc.fieldName);
+    if (!categorizedDocs[category]) {
+      categorizedDocs[category] = [];
+    }
+    categorizedDocs[category].push(doc);
+  });
+  
+  return categorizedDocs;
+};
+
+const getCategoryFromFieldName = (fieldName: string): string => {
+  // Map field names to user-friendly categories
+  const categoryMap: Record<string, string> = {
+    'kycProofOfIdentity': 'KYC - Proof of Identity',
+    'businessPlanGuide': 'Business Plan Guide',
+    'letterheadBrandGuide': 'Letterhead Brand Guide',
+    'websitePlanDesignGuide': 'Website Plan Design Guide',
+    'whitePaperTemplate': 'White Paper Template',
+    'legalDocumentTemplate': 'Legal Document Template',
+    'raiseDocumentTemplate': 'Raise Document Template',
+    'exchangeApplication': 'Exchange Application',
+    'custodianAgreement': 'Custodian Agreement',
+    'issuerDocumentation': 'Issuer Documentation'
+  };
+  
+  return categoryMap[fieldName] || fieldName;
+};
+
 const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ submission }) => {
+  const categorizedDocs = getDocumentsByCategory(submission.uploadedDocuments);
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -377,6 +416,28 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
             </div>
           )}
 
+          {/* Documents by Category */}
+          <div className="space-y-4 md:col-span-2">
+            <h3 className="font-semibold text-lg border-b pb-2">Uploaded Documents by Category</h3>
+            
+            {Object.keys(categorizedDocs).length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.entries(categorizedDocs).map(([category, docs]) => (
+                  <div key={category} className="space-y-2">
+                    <h4 className="font-medium text-md">{category}</h4>
+                    <div className="space-y-1">
+                      {docs.map((doc) => (
+                        <DocumentsCell key={doc.id} documents={[doc]} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No documents uploaded</div>
+            )}
+          </div>
+
           {/* Additional Services */}
           <div className="space-y-4 md:col-span-2">
             <h3 className="font-semibold text-lg border-b pb-2">Additional Services</h3>
@@ -455,73 +516,6 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
                 <div className="text-gray-500">No additional features selected</div>
               )}
             </div>
-          </div>
-
-          {/* Documents */}
-          <div className="space-y-4 md:col-span-2">
-            <h3 className="font-semibold text-lg border-b pb-2">Documents</h3>
-            
-            {/* Raise Documents */}
-            {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
-              <div className="mb-4">
-                <h4 className="font-medium text-md mb-2">Raise Documents - Regions: {submission.raiseDocumentRegions.join(', ')}</h4>
-                <div className="text-sm space-y-1">
-                  {submission.raiseDocumentCompany && (
-                    <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>
-                  )}
-                  {submission.raiseDocumentContactName && (
-                    <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>
-                  )}
-                  {submission.raiseDocumentContactPerson && (
-                    <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>
-                  )}
-                  {submission.raiseDocumentPosition && (
-                    <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>
-                  )}
-                  {submission.raiseDocumentEmail && (
-                    <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>
-                  )}
-                  {submission.raiseDocumentPhone && (
-                    <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>
-                  )}
-                  {submission.raiseDocumentAddress && (
-                    <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>
-                  )}
-                  {submission.raiseDocumentWebsite && (
-                    <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="mb-4">
-                <h4 className="font-medium text-md mb-2">Raise Documents</h4>
-                <div className="text-sm text-gray-500">None selected</div>
-              </div>
-            )}
-
-            {/* Legal Documents */}
-            {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
-              <div>
-                <h4 className="font-medium text-md mb-2">Legal Documents:</h4>
-                <div className="text-sm space-y-2">
-                  {submission.legalDocumentsPreferences && (
-                    <div className="p-2 bg-muted rounded">
-                      {submission.legalDocumentsPreferences}
-                    </div>
-                  )}
-                  <ul className="list-disc list-inside space-y-1">
-                    {submission.legalDocuments.map((doc, index) => (
-                      <li key={index}>{doc}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <h4 className="font-medium text-md mb-2">Legal Documents</h4>
-                <div className="text-sm text-gray-500">None selected</div>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>
@@ -876,50 +870,27 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
                             </div>
                           </div>
 
-                          {/* Documents Section */}
-                          <div className="space-y-2 md:col-span-2">
-                            <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">Documents</h4>
-                            <div className="text-xs space-y-3">
-                              {/* Raise Documents */}
-                              {submission.raiseDocumentRegions && submission.raiseDocumentRegions.length > 0 ? (
-                                <div>
-                                  <div><strong>Raise Documents - Regions:</strong> {submission.raiseDocumentRegions.join(', ')}</div>
-                                  <div className="ml-2 mt-1 space-y-0.5">
-                                    {submission.raiseDocumentCompany && <div><strong>Company Name:</strong> {submission.raiseDocumentCompany}</div>}
-                                    {submission.raiseDocumentContactName && <div><strong>Contact Name:</strong> {submission.raiseDocumentContactName}</div>}
-                                    {submission.raiseDocumentContactPerson && <div><strong>Contact Person:</strong> {submission.raiseDocumentContactPerson}</div>}
-                                    {submission.raiseDocumentPosition && <div><strong>Position in Company:</strong> {submission.raiseDocumentPosition}</div>}
-                                    {submission.raiseDocumentEmail && <div><strong>Email:</strong> {submission.raiseDocumentEmail}</div>}
-                                    {submission.raiseDocumentPhone && <div><strong>Phone No.:</strong> {submission.raiseDocumentPhone}</div>}
-                                    {submission.raiseDocumentAddress && <div><strong>Company Address:</strong> {submission.raiseDocumentAddress}</div>}
-                                    {submission.raiseDocumentWebsite && <div><strong>Website URL:</strong> {submission.raiseDocumentWebsite}</div>}
-                                  </div>
-                                </div>
-                              ) : (
-                                <div>
-                                  <div><strong>Raise Documents:</strong> None</div>
-                                </div>
-                              )}
-                              
-                              {/* Legal Documents */}
-                              {submission.legalDocuments && submission.legalDocuments.length > 0 ? (
-                                <div>
-                                  <div><strong>Legal Documents:</strong></div>
-                                  {submission.legalDocumentsPreferences && (
-                                    <div className="mt-1 p-2 bg-muted rounded">
-                                      {submission.legalDocumentsPreferences}
+                          {/* Documents by Category in Expanded View */}
+                          <div className="space-y-2 md:col-span-2 lg:col-span-3">
+                            <h4 className="font-semibold text-sm text-red-700 border-b border-red-200 pb-1">
+                              Documents by Category
+                            </h4>
+                            <div className="text-xs">
+                              {Object.keys(getDocumentsByCategory(submission.uploadedDocuments)).length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {Object.entries(getDocumentsByCategory(submission.uploadedDocuments)).map(([category, docs]) => (
+                                    <div key={category} className="space-y-1">
+                                      <div className="font-medium">{category}:</div>
+                                      <div className="ml-2">
+                                        {docs.map((doc) => (
+                                          <DocumentsCell key={doc.id} documents={[doc]} />
+                                        ))}
+                                      </div>
                                     </div>
-                                  )}
-                                  <div className="ml-2 mt-1 space-y-0.5">
-                                    {submission.legalDocuments.map((doc, index) => (
-                                      <div key={index}>• {doc}</div>
-                                    ))}
-                                  </div>
+                                  ))}
                                 </div>
                               ) : (
-                                <div>
-                                  <div><strong>Legal Documents:</strong> None</div>
-                                </div>
+                                <div className="text-gray-500">No documents uploaded</div>
                               )}
                             </div>
                           </div>

@@ -167,7 +167,29 @@ export const useFormSubmission = () => {
 		return errors;
 	};
 
-	const submitForm = async (data: FormSubmissionData, uploadedDocuments?: Record<string, string>) => {
+	const uploadToSupabase = async (uploadedFiles: Record<string, any>, submissionId: string) => {
+		const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]) => ({
+			submission_id: submissionId,
+			field_name: fieldName,
+			original_filename: fileData.file.name,
+			file_path: fileData.storagePath,
+			file_size: fileData.file.size,
+			mime_type: fileData.file.type
+		}));
+
+		if (documentsToInsert.length > 0) {
+			const { error: documentsError } = await supabase
+				.from('uploaded_documents')
+				.insert(documentsToInsert);
+
+			if (documentsError) {
+				console.error('Documents storage error:', documentsError);
+				throw documentsError;
+			}
+		}
+	};
+
+	const submitForm = async (data: FormSubmissionData, uploadedFiles: Record<string, any> = {}) => {
 		setIsSubmitting(true);
 
 		try {
@@ -205,22 +227,8 @@ export const useFormSubmission = () => {
 			console.log('Created submission with ID:', submissionId);
 
 			// Store uploaded documents if any
-			if (uploadedDocuments && Object.keys(uploadedDocuments).length > 0) {
-				const documentsToInsert = Object.entries(uploadedDocuments).map(([fieldName, url]) => ({
-					submission_id: submissionId,
-					document_type: fieldName,
-					file_url: url,
-					uploaded_at: new Date().toISOString()
-				}));
-
-				const { error: documentsError } = await supabase
-					.from('uploaded_documents')
-					.insert(documentsToInsert);
-
-				if (documentsError) {
-					console.error('Documents storage error:', documentsError);
-					// Don't throw error for documents, just log it
-				}
+			if (Object.keys(uploadedFiles).length > 0) {
+				await uploadToSupabase(uploadedFiles, submissionId);
 			}
 
 			// Insert optional sections data
@@ -499,29 +507,10 @@ export const useFormSubmission = () => {
 			};
 		}
 
-		// Upload files to Supabase and get URLs
-		let uploadedDocuments: Record<string, string> = {};
-		if (fileUpload && Object.keys(fileUpload.uploadedFiles).length > 0) {
-			try {
-				// First submit the form to get submission ID
-				const result = await submitForm(submissionData);
-				if (result.success) {
-					// Then upload files with the submission ID
-					uploadedDocuments = await fileUpload.uploadToSupabase(result.submissionId);
-					
-					// Update the submission with document URLs if any were uploaded
-					if (Object.keys(uploadedDocuments).length > 0) {
-						await submitForm(submissionData, uploadedDocuments);
-					}
-				}
-				return result;
-			} catch (error) {
-				console.error('Error during file upload:', error);
-				// Still try to submit the form without files
-			}
-		}
+		// Get uploaded files from the file upload hook
+		const uploadedFiles = fileUpload ? fileUpload.uploadedFiles : {};
 
-		return await submitForm(submissionData, uploadedDocuments);
+		return await submitForm(submissionData, uploadedFiles);
 	};
 
 	return { submitForm, validateAndSubmit, isSubmitting };
