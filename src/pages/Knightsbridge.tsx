@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInformationSection';
@@ -48,10 +46,12 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 		try {
 			const result = await validateAndSubmit(formData, 'Knightsbridge');
 			if (result.success) {
-				setShowPayment(false);
+				// Don't close payment for crypto payments, let the component handle it
+				return result;
 			}
 		} catch (error) {
 			console.error('Form submission error:', error);
+			throw error;
 		}
 	};
 
@@ -145,6 +145,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 					onPayNow={handlePayNow}
 					isSubmitting={isSubmitting}
 					totalAmount={totalAmount}
+					formType="Knightsbridge"
 				/>
 			</div>
 
@@ -168,4 +169,3 @@ const Knightsbridge: React.FC<KnightsbridgeProps> = (props) => {
 };
 
 export default Knightsbridge;
-

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
@@ -47,10 +46,12 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 		try {
 			const result = await validateAndSubmit(formData, 'Decentralized');
 			if (result.success) {
-				setShowPayment(false);
+				// Don't close payment for crypto payments, let the component handle it
+				return result;
 			}
 		} catch (error) {
 			console.error('Form submission error:', error);
+			throw error;
 		}
 	};
 
@@ -112,6 +113,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 					onPayNow={handlePayNow}
 					isSubmitting={isSubmitting}
 					totalAmount={totalAmount}
+					formType="Decentralized"
 				/>
 			</div>
 

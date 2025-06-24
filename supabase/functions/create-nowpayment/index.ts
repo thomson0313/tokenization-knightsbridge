@@ -16,8 +16,8 @@ serve(async (req) => {
   try {
     console.log('NOWPayments function called')
 
-    const { amount, currency, orderId, orderDescription } = await req.json()
-    console.log('Request data:', { amount, currency, orderId, orderDescription })
+    const { amount, currency, orderId, orderDescription, submissionId } = await req.json()
+    console.log('Request data:', { amount, currency, orderId, orderDescription, submissionId })
 
     const nowPaymentsApiKey = Deno.env.get('NOWPAYMENTS_API_KEY')
     console.log('API key exists:', !!nowPaymentsApiKey)
@@ -27,18 +27,33 @@ serve(async (req) => {
       throw new Error('NOWPayments API key not configured')
     }
 
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
     // Get the origin for callback URLs
     const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/$/, '') || 'https://tokenization-knightsbridge.vercel.app'
     console.log('Origin for callbacks:', origin)
 
+    // Map currency to NOWPayments currency code
+    let payCurrency = currency;
+    if (currency === 'usdt') {
+      payCurrency = 'USDT'; // Let NOWPayments handle network selection in their interface
+    } else if (currency === 'btc') {
+      payCurrency = 'BTC';
+    }
+
     const requestBody = {
       price_amount: amount,
       price_currency: 'USD',
-      pay_currency: currency, // BTC or USDTTRC20
+      pay_currency: payCurrency,
       order_id: orderId,
       order_description: orderDescription,
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/payment-cancelled`,
+      ipn_callback_url: `${origin.replace('https://', 'https://').replace('http://', 'https://')}/api/webhooks/nowpayments`
     }
 
     console.log('Making request to NOWPayments with:', requestBody)
@@ -73,8 +88,28 @@ serve(async (req) => {
     const paymentData = await paymentResponse.json()
     console.log('NOWPayments success:', paymentData)
 
-    // Check if we have an invoice_url (for invoice API) or payment_url
-    const redirectUrl = paymentData.invoice_url || paymentData.payment_url
+    // Update form submission with payment details
+    if (submissionId) {
+      const { error: updateError } = await supabaseClient
+        .from('form_submissions')
+        .update({ 
+          payment_status: 'pending',
+          payment_id: paymentData.id,
+          order_id: orderId,
+          payment_amount: amount,
+          payment_currency: payCurrency,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', submissionId)
+
+      if (updateError) {
+        console.error('Error updating submission with payment details:', updateError)
+      } else {
+        console.log('Updated submission with payment details')
+      }
+    }
+
+    const redirectUrl = paymentData.invoice_url
     
     if (!redirectUrl) {
       console.error('No payment URL received from NOWPayments:', paymentData)
