@@ -42,13 +42,9 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 		setShowPayment(true);
 	};
 
-	const handlePayNow = async () => {
+	const handlePayNow = async (): Promise<void> => {
 		try {
-			const result = await validateAndSubmit(formData, 'Knightsbridge');
-			if (result.success) {
-				// Don't close payment for crypto payments, let the component handle it
-				return result;
-			}
+			await validateAndSubmit(formData, 'Knightsbridge');
 		} catch (error) {
 			console.error('Form submission error:', error);
 			throw error;
