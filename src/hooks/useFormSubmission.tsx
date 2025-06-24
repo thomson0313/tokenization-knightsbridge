@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { z } from "zod";
@@ -9,6 +10,13 @@ import {
 
 // Define a combined schema type
 export type FormSubmissionData = z.infer<typeof KnightsbridgeSchema> | z.infer<typeof DecentralizedSchema>;
+
+interface DocumentInfo {
+  originalFilename: string;
+  filePath: string;
+  fileSize: number;
+  mimeType: string;
+}
 
 export const useFormSubmission = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,14 +132,17 @@ export const useFormSubmission = () => {
 
       // Store uploaded documents if any exist
       if (formData.uploadedDocuments && Object.keys(formData.uploadedDocuments).length > 0) {
-        const documentsToInsert = Object.entries(formData.uploadedDocuments).map(([fieldName, docInfo]) => ({
-          submission_id: submissionId,
-          field_name: fieldName,
-          original_filename: docInfo.originalFilename,
-          file_path: docInfo.filePath,
-          file_size: docInfo.fileSize,
-          mime_type: docInfo.mimeType
-        }));
+        const documentsToInsert = Object.entries(formData.uploadedDocuments).map(([fieldName, docInfo]) => {
+          const typedDocInfo = docInfo as DocumentInfo;
+          return {
+            submission_id: submissionId,
+            field_name: fieldName,
+            original_filename: typedDocInfo.originalFilename,
+            file_path: typedDocInfo.filePath,
+            file_size: typedDocInfo.fileSize,
+            mime_type: typedDocInfo.mimeType
+          };
+        });
 
         const { error: documentsError } = await supabase
           .from('uploaded_documents')
@@ -224,9 +235,25 @@ export const useFormSubmission = () => {
     }
   };
 
+  const validateAndSubmit = async (formData: any, type: 'Knightsbridge' | 'Decentralized', paymentAmount: number) => {
+    const submissionData = {
+      ...formData,
+      type,
+      paymentAmount
+    };
+    
+    try {
+      await submitForm(submissionData);
+      return { success: true, submissionId: 'temp-id' };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
   return {
     isSubmitting,
     submitForm,
+    validateAndSubmit,
     validationErrors
   };
 };
