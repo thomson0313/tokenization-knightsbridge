@@ -167,6 +167,17 @@ interface LegalPreference {
   preferences?: string; 
 }
 
+interface UploadedDocument {
+  id: string;
+  submission_id: string;
+  field_name: string;
+  original_filename: string;
+  file_path: string;
+  file_size: number | null;
+  mime_type: string | null;
+  created_at: string;
+}
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeToggle }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
@@ -194,17 +205,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       // Debug: Check if uploaded_documents table exists and has data
       console.log('Checking uploaded_documents table...');
       
-      // First, let's check if the table exists by trying to get table info
-      const { data: tableCheck, error: tableError } = await supabase
+      // Test table access with a simple count query
+      const { count: documentsCount, error: countError } = await supabase
         .from('uploaded_documents')
-        .select('*')
-        .limit(1);
+        .select('*', { count: 'exact', head: true });
 
-      if (tableError) {
-        console.error('Table check error:', tableError);
+      if (countError) {
+        console.error('Table access error:', countError);
         console.log('uploaded_documents table might not exist or might have permission issues');
       } else {
-        console.log('uploaded_documents table exists, sample record:', tableCheck);
+        console.log('uploaded_documents table accessible, total count:', documentsCount);
       }
 
       // Fetch uploaded documents with detailed logging
