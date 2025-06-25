@@ -149,20 +149,41 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       console.log('Documents fetched:', documentsData?.length || 0);
       console.log('Documents data sample:', documentsData?.slice(0, 2));
 
-      // Fetch related data with error handling
-      const fetchRelatedData = async (table: string, select: string) => {
+      // Fetch related data with proper error handling and typing
+      const fetchRelatedData = async <T>(table: string, select: string): Promise<T[]> => {
         try {
           const { data, error } = await supabase.from(table).select(select);
           if (error) {
             console.warn(`Error fetching ${table}:`, error);
             return [];
           }
-          return data || [];
+          return (data || []) as T[];
         } catch (err) {
           console.warn(`Failed to fetch ${table}:`, err);
           return [];
         }
       };
+
+      // Define interfaces for the related data
+      interface TokenFeature { submission_id: string; feature_name: string; }
+      interface RaiseRegion { submission_id: string; region: string; }
+      interface ExchangeListing { submission_id: string; exchange_name: string; }
+      interface LegalDocument { submission_id: string; document_type: string; }
+      interface LetterheadService { submission_id: string; enabled: boolean; guidelines?: string; }
+      interface RaiseDocument { 
+        submission_id: string; 
+        company?: string;
+        contact_name?: string;
+        contact_person?: string;
+        position?: string;
+        email?: string;
+        phone?: string;
+        address?: string;
+        website?: string;
+      }
+      interface Whitepaper { submission_id: string; pages?: string; guidelines?: string; }
+      interface WebsitePlan { submission_id: string; enabled: boolean; guidelines?: string; }
+      interface LegalPreference { submission_id: string; preferences?: string; }
 
       const [
         tokenFeaturesData,
@@ -175,15 +196,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         websitePlansData,
         legalPreferencesData
       ] = await Promise.all([
-        fetchRelatedData('token_features', 'submission_id, feature_name'),
-        fetchRelatedData('raise_document_regions', 'submission_id, region'),
-        fetchRelatedData('exchange_listings', 'submission_id, exchange_name'),
-        fetchRelatedData('legal_documents', 'submission_id, document_type'),
-        fetchRelatedData('letterhead_services', 'submission_id, enabled, guidelines'),
-        fetchRelatedData('raise_documents', 'submission_id, company, contact_name, contact_person, position, email, phone, address, website'),
-        fetchRelatedData('whitepapers', 'submission_id, pages, guidelines'),
-        fetchRelatedData('website_plans', 'submission_id, enabled, guidelines'),
-        fetchRelatedData('legal_document_preferences', 'submission_id, preferences')
+        fetchRelatedData<TokenFeature>('token_features', 'submission_id, feature_name'),
+        fetchRelatedData<RaiseRegion>('raise_document_regions', 'submission_id, region'),
+        fetchRelatedData<ExchangeListing>('exchange_listings', 'submission_id, exchange_name'),
+        fetchRelatedData<LegalDocument>('legal_documents', 'submission_id, document_type'),
+        fetchRelatedData<LetterheadService>('letterhead_services', 'submission_id, enabled, guidelines'),
+        fetchRelatedData<RaiseDocument>('raise_documents', 'submission_id, company, contact_name, contact_person, position, email, phone, address, website'),
+        fetchRelatedData<Whitepaper>('whitepapers', 'submission_id, pages, guidelines'),
+        fetchRelatedData<WebsitePlan>('website_plans', 'submission_id, enabled, guidelines'),
+        fetchRelatedData<LegalPreference>('legal_document_preferences', 'submission_id, preferences')
       ]);
 
       const toBool = (value: any): boolean => {
@@ -198,16 +219,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       };
 
       const transformedSubmissions = (submissionsData || []).map(submission => {
-        const tokenFeatures = tokenFeaturesData?.filter(f => f.submission_id === submission.id).map(f => f.feature_name) || [];
-        const raiseDocumentRegions = raiseRegionsData?.filter(r => r.submission_id === submission.id).map(r => r.region) || [];
-        const exchangeListings = exchangeListingsData?.filter(e => e.submission_id === submission.id).map(e => e.exchange_name) || [];
-        const legalDocuments = legalDocumentsData?.filter(d => d.submission_id === submission.id).map(d => d.document_type) || [];
+        const tokenFeatures = tokenFeaturesData.filter(f => f.submission_id === submission.id).map(f => f.feature_name);
+        const raiseDocumentRegions = raiseRegionsData.filter(r => r.submission_id === submission.id).map(r => r.region);
+        const exchangeListings = exchangeListingsData.filter(e => e.submission_id === submission.id).map(e => e.exchange_name);
+        const legalDocuments = legalDocumentsData.filter(d => d.submission_id === submission.id).map(d => d.document_type);
         
-        const letterheadService = letterheadServicesData?.find(l => l.submission_id === submission.id);
-        const raiseDocumentService = raiseDocumentsData?.find(r => r.submission_id === submission.id);
-        const whitepaperService = whitepapersData?.find(w => w.submission_id === submission.id);
-        const websitePlanService = websitePlansData?.find(w => w.submission_id === submission.id);
-        const legalDocumentPreferences = legalPreferencesData?.find(l => l.submission_id === submission.id);
+        const letterheadService = letterheadServicesData.find(l => l.submission_id === submission.id);
+        const raiseDocumentService = raiseDocumentsData.find(r => r.submission_id === submission.id);
+        const whitepaperService = whitepapersData.find(w => w.submission_id === submission.id);
+        const websitePlanService = websitePlansData.find(w => w.submission_id === submission.id);
+        const legalDocumentPreferences = legalPreferencesData.find(l => l.submission_id === submission.id);
         
         // Map uploaded documents for this submission
         const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => {
