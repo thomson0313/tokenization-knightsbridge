@@ -42,8 +42,9 @@ serve(async (req) => {
     const requestBody = await req.text()
     console.log('Request body:', requestBody)
     
-    const { formData } = JSON.parse(requestBody)
+    const { formData, uploadedFiles } = JSON.parse(requestBody)
     console.log('Parsed form data:', JSON.stringify(formData, null, 2))
+    console.log('Uploaded files:', JSON.stringify(uploadedFiles, null, 2))
 
     // Insert main form submission
     console.log('Inserting main form submission')
@@ -60,6 +61,30 @@ serve(async (req) => {
 
     const submissionId = submission.id
     console.log('Created submission with ID:', submissionId)
+
+    // Insert uploaded documents metadata if any
+    if (uploadedFiles && Object.keys(uploadedFiles).length > 0) {
+      console.log('Inserting uploaded documents metadata')
+      const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]: [string, any]) => ({
+        submission_id: submissionId,
+        field_name: fieldName,
+        original_filename: fileData.file.name,
+        file_path: fileData.storagePath,
+        file_size: fileData.file.size,
+        mime_type: fileData.file.type
+      }))
+
+      const { error: documentsError } = await supabaseClient
+        .from('uploaded_documents')
+        .insert(documentsToInsert)
+
+      if (documentsError) {
+        console.error('Documents metadata error:', documentsError)
+        throw documentsError
+      }
+      
+      console.log('Inserted', documentsToInsert.length, 'document records')
+    }
 
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {

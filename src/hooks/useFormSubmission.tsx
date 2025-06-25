@@ -194,192 +194,34 @@ export const useFormSubmission = () => {
 
 		try {
 			console.log('Submitting form data:', data);
+			console.log('Uploaded files:', uploadedFiles);
 
-			// First check if the tables exist
-			const { error: testError } = await supabase
-				.from('form_submissions')
-				.select('id')
-				.limit(1);
+			// Call Edge Function instead of direct database operations
+			const response = await fetch('/api/submit-form', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ 
+					formData: data,
+					uploadedFiles: uploadedFiles 
+				}),
+			});
 
-			if (testError) {
-				console.error('Database tables not found:', testError);
-				toast({
-					title: "Database Error",
-					description: "Database tables are not set up. Please run the database migrations first.",
-					variant: "destructive",
-				});
-				throw new Error('Database tables not found. Please run migrations.');
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || 'Submission failed');
 			}
 
-			// Insert main form submission
-			const { data: submission, error: submissionError } = await supabase
-				.from('form_submissions')
-				.insert(data.main)
-				.select()
-				.single();
-
-			if (submissionError) {
-				console.error('Submission error:', submissionError);
-				throw submissionError;
-			}
-
-			const submissionId = submission.id;
-			console.log('Created submission with ID:', submissionId);
-
-			// Store uploaded documents if any
-			if (Object.keys(uploadedFiles).length > 0) {
-				await uploadToSupabase(uploadedFiles, submissionId);
-			}
-
-			// Insert optional sections data
-			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
-				const tokenFeatures = data.tokenFeatures.features.map((feature: string) => ({
-					submission_id: submissionId,
-					feature_name: feature
-				}));
-
-				const { error: featuresError } = await supabase
-					.from('token_features')
-					.insert(tokenFeatures);
-
-				if (featuresError) {
-					console.error('Features error:', featuresError);
-					throw featuresError;
-				}
-			}
-
-			if (data.letterhead && data.letterhead.enabled) {
-				const { error: letterheadError } = await supabase
-					.from('letterhead_services')
-					.insert({
-						submission_id: submissionId,
-						enabled: data.letterhead.enabled,
-						guidelines: data.letterhead.guidelines
-					});
-
-				if (letterheadError) {
-					console.error('Letterhead error:', letterheadError);
-					throw letterheadError;
-				}
-			}
-
-			if (data.raiseDocument && data.raiseDocument.regions?.length > 0) {
-				const regions = data.raiseDocument.regions.map((region: string) => ({
-					submission_id: submissionId,
-					region: region
-				}));
-
-				const { error: regionsError } = await supabase
-					.from('raise_document_regions')
-					.insert(regions);
-
-				if (regionsError) {
-					console.error('Regions error:', regionsError);
-					throw regionsError;
-				}
-
-				// Insert raise document details
-				const { error: raiseDocError } = await supabase
-					.from('raise_documents')
-					.insert({
-						submission_id: submissionId,
-						company: data.raiseDocument.company,
-						contact_name: data.raiseDocument.contact_name,
-						contact_person: data.raiseDocument.contact_person,
-						position: data.raiseDocument.position,
-						email: data.raiseDocument.email,
-						phone: data.raiseDocument.phone,
-						address: data.raiseDocument.address,
-						website: data.raiseDocument.website
-					});
-
-				if (raiseDocError) {
-					console.error('Raise document error:', raiseDocError);
-					throw raiseDocError;
-				}
-			}
-
-			if (data.whitepaper && data.whitepaper.pages && data.whitepaper.pages !== 'none') {
-				const { error: whitepaperError } = await supabase
-					.from('whitepapers')
-					.insert({
-						submission_id: submissionId,
-						pages: data.whitepaper.pages,
-						guidelines: data.whitepaper.guidelines
-					});
-
-				if (whitepaperError) {
-					console.error('Whitepaper error:', whitepaperError);
-					throw whitepaperError;
-				}
-			}
-
-			if (data.websitePlan && data.websitePlan.enabled) {
-				const { error: websiteError } = await supabase
-					.from('website_plans')
-					.insert({
-						submission_id: submissionId,
-						enabled: data.websitePlan.enabled,
-						guidelines: data.websitePlan.guidelines
-					});
-
-				if (websiteError) {
-					console.error('Website plan error:', websiteError);
-					throw websiteError;
-				}
-			}
-
-			if (data.exchangeListings && data.exchangeListings.exchanges?.length > 0) {
-				const exchanges = data.exchangeListings.exchanges.map((exchange: string) => ({
-					submission_id: submissionId,
-					exchange_name: exchange
-				}));
-
-				const { error: exchangesError } = await supabase
-					.from('exchange_listings')
-					.insert(exchanges);
-
-				if (exchangesError) {
-					console.error('Exchanges error:', exchangesError);
-					throw exchangesError;
-				}
-			}
-
-			if (data.legalDocuments && data.legalDocuments.documents?.length > 0) {
-				const documents = data.legalDocuments.documents.map((doc: string) => ({
-					submission_id: submissionId,
-					document_type: doc
-				}));
-
-				const { error: documentsError } = await supabase
-					.from('legal_documents')
-					.insert(documents);
-
-				if (documentsError) {
-					console.error('Documents error:', documentsError);
-					throw documentsError;
-				}
-
-				// Insert legal document preferences
-				const { error: legalPrefError } = await supabase
-					.from('legal_document_preferences')
-					.insert({
-						submission_id: submissionId,
-						preferences: data.legalDocuments.preferences
-					});
-
-				if (legalPrefError) {
-					console.error('Legal preferences error:', legalPrefError);
-					throw legalPrefError;
-				}
-			}
+			const result = await response.json();
+			console.log('Submission successful:', result);
 
 			toast({
 				title: "Success!",
 				description: "Your form has been submitted successfully.",
 			});
 
-			return { success: true, submissionId };
+			return { success: true, submissionId: result.submissionId };
 		} catch (error) {
 			console.error('Form submission error:', error);
 			toast({
