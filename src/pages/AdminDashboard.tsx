@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { DataTable } from '../components/admin/DataTable';
@@ -111,73 +110,6 @@ interface AdminDashboardProps {
   onThemeToggle: () => void;
 }
 
-// Define interfaces for the related data
-interface TokenFeature { 
-  submission_id: string; 
-  feature_name: string; 
-}
-
-interface RaiseRegion { 
-  submission_id: string; 
-  region: string; 
-}
-
-interface ExchangeListing { 
-  submission_id: string; 
-  exchange_name: string; 
-}
-
-interface LegalDocument { 
-  submission_id: string; 
-  document_type: string; 
-}
-
-interface LetterheadService { 
-  submission_id: string; 
-  enabled: boolean; 
-  guidelines?: string; 
-}
-
-interface RaiseDocument { 
-  submission_id: string; 
-  company?: string;
-  contact_name?: string;
-  contact_person?: string;
-  position?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  website?: string;
-}
-
-interface Whitepaper { 
-  submission_id: string; 
-  pages?: string; 
-  guidelines?: string; 
-}
-
-interface WebsitePlan { 
-  submission_id: string; 
-  enabled: boolean; 
-  guidelines?: string; 
-}
-
-interface LegalPreference { 
-  submission_id: string; 
-  preferences?: string; 
-}
-
-interface UploadedDocument {
-  id: string;
-  submission_id: string;
-  field_name: string;
-  original_filename: string;
-  file_path: string;
-  file_size: number | null;
-  mime_type: string | null;
-  created_at: string;
-}
-
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeToggle }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
@@ -187,8 +119,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      console.log('Fetching submissions...');
-      
       // Fetch form submissions
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
@@ -196,94 +126,54 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         .order('created_at', { ascending: false });
 
       if (submissionsError) {
-        console.error('Submissions error:', submissionsError);
         throw submissionsError;
       }
 
-      console.log('Submissions fetched:', submissionsData?.length || 0);
-
-      // Debug: Check if uploaded_documents table exists and has data
-      console.log('Checking uploaded_documents table...');
-      
-      // Test table access with a simple count query
-      const { count: documentsCount, error: countError } = await supabase
-        .from('uploaded_documents')
-        .select('*', { count: 'exact', head: true });
-
-      if (countError) {
-        console.error('Table access error:', countError);
-        console.log('uploaded_documents table might not exist or might have permission issues');
-      } else {
-        console.log('uploaded_documents table accessible, total count:', documentsCount);
-      }
-
-      // Fetch uploaded documents with detailed logging
-      console.log('Fetching uploaded documents...');
+      // Fetch uploaded documents
       const { data: documentsData, error: documentsError } = await supabase
         .from('uploaded_documents')
-        .select(`
-          id,
-          submission_id,
-          field_name,
-          original_filename,
-          file_path,
-          file_size,
-          mime_type,
-          created_at
-        `);
+        .select('*');
 
       if (documentsError) {
-        console.error('Documents error:', documentsError);
         console.warn('Error fetching documents:', documentsError);
-      } else {
-        console.log('Documents fetched:', documentsData?.length || 0);
-        console.log('Documents data sample:', documentsData?.slice(0, 2));
-        
-        // Debug: Check which submissions have documents
-        if (documentsData && documentsData.length > 0) {
-          const submissionIds = [...new Set(documentsData.map(doc => doc.submission_id))];
-          console.log('Submissions with documents:', submissionIds);
-        }
       }
 
-      // Fetch related data with proper error handling and typing
-      const fetchRelatedData = async (table: string, select: string): Promise<any[]> => {
-        try {
-          console.log(`Fetching ${table}...`);
-          const { data, error } = await supabase.from(table).select(select);
-          if (error) {
-            console.warn(`Error fetching ${table}:`, error);
-            return [];
-          }
-          console.log(`${table} fetched:`, data?.length || 0);
-          return data || [];
-        } catch (err) {
-          console.warn(`Failed to fetch ${table}:`, err);
-          return [];
-        }
-      };
+      // Fetch related data
+      const { data: tokenFeaturesData } = await supabase
+        .from('token_features')
+        .select('submission_id, feature_name');
 
-      const [
-        tokenFeaturesData,
-        raiseRegionsData,
-        exchangeListingsData,
-        legalDocumentsData,
-        letterheadServicesData,
-        raiseDocumentsData,
-        whitepapersData,
-        websitePlansData,
-        legalPreferencesData
-      ] = await Promise.all([
-        fetchRelatedData('token_features', 'submission_id, feature_name'),
-        fetchRelatedData('raise_document_regions', 'submission_id, region'),
-        fetchRelatedData('exchange_listings', 'submission_id, exchange_name'),
-        fetchRelatedData('legal_documents', 'submission_id, document_type'),
-        fetchRelatedData('letterhead_services', 'submission_id, enabled, guidelines'),
-        fetchRelatedData('raise_documents', 'submission_id, company, contact_name, contact_person, position, email, phone, address, website'),
-        fetchRelatedData('whitepapers', 'submission_id, pages, guidelines'),
-        fetchRelatedData('website_plans', 'submission_id, enabled, guidelines'),
-        fetchRelatedData('legal_document_preferences', 'submission_id, preferences')
-      ]);
+      const { data: raiseRegionsData } = await supabase
+        .from('raise_document_regions')
+        .select('submission_id, region');
+
+      const { data: exchangeListingsData } = await supabase
+        .from('exchange_listings')  
+        .select('submission_id, exchange_name');
+
+      const { data: legalDocumentsData } = await supabase
+        .from('legal_documents')
+        .select('submission_id, document_type');
+
+      const { data: letterheadServicesData } = await supabase
+        .from('letterhead_services')
+        .select('submission_id, enabled, guidelines');
+
+      const { data: raiseDocumentsData } = await supabase
+        .from('raise_documents')
+        .select('submission_id, company, contact_name, contact_person, position, email, phone, address, website');
+
+      const { data: whitepapersData } = await supabase
+        .from('whitepapers')
+        .select('submission_id, pages, guidelines');
+
+      const { data: websitePlansData } = await supabase
+        .from('website_plans')
+        .select('submission_id, enabled, guidelines');
+
+      const { data: legalPreferencesData } = await supabase
+        .from('legal_document_preferences')
+        .select('submission_id, preferences');
 
       const toBool = (value: any): boolean => {
         if (value === null || value === undefined) return false;
@@ -297,31 +187,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       };
 
       const transformedSubmissions = (submissionsData || []).map(submission => {
-        const tokenFeatures = (tokenFeaturesData as TokenFeature[]).filter(f => f.submission_id === submission.id).map(f => f.feature_name);
-        const raiseDocumentRegions = (raiseRegionsData as RaiseRegion[]).filter(r => r.submission_id === submission.id).map(r => r.region);
-        const exchangeListings = (exchangeListingsData as ExchangeListing[]).filter(e => e.submission_id === submission.id).map(e => e.exchange_name);
-        const legalDocuments = (legalDocumentsData as LegalDocument[]).filter(d => d.submission_id === submission.id).map(d => d.document_type);
+        const tokenFeatures = tokenFeaturesData?.filter(f => f.submission_id === submission.id).map(f => f.feature_name) || [];
+        const raiseDocumentRegions = raiseRegionsData?.filter(r => r.submission_id === submission.id).map(r => r.region) || [];
+        const exchangeListings = exchangeListingsData?.filter(e => e.submission_id === submission.id).map(e => e.exchange_name) || [];
+        const legalDocuments = legalDocumentsData?.filter(d => d.submission_id === submission.id).map(d => d.document_type) || [];
         
-        const letterheadService = (letterheadServicesData as LetterheadService[]).find(l => l.submission_id === submission.id);
-        const raiseDocumentService = (raiseDocumentsData as RaiseDocument[]).find(r => r.submission_id === submission.id);
-        const whitepaperService = (whitepapersData as Whitepaper[]).find(w => w.submission_id === submission.id);
-        const websitePlanService = (websitePlansData as WebsitePlan[]).find(w => w.submission_id === submission.id);
-        const legalDocumentPreferences = (legalPreferencesData as LegalPreference[]).find(l => l.submission_id === submission.id);
+        const letterheadService = letterheadServicesData?.find(l => l.submission_id === submission.id);
+        const raiseDocumentService = raiseDocumentsData?.find(r => r.submission_id === submission.id);
+        const whitepaperService = whitepapersData?.find(w => w.submission_id === submission.id);
+        const websitePlanService = websitePlansData?.find(w => w.submission_id === submission.id);
+        const legalDocumentPreferences = legalPreferencesData?.find(l => l.submission_id === submission.id);
         
         // Map uploaded documents for this submission
-        const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => {
-          console.log('Processing document for submission', submission.id, ':', doc);
-          return {
-            id: doc.id,
-            fieldName: doc.field_name,
-            originalFilename: doc.original_filename,
-            filePath: doc.file_path,
-            fileSize: doc.file_size || 0,
-            mimeType: doc.mime_type || 'application/octet-stream'
-          };
-        }) || [];
-        
-        console.log(`Submission ${submission.id} has ${uploadedDocuments.length} documents`);
+        const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => ({
+          id: doc.id,
+          fieldName: doc.field_name,
+          originalFilename: doc.original_filename,
+          filePath: doc.file_path,
+          fileSize: doc.file_size || 0,
+          mimeType: doc.mime_type || 'application/octet-stream'
+        })) || [];
         
         const featuresEnabled = tokenFeatures.length > 0;
         const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
@@ -417,12 +302,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         };
       });
 
-      console.log('Final transformed submissions:', transformedSubmissions.length);
-      console.log('Sample submission with documents:', transformedSubmissions[0]?.uploadedDocuments);
-      
       setSubmissions(transformedSubmissions);
     } catch (error) {
-      console.error('Fetch error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to fetch submissions",
