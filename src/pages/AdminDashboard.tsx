@@ -119,6 +119,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
+      console.log('Fetching submissions...');
+      
       // Fetch form submissions
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
@@ -126,54 +128,63 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         .order('created_at', { ascending: false });
 
       if (submissionsError) {
+        console.error('Submissions error:', submissionsError);
         throw submissionsError;
       }
 
-      // Fetch uploaded documents
+      console.log('Submissions fetched:', submissionsData?.length || 0);
+
+      // Fetch uploaded documents with detailed logging
+      console.log('Fetching uploaded documents...');
       const { data: documentsData, error: documentsError } = await supabase
         .from('uploaded_documents')
         .select('*');
 
       if (documentsError) {
+        console.error('Documents error:', documentsError);
+        // Don't throw error for documents, just log warning
         console.warn('Error fetching documents:', documentsError);
       }
 
-      // Fetch related data
-      const { data: tokenFeaturesData } = await supabase
-        .from('token_features')
-        .select('submission_id, feature_name');
+      console.log('Documents fetched:', documentsData?.length || 0);
+      console.log('Documents data sample:', documentsData?.slice(0, 2));
 
-      const { data: raiseRegionsData } = await supabase
-        .from('raise_document_regions')
-        .select('submission_id, region');
+      // Fetch related data with error handling
+      const fetchRelatedData = async (table: string, select: string) => {
+        try {
+          const { data, error } = await supabase.from(table).select(select);
+          if (error) {
+            console.warn(`Error fetching ${table}:`, error);
+            return [];
+          }
+          return data || [];
+        } catch (err) {
+          console.warn(`Failed to fetch ${table}:`, err);
+          return [];
+        }
+      };
 
-      const { data: exchangeListingsData } = await supabase
-        .from('exchange_listings')  
-        .select('submission_id, exchange_name');
-
-      const { data: legalDocumentsData } = await supabase
-        .from('legal_documents')
-        .select('submission_id, document_type');
-
-      const { data: letterheadServicesData } = await supabase
-        .from('letterhead_services')
-        .select('submission_id, enabled, guidelines');
-
-      const { data: raiseDocumentsData } = await supabase
-        .from('raise_documents')
-        .select('submission_id, company, contact_name, contact_person, position, email, phone, address, website');
-
-      const { data: whitepapersData } = await supabase
-        .from('whitepapers')
-        .select('submission_id, pages, guidelines');
-
-      const { data: websitePlansData } = await supabase
-        .from('website_plans')
-        .select('submission_id, enabled, guidelines');
-
-      const { data: legalPreferencesData } = await supabase
-        .from('legal_document_preferences')
-        .select('submission_id, preferences');
+      const [
+        tokenFeaturesData,
+        raiseRegionsData,
+        exchangeListingsData,
+        legalDocumentsData,
+        letterheadServicesData,
+        raiseDocumentsData,
+        whitepapersData,
+        websitePlansData,
+        legalPreferencesData
+      ] = await Promise.all([
+        fetchRelatedData('token_features', 'submission_id, feature_name'),
+        fetchRelatedData('raise_document_regions', 'submission_id, region'),
+        fetchRelatedData('exchange_listings', 'submission_id, exchange_name'),
+        fetchRelatedData('legal_documents', 'submission_id, document_type'),
+        fetchRelatedData('letterhead_services', 'submission_id, enabled, guidelines'),
+        fetchRelatedData('raise_documents', 'submission_id, company, contact_name, contact_person, position, email, phone, address, website'),
+        fetchRelatedData('whitepapers', 'submission_id, pages, guidelines'),
+        fetchRelatedData('website_plans', 'submission_id, enabled, guidelines'),
+        fetchRelatedData('legal_document_preferences', 'submission_id, preferences')
+      ]);
 
       const toBool = (value: any): boolean => {
         if (value === null || value === undefined) return false;
@@ -199,14 +210,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         const legalDocumentPreferences = legalPreferencesData?.find(l => l.submission_id === submission.id);
         
         // Map uploaded documents for this submission
-        const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => ({
-          id: doc.id,
-          fieldName: doc.field_name,
-          originalFilename: doc.original_filename,
-          filePath: doc.file_path,
-          fileSize: doc.file_size || 0,
-          mimeType: doc.mime_type || 'application/octet-stream'
-        })) || [];
+        const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => {
+          console.log('Processing document:', doc);
+          return {
+            id: doc.id,
+            fieldName: doc.field_name,
+            originalFilename: doc.original_filename,
+            filePath: doc.file_path,
+            fileSize: doc.file_size || 0,
+            mimeType: doc.mime_type || 'application/octet-stream'
+          };
+        }) || [];
+        
+        console.log(`Submission ${submission.id} has ${uploadedDocuments.length} documents`);
         
         const featuresEnabled = tokenFeatures.length > 0;
         const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
@@ -302,8 +318,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
         };
       });
 
+      console.log('Final transformed submissions:', transformedSubmissions.length);
+      console.log('Sample submission with documents:', transformedSubmissions[0]?.uploadedDocuments);
+      
       setSubmissions(transformedSubmissions);
     } catch (error) {
+      console.error('Fetch error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to fetch submissions",
