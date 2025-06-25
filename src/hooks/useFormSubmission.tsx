@@ -167,28 +167,6 @@ export const useFormSubmission = () => {
 		return errors;
 	};
 
-	const uploadToSupabase = async (uploadedFiles: Record<string, any>, submissionId: string) => {
-		const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]) => ({
-			submission_id: submissionId,
-			field_name: fieldName,
-			original_filename: fileData.file.name,
-			file_path: fileData.storagePath,
-			file_size: fileData.file.size,
-			mime_type: fileData.file.type
-		}));
-
-		if (documentsToInsert.length > 0) {
-			const { error: documentsError } = await supabase
-				.from('uploaded_documents')
-				.insert(documentsToInsert);
-
-			if (documentsError) {
-				console.error('Documents storage error:', documentsError);
-				throw documentsError;
-			}
-		}
-	};
-
 	const submitForm = async (data: FormSubmissionData, uploadedFiles: Record<string, any> = {}) => {
 		setIsSubmitting(true);
 
@@ -346,6 +324,7 @@ export const useFormSubmission = () => {
 
 		// Get uploaded files from the file upload hook
 		const uploadedFiles = fileUpload ? fileUpload.uploadedFiles : {};
+		console.log('Uploaded files being sent to submission:', uploadedFiles);
 
 		return await submitForm(submissionData, uploadedFiles);
 	};

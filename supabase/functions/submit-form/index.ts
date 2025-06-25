@@ -64,32 +64,43 @@ serve(async (req) => {
 
     // Insert uploaded documents metadata if any
     if (uploadedFiles && Object.keys(uploadedFiles).length > 0) {
-      console.log('Inserting uploaded documents metadata')
-      const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]: [string, any]) => ({
-        submission_id: submissionId,
-        field_name: fieldName,
-        original_filename: fileData.file.name,
-        file_path: fileData.storagePath,
-        file_size: fileData.file.size,
-        mime_type: fileData.file.type
-      }))
+      console.log('Processing uploaded documents metadata')
+      console.log('Uploaded files structure:', JSON.stringify(uploadedFiles, null, 2))
+      
+      const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]: [string, any]) => {
+        console.log(`Processing file for field: ${fieldName}`, fileData)
+        return {
+          submission_id: submissionId,
+          field_name: fieldName,
+          original_filename: fileData.file?.name || 'unknown',
+          file_path: fileData.storagePath || '',
+          file_size: fileData.file?.size || 0,
+          mime_type: fileData.file?.type || 'application/octet-stream'
+        }
+      })
 
-      const { error: documentsError } = await supabaseClient
+      console.log('Documents to insert:', JSON.stringify(documentsToInsert, null, 2))
+
+      const { data: insertedDocs, error: documentsError } = await supabaseClient
         .from('uploaded_documents')
         .insert(documentsToInsert)
+        .select()
 
       if (documentsError) {
         console.error('Documents metadata error:', documentsError)
         throw documentsError
       }
       
-      console.log('Inserted', documentsToInsert.length, 'document records')
+      console.log('Successfully inserted', documentsToInsert.length, 'document records')
+      console.log('Inserted documents:', insertedDocs)
+    } else {
+      console.log('No uploaded files to process')
     }
 
-    // Insert related data
-    if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
+    // Insert related data sections
+    if (formData.tokenFeatures && formData.tokenFeatures.features && formData.tokenFeatures.features.length > 0) {
       console.log('Inserting token features')
-      const tokenFeatures = formData.tokenFeatures.map((feature: string) => ({
+      const tokenFeatures = formData.tokenFeatures.features.map((feature: string) => ({
         submission_id: submissionId,
         feature_name: feature
       }))
@@ -104,9 +115,9 @@ serve(async (req) => {
       }
     }
 
-    if (formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
+    if (formData.raiseDocument && formData.raiseDocument.regions && formData.raiseDocument.regions.length > 0) {
       console.log('Inserting raise document regions')
-      const regions = formData.raiseDocumentRegions.map((region: string) => ({
+      const regions = formData.raiseDocument.regions.map((region: string) => ({
         submission_id: submissionId,
         region: region
       }))
@@ -121,9 +132,9 @@ serve(async (req) => {
       }
     }
 
-    if (formData.exchangeListings && formData.exchangeListings.length > 0) {
+    if (formData.exchangeListings && formData.exchangeListings.exchanges && formData.exchangeListings.exchanges.length > 0) {
       console.log('Inserting exchange listings')
-      const exchanges = formData.exchangeListings.map((exchange: string) => ({
+      const exchanges = formData.exchangeListings.exchanges.map((exchange: string) => ({
         submission_id: submissionId,
         exchange_name: exchange
       }))
@@ -138,9 +149,9 @@ serve(async (req) => {
       }
     }
 
-    if (formData.legalDocuments && formData.legalDocuments.length > 0) {
+    if (formData.legalDocuments && formData.legalDocuments.documents && formData.legalDocuments.documents.length > 0) {
       console.log('Inserting legal documents')
-      const documents = formData.legalDocuments.map((doc: string) => ({
+      const documents = formData.legalDocuments.documents.map((doc: string) => ({
         submission_id: submissionId,
         document_type: doc
       }))
