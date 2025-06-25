@@ -119,61 +119,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      // Fetch form submissions
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('form_submissions')
-        .select('*')
+        .select(`
+          *,
+          token_features(feature_name),
+          raise_document_regions(region),
+          exchange_listings(exchange_name),
+          legal_documents(document_type),
+          letterhead_services(enabled, guidelines),
+          raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
+          whitepapers(pages, guidelines),
+          website_plans(enabled, guidelines),
+          legal_document_preferences(preferences),
+          uploaded_documents(id, field_name, original_filename, file_path, file_size, mime_type)
+        `)
         .order('created_at', { ascending: false });
 
       if (submissionsError) {
         throw submissionsError;
       }
-
-      // Fetch uploaded documents
-      const { data: documentsData, error: documentsError } = await supabase
-        .from('uploaded_documents')
-        .select('*');
-
-      if (documentsError) {
-        console.warn('Error fetching documents:', documentsError);
-      }
-
-      // Fetch related data
-      const { data: tokenFeaturesData } = await supabase
-        .from('token_features')
-        .select('submission_id, feature_name');
-
-      const { data: raiseRegionsData } = await supabase
-        .from('raise_document_regions')
-        .select('submission_id, region');
-
-      const { data: exchangeListingsData } = await supabase
-        .from('exchange_listings')  
-        .select('submission_id, exchange_name');
-
-      const { data: legalDocumentsData } = await supabase
-        .from('legal_documents')
-        .select('submission_id, document_type');
-
-      const { data: letterheadServicesData } = await supabase
-        .from('letterhead_services')
-        .select('submission_id, enabled, guidelines');
-
-      const { data: raiseDocumentsData } = await supabase
-        .from('raise_documents')
-        .select('submission_id, company, contact_name, contact_person, position, email, phone, address, website');
-
-      const { data: whitepapersData } = await supabase
-        .from('whitepapers')
-        .select('submission_id, pages, guidelines');
-
-      const { data: websitePlansData } = await supabase
-        .from('website_plans')
-        .select('submission_id, enabled, guidelines');
-
-      const { data: legalPreferencesData } = await supabase
-        .from('legal_document_preferences')
-        .select('submission_id, preferences');
 
       const toBool = (value: any): boolean => {
         if (value === null || value === undefined) return false;
@@ -187,26 +152,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       };
 
       const transformedSubmissions = (submissionsData || []).map(submission => {
-        const tokenFeatures = tokenFeaturesData?.filter(f => f.submission_id === submission.id).map(f => f.feature_name) || [];
-        const raiseDocumentRegions = raiseRegionsData?.filter(r => r.submission_id === submission.id).map(r => r.region) || [];
-        const exchangeListings = exchangeListingsData?.filter(e => e.submission_id === submission.id).map(e => e.exchange_name) || [];
-        const legalDocuments = legalDocumentsData?.filter(d => d.submission_id === submission.id).map(d => d.document_type) || [];
+        const tokenFeatures = submission.token_features?.map((f: any) => f.feature_name) || [];
+        const raiseDocumentRegions = submission.raise_document_regions?.map((r: any) => r.region) || [];
+        const exchangeListings = submission.exchange_listings?.map((e: any) => e.exchange_name) || [];
+        const legalDocuments = submission.legal_documents?.map((d: any) => d.document_type) || [];
         
-        const letterheadService = letterheadServicesData?.find(l => l.submission_id === submission.id);
-        const raiseDocumentService = raiseDocumentsData?.find(r => r.submission_id === submission.id);
-        const whitepaperService = whitepapersData?.find(w => w.submission_id === submission.id);
-        const websitePlanService = websitePlansData?.find(w => w.submission_id === submission.id);
-        const legalDocumentPreferences = legalPreferencesData?.find(l => l.submission_id === submission.id);
-        
-        // Map uploaded documents for this submission
-        const uploadedDocuments = documentsData?.filter(doc => doc.submission_id === submission.id).map(doc => ({
-          id: doc.id,
-          fieldName: doc.field_name,
-          originalFilename: doc.original_filename,
-          filePath: doc.file_path,
-          fileSize: doc.file_size || 0,
-          mimeType: doc.mime_type || 'application/octet-stream'
-        })) || [];
+        const letterheadService = submission.letterhead_services?.[0];
+        const raiseDocumentService = submission.raise_documents?.[0];
+        const whitepaperService = submission.whitepapers?.[0];
+        const websitePlanService = submission.website_plans?.[0];
+        const legalDocumentPreferences = submission.legal_document_preferences?.[0];
         
         const featuresEnabled = tokenFeatures.length > 0;
         const letterheadEnabled = letterheadService ? toBool(letterheadService.enabled) : false;
@@ -298,7 +253,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
           status: submission.status as 'Pending' | 'Completed' | 'Processing' || 'Pending',
           
           // Add uploaded documents
-          uploadedDocuments
+          uploadedDocuments: submission.uploaded_documents?.map((doc: any) => ({
+            id: doc.id,
+            fieldName: doc.field_name,
+            originalFilename: doc.original_filename,
+            filePath: doc.file_path,
+            fileSize: doc.file_size,
+            mimeType: doc.mime_type
+          })) || []
         };
       });
 
