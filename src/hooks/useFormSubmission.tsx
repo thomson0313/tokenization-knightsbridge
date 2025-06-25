@@ -196,24 +196,19 @@ export const useFormSubmission = () => {
 			console.log('Submitting form data:', data);
 			console.log('Uploaded files:', uploadedFiles);
 
-			// Call Edge Function instead of direct database operations
-			const response = await fetch('/api/submit-form', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ 
+			// Call Supabase Edge Function instead of relative API route
+			const { data: result, error } = await supabase.functions.invoke('submit-form', {
+				body: { 
 					formData: data,
 					uploadedFiles: uploadedFiles 
-				}),
+				}
 			});
 
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.error || 'Submission failed');
+			if (error) {
+				console.error('Edge function error:', error);
+				throw new Error(error.message || 'Submission failed');
 			}
 
-			const result = await response.json();
 			console.log('Submission successful:', result);
 
 			toast({
