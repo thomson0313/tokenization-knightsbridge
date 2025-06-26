@@ -24,7 +24,6 @@ export const ExchangeListingSection: React.FC = () => {
     }
     
     updateFormData('exchangeListings', updatedExchanges);
-    console.log('Updated exchangeListings:', updatedExchanges);
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
@@ -32,7 +31,6 @@ export const ExchangeListingSection: React.FC = () => {
     if (!enabled) {
       updateFormData('exchangeListings', []);
     }
-    console.log('Exchange listing enabled:', enabled);
   };
 
   const isEnabled = formData.exchangeListingEnabled || (formData.exchangeListings && formData.exchangeListings.length > 0);

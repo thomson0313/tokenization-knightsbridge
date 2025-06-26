@@ -9,7 +9,6 @@ export const FeaturesSection: React.FC = () => {
 
   const updateFeature = (feature: string, checked: boolean) => {
     updateArrayField('tokenFeatures', feature, checked);
-    console.log('Updated tokenFeatures:', formData.tokenFeatures);
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
@@ -18,7 +17,6 @@ export const FeaturesSection: React.FC = () => {
       updateFormData('tokenFeatures', []);
       updateFormData('featuresGuidelines', '');
     }
-    console.log('Features enabled:', enabled);
   };
 
   const handleGuidelinesChange = (guidelines: string) => {
