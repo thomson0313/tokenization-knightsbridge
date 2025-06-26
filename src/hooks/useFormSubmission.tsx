@@ -179,6 +179,9 @@ export const useFormSubmission = () => {
 				formData: {
 					main: data.main,
 					tokenFeatures: data.tokenFeatures?.features || [],
+                    letterhead: data.letterhead,
+                    whitepaper: data.whitepaper,
+                    websitePlan: data.websitePlan,
 					raiseDocumentRegions: data.raiseDocument?.regions || [],
 					exchangeListings: data.exchangeListings?.exchanges || [],
 					legalDocuments: data.legalDocuments?.documents || [],
@@ -277,6 +280,61 @@ export const useFormSubmission = () => {
 				payment_amount: amount.toString() // Store amount as string for consistency
 			}
 		};
+
+        // Add optional sections only if they have data
+		if (formData.tokenFeatures?.length > 0) {
+			submissionData.tokenFeatures = {
+				features: formData.tokenFeatures
+			};
+		}
+
+		if (formData.letterheadEnabled || formData.letterheadGuidelines?.trim()) {
+			submissionData.letterhead = {
+				enabled: formData.letterheadEnabled,
+				guidelines: formData.letterheadGuidelines || ''
+			};
+		}
+
+		if (formData.raiseDocumentRegions?.length > 0) {
+			submissionData.raiseDocument = {
+				regions: formData.raiseDocumentRegions,
+				company: formData.raiseDocumentCompany || '',
+				contact_name: formData.raiseDocumentContactName || '',
+				contact_person: formData.raiseDocumentContactPerson || '',
+				position: formData.raiseDocumentPosition || '',
+				email: formData.raiseDocumentEmail || '',
+				phone: formData.raiseDocumentPhone || '',
+				address: formData.raiseDocumentAddress || '',
+				website: formData.raiseDocumentWebsite || ''
+			};
+		}
+
+		if (formData.whitePaperPages?.trim() && formData.whitePaperPages !== 'none') {
+			submissionData.whitepaper = {
+				pages: formData.whitePaperPages,
+				guidelines: formData.whitePaperGuidelines || ''
+			};
+		}
+
+		if (formData.websitePlanEnabled) {
+			submissionData.websitePlan = {
+				enabled: formData.websitePlanEnabled,
+				guidelines: formData.websitePlanGuidelines || ''
+			};
+		}
+
+		if (formData.exchangeListings?.length > 0) {
+			submissionData.exchangeListings = {
+				exchanges: formData.exchangeListings
+			};
+		}
+
+		if (formData.legalDocuments?.length > 0) {
+			submissionData.legalDocuments = {
+				documents: formData.legalDocuments,
+				preferences: formData.legalDocumentsPreferences || ''
+			};
+		}
 
 		// Prepare uploaded files metadata for submission
 		let uploadedFilesMetadata: Record<string, any> = {};
