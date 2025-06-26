@@ -9,6 +9,7 @@ export const LegalDocumentsSection: React.FC = () => {
 
   const updateDocument = (document: string, checked: boolean) => {
     updateArrayField('legalDocuments', document, checked);
+    console.log('Updated legalDocuments:', formData.legalDocuments);
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
@@ -17,6 +18,7 @@ export const LegalDocumentsSection: React.FC = () => {
       updateFormData('legalDocuments', []);
       updateFormData('legalDocumentsPreferences', '');
     }
+    console.log('Legal documents enabled:', enabled);
   };
 
   const handlePreferencesChange = (preferences: string) => {
