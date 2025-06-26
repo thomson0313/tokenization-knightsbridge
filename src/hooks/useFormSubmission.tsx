@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from './use-toast';
 import { supabase } from '../utils/supabase';
@@ -179,9 +180,10 @@ export const useFormSubmission = () => {
 				formData: {
 					main: data.main,
 					tokenFeatures: data.tokenFeatures?.features || [],
-                    letterhead: data.letterhead,
-                    whitepaper: data.whitepaper,
-                    websitePlan: data.websitePlan,
+					letterhead: data.letterhead,
+					whitepaper: data.whitepaper,
+					websitePlan: data.websitePlan,
+					raiseDocument: data.raiseDocument,
 					raiseDocumentRegions: data.raiseDocument?.regions || [],
 					exchangeListings: data.exchangeListings?.exchanges || [],
 					legalDocuments: data.legalDocuments?.documents || [],
