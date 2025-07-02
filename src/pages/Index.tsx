@@ -34,7 +34,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 	});
 	const [totalAmount, setTotalAmount] = useState(100); // Start with Mint Token
 
-	const { formData, fileUpload } = useFormContext();
+	const { formData } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
 	const handleCheckout = (amount: number) => {
@@ -44,8 +44,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
 	const handlePayNow = async () => {
 		try {
-			console.log('Submitting with uploaded files:', fileUpload.uploadedFiles);
-			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount, fileUpload);
+			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true

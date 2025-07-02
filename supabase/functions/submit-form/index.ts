@@ -61,32 +61,6 @@ serve(async (req) => {
     const submissionId = submission.id
     console.log('Created submission with ID:', submissionId)
 
-    // Insert uploaded documents metadata
-    if (formData.uploadedDocuments && Object.keys(formData.uploadedDocuments).length > 0) {
-      console.log('Inserting uploaded documents metadata:', formData.uploadedDocuments)
-      const documentsToInsert = Object.entries(formData.uploadedDocuments).map(([fieldName, fileData]: [string, any]) => ({
-        submission_id: submissionId,
-        field_name: fieldName,
-        original_filename: fileData.originalFilename || fileData.file?.name || 'unknown',
-        file_path: fileData.filePath || fileData.storagePath || '',
-        file_size: fileData.fileSize || fileData.file?.size || 0,
-        mime_type: fileData.mimeType || fileData.file?.type || 'application/octet-stream'
-      }))
-      
-      console.log('Documents to insert:', documentsToInsert)
-      
-      const { error: documentsError } = await supabaseClient
-        .from('uploaded_documents')
-        .insert(documentsToInsert)
-      
-      if (documentsError) {
-        console.error('Documents metadata error:', documentsError)
-        // Don't throw error for documents metadata, just log it
-      } else {
-        console.log('Successfully inserted documents metadata')
-      }
-    }
-
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
       console.log('Inserting token features')

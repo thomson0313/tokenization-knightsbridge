@@ -34,7 +34,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 	});
 	const [totalAmount, setTotalAmount] = useState(200); // Start with Knightsbridge Service + Mint Token
 
-	const { formData, fileUpload } = useFormContext();
+	const { formData } = useFormContext();
 	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
 	const handleCheckout = (amount: number) => {
@@ -44,8 +44,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
 	const handlePayNow = async () => {
 		try {
-			console.log('Knightsbridge submitting with uploaded files:', fileUpload.uploadedFiles);
-			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount, fileUpload);
+			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount);
 			if (result.success) {
 				setShowPayment(false);
 				// Only access submissionId if success is true
