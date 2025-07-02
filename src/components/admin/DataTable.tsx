@@ -190,7 +190,62 @@ const DocumentsCell: React.FC<{ documents: FormSubmission['uploadedDocuments'] }
 	);
 };
 
+const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; originalFilename: string; filePath: string; fileSize: number; mimeType: string; } }> = ({ document }) => {
+	const { toast } = useToast();
+
+	const handleDownload = async () => {
+		try {
+			const { data, error } = await supabase.storage
+				.from('form-documents')
+				.download(document.filePath);
+
+			if (error) {
+				throw error;
+			}
+
+			// Create blob URL and trigger download
+			const url = URL.createObjectURL(data);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = document.originalFilename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+
+			toast({
+				title: "Download started",
+				description: `${document.originalFilename} is being downloaded.`,
+			});
+		} catch (error) {
+			console.error('Download error:', error);
+			toast({
+				title: "Download failed",
+				description: "Failed to download file. Please try again.",
+				variant: "destructive",
+			});
+		}
+	};
+
+	return (
+		<Button
+			variant="outline"
+			size="sm"
+			onClick={handleDownload}
+			className="h-6 px-2 text-xs ml-2"
+		>
+			<Download className="h-3 w-3 mr-1" />
+			{document.originalFilename}
+		</Button>
+	);
+};
+
 const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ submission }) => {
+	// Helper function to get document by field name
+	const getDocumentByFieldName = (fieldName: string) => {
+		return submission.uploadedDocuments?.find(doc => doc.fieldName === fieldName);
+	};
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -283,13 +338,23 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 								{submission.kycFullName && (
 									<>
 										<div><strong>Full Name:</strong></div>
-										<div>{submission.kycFullName}</div>
+										<div className="flex items-center">
+											{submission.kycFullName}
+											{getDocumentByFieldName('kycProofOfAddress') && (
+												<FileDownloadButton document={getDocumentByFieldName('kycProofOfAddress')!} />
+											)}
+										</div>
 									</>
 								)}
 								{submission.kycIdNumber && (
 									<>
 										<div><strong>ID Number:</strong></div>
-										<div>{submission.kycIdNumber}</div>
+										<div className="flex items-center">
+											{submission.kycIdNumber}
+											{getDocumentByFieldName('kycProofOfIdentity') && (
+												<FileDownloadButton document={getDocumentByFieldName('kycProofOfIdentity')!} />
+											)}
+										</div>
 									</>
 								)}
 							</div>
@@ -370,7 +435,12 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 								{submission.businessPlanGuidelines && (
 									<>
 										<div><strong>Guidelines:</strong></div>
-										<div>{submission.businessPlanGuidelines}</div>
+										<div className="flex items-center">
+											{submission.businessPlanGuidelines}
+											{getDocumentByFieldName('businessPlanGuide') && (
+												<FileDownloadButton document={getDocumentByFieldName('businessPlanGuide')!} />
+											)}
+										</div>
 									</>
 								)}
 							</div>
@@ -391,9 +461,14 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 							</div>
 
 							<div>
-								<strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
+								<div className="flex items-center">
+									<strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
+									{getDocumentByFieldName('letterheadBrandGuide') && (
+										<FileDownloadButton document={getDocumentByFieldName('letterheadBrandGuide')!} />
+									)}
+								</div>
 								{submission.letterheadEnabled && submission.letterheadGuidelines && (
-									<div className="mt-1 p-2 bg-muted rounded text-xs">
+									<div className="mt-1 p-2 bg-muted rounded">
 										{submission.letterheadGuidelines}
 									</div>
 								)}
@@ -404,9 +479,14 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 							</div>
 
 							<div>
-								<strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
+								<div className="flex items-center">
+									<strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
+									{getDocumentByFieldName('websitePlanDesignGuide') && (
+										<FileDownloadButton document={getDocumentByFieldName('websitePlanDesignGuide')!} />
+									)}
+								</div>
 								{submission.websitePlanEnabled && submission.websitePlanGuidelines && (
-									<div className="mt-1 p-2 bg-muted rounded text-xs">
+									<div className="mt-1 p-2 bg-muted rounded">
 										{submission.websitePlanGuidelines}
 									</div>
 								)}
@@ -415,12 +495,12 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 							<div>
 								<strong>WhitePaper:</strong> {submission.whitePaperEnabled ? '✓ Yes' : '✗ No'}
 								{submission.whitePaperEnabled && submission.whitePaperPages && (
-									<div className="mt-1 text-gray-600">
+									<div className="mt-1 text-muted-foreground">
 										Pages: {submission.whitePaperPages}
 									</div>
 								)}
 								{submission.whitePaperEnabled && submission.whitePaperGuidelines && (
-									<div className="mt-1 p-2 bg-muted rounded text-xs">
+									<div className="mt-1 p-2 bg-muted rounded">
 										{submission.whitePaperGuidelines}
 									</div>
 								)}
@@ -533,6 +613,11 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 	const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 10;
+
+	// Helper function to get document by field name
+	const getDocumentByFieldName = (submission: FormSubmission, fieldName: string) => {
+		return submission.uploadedDocuments?.find(doc => doc.fieldName === fieldName);
+	};
 
 	const toggleRow = (id: string) => {
 		const newExpanded = new Set(expandedRows);
@@ -666,14 +751,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 							<TableHead className="min-w-[150px]">Token/Project</TableHead>
 							<TableHead className="min-w-[120px]">Payment</TableHead>
 							<TableHead className="min-w-[100px]">Status</TableHead>
-							{/* <TableHead className="min-w-[200px]">Documents</TableHead> */}
 							<TableHead className="min-w-[150px]">Actions</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{currentData.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+								<TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
 									No submissions found
 								</TableCell>
 							</TableRow>
@@ -732,9 +816,6 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 												{submission.status}
 											</span>
 										</TableCell>
-										{/* <TableCell>
-                      <DocumentsCell documents={submission.uploadedDocuments} />
-                    </TableCell> */}
 										<TableCell>
 											<SubmissionDetailDialog submission={submission} />
 										</TableCell>
@@ -742,7 +823,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 
 									{expandedRows.has(submission.id) && (
 										<TableRow className="bg-muted/30">
-											<TableCell colSpan={11} className="p-6">
+											<TableCell colSpan={10} className="p-6">
 												<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 													{/* Token Details - Display ALL token fields */}
 													{(submission.tokenName || submission.tokenTicker) && (
@@ -784,14 +865,28 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 														</div>
 													</div>
 
-													{/* KYC & Business Info (Knightsbridge) - Display ALL data */}
+													{/* KYC & Business Info (Knightsbridge) - Display ALL data with file downloads */}
 													{submission.type === 'Knightsbridge' && (
 														<div className="space-y-2">
 															<h4 className="font-semibold text-sm text-purple-700 border-b border-purple-200 pb-1">KYC & Business</h4>
 															<div className="text-xs space-y-1">
-																{/* KYC Data */}
-																{submission.kycFullName && <div><strong>KYC Name:</strong> {submission.kycFullName}</div>}
-																{submission.kycIdNumber && <div><strong>ID Number:</strong> {submission.kycIdNumber}</div>}
+																{/* KYC Data with file attachments */}
+																{submission.kycFullName && (
+																	<div className="flex items-center justify-between">
+																		<span><strong>KYC Name:</strong> {submission.kycFullName}</span>
+																		{getDocumentByFieldName(submission, 'kycProofOfAddress') && (
+																			<FileDownloadButton document={getDocumentByFieldName(submission, 'kycProofOfAddress')!} />
+																		)}
+																	</div>
+																)}
+																{submission.kycIdNumber && (
+																	<div className="flex items-center justify-between">
+																		<span><strong>ID Number:</strong> {submission.kycIdNumber}</span>
+																		{getDocumentByFieldName(submission, 'kycProofOfIdentity') && (
+																			<FileDownloadButton document={getDocumentByFieldName(submission, 'kycProofOfIdentity')!} />
+																		)}
+																	</div>
+																)}
 																{submission.kycDateOfBirth && <div><strong>Date of Birth:</strong> {submission.kycDateOfBirth}</div>}
 																{submission.kycNationality && <div><strong>Nationality:</strong> {submission.kycNationality}</div>}
 																{submission.kycAddress && <div><strong>Address:</strong> {submission.kycAddress}</div>}
@@ -819,9 +914,16 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 																{submission.issuerBusinessType && <div><strong>Business Type:</strong> {submission.issuerBusinessType}</div>}
 																{submission.issuerRegistrationNumber && <div><strong>Registration Number:</strong> {submission.issuerRegistrationNumber}</div>}
 
-																{/* Business Plan Data */}
+																{/* Business Plan Data with file attachment */}
 																{submission.businessPlanType && <div><strong>Business Plan Type:</strong> {submission.businessPlanType}</div>}
-																{submission.businessPlanGuidelines && <div><strong>Business Plan Guidelines:</strong> {submission.businessPlanGuidelines}</div>}
+																{submission.businessPlanGuidelines && (
+																	<div className="flex items-center justify-between">
+																		<span><strong>Business Plan Guidelines:</strong> {submission.businessPlanGuidelines}</span>
+																		{getDocumentByFieldName(submission, 'businessPlanGuide') && (
+																			<FileDownloadButton document={getDocumentByFieldName(submission, 'businessPlanGuide')!} />
+																		)}
+																	</div>
+																)}
 																{submission.businessPlanExecutiveSummary && <div><strong>Executive Summary:</strong> {submission.businessPlanExecutiveSummary}</div>}
 																{submission.businessPlanMarketAnalysis && <div><strong>Market Analysis:</strong> {submission.businessPlanMarketAnalysis}</div>}
 																{submission.businessPlanFinancialProjections && <div><strong>Financial Projections:</strong> {submission.businessPlanFinancialProjections}</div>}
@@ -829,12 +931,17 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 														</div>
 													)}
 
-													{/* Additional Services Section */}
+													{/* Additional Services Section with file downloads */}
 													<div className="space-y-2">
 														<h4 className="font-semibold text-sm text-orange-700 border-b border-orange-200 pb-1">Additional Services</h4>
 														<div className="text-xs space-y-2">
 															<div>
-																<strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}
+																<div className="flex items-center justify-between">
+																	<span><strong>Letterhead:</strong> {submission.letterheadEnabled ? '✓ Yes' : '✗ No'}</span>
+																	{getDocumentByFieldName(submission, 'letterheadBrandGuide') && (
+																		<FileDownloadButton document={getDocumentByFieldName(submission, 'letterheadBrandGuide')!} />
+																	)}
+																</div>
 																{submission.letterheadEnabled && submission.letterheadGuidelines && (
 																	<div className="mt-1 p-2 bg-muted rounded">
 																		{submission.letterheadGuidelines}
@@ -845,7 +952,12 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 																<strong>Raise Document:</strong> {submission.raiseDocumentEnabled ? '✓ Yes' : '✗ No'}
 															</div>
 															<div>
-																<strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}
+																<div className="flex items-center justify-between">
+																	<span><strong>Website Plan:</strong> {submission.websitePlanEnabled ? '✓ Yes' : '✗ No'}</span>
+																	{getDocumentByFieldName(submission, 'websitePlanDesignGuide') && (
+																		<FileDownloadButton document={getDocumentByFieldName(submission, 'websitePlanDesignGuide')!} />
+																	)}
+																</div>
 																{submission.websitePlanEnabled && submission.websitePlanGuidelines && (
 																	<div className="mt-1 p-2 bg-muted rounded">
 																		{submission.websitePlanGuidelines}
