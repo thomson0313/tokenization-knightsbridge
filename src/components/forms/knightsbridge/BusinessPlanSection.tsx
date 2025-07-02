@@ -49,7 +49,7 @@ export const BusinessPlanSection: React.FC = () => {
           />
         }
       />
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <CheckboxField
           label="Utility Token"
@@ -76,7 +76,7 @@ export const BusinessPlanSection: React.FC = () => {
           checked={businessPlanTypes.reward || false}
           onChange={(checked) => updateBusinessPlanType('reward', checked)}
         />
-        <div className="flex items-center justify-center">
+        {/* <div className="flex items-center justify-center">
           <UploadButton
             label="Upload Document"
             onFileUpload={handleUploadDocument}
@@ -85,9 +85,9 @@ export const BusinessPlanSection: React.FC = () => {
             isUploading={fileUpload.isUploading('businessPlanDocument')}
             onRemoveFile={() => fileUpload.removeFile('businessPlanDocument')}
           />
-        </div>
+        </div> */}
       </div>
-      
+
       <div className="flex flex-col">
         <label className="text-text-primary text-[17px] font-normal mb-[11px]">
           Mention your Guidelines
