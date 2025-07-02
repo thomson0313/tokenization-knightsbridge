@@ -190,14 +190,14 @@ const DocumentsCell: React.FC<{ documents: FormSubmission['uploadedDocuments'] }
 	);
 };
 
-const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; originalFilename: string; filePath: string; fileSize: number; mimeType: string; } }> = ({ document }) => {
+const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; originalFilename: string; filePath: string; fileSize: number; mimeType: string; } }> = ({ document: fileDocument }) => {
 	const { toast } = useToast();
 
 	const handleDownload = async () => {
 		try {
 			const { data, error } = await supabase.storage
 				.from('form-documents')
-				.download(document.filePath);
+				.download(fileDocument.filePath);
 
 			if (error) {
 				throw error;
@@ -207,7 +207,7 @@ const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; 
 			const url = URL.createObjectURL(data);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = document.originalFilename;
+			a.download = fileDocument.originalFilename;
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
@@ -215,7 +215,7 @@ const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; 
 
 			toast({
 				title: "Download started",
-				description: `${document.originalFilename} is being downloaded.`,
+				description: `${fileDocument.originalFilename} is being downloaded.`,
 			});
 		} catch (error) {
 			console.error('Download error:', error);
@@ -235,7 +235,7 @@ const FileDownloadButton: React.FC<{ document: { id: string; fieldName: string; 
 			className="h-6 px-2 text-xs ml-2"
 		>
 			<Download className="h-3 w-3 mr-1" />
-			{document.originalFilename}
+			{fileDocument.originalFilename}
 		</Button>
 	);
 };
