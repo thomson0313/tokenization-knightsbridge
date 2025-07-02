@@ -167,7 +167,7 @@ export const useFormSubmission = () => {
 		return errors;
 	};
 
-	const submitForm = async (data: FormSubmissionData, uploadedDocuments?: Record<string, string>) => {
+	const submitForm = async (data: FormSubmissionData, uploadedFiles?: Record<string, any>) => {
 		setIsSubmitting(true);
 
 		try {
@@ -205,13 +205,15 @@ export const useFormSubmission = () => {
 			console.log('Created submission with ID:', submissionId);
 
 			// Store uploaded documents if any
-			if (uploadedDocuments && Object.keys(uploadedDocuments).length > 0) {
-				const documentsToInsert = Object.entries(uploadedDocuments).map(([fieldName, url]) => ({
+			if (uploadedFiles && Object.keys(uploadedFiles).length > 0) {
+				const documentsToInsert = Object.entries(uploadedFiles).map(([fieldName, fileData]: [string, any]) => ({
 					submission_id: submissionId,
-					document_type: fieldName,
-					file_url: url,
-					uploaded_at: new Date().toISOString()
-				}));
+					field_name: fieldName,
+					original_filename: fileData.originalFilename || fileData.file?.name || 'unknown',
+					file_path: fileData.filePath || fileData.storagePath || '',
+					file_size: fileData.fileSize || fileData.file?.size || 0,
+					mime_type: fileData.mimeType || fileData.file?.type || 'application/octet-stream'
+				}))
 
 				const { error: documentsError } = await supabase
 					.from('uploaded_documents')
@@ -222,6 +224,33 @@ export const useFormSubmission = () => {
 					// Don't throw error for documents, just log it
 				}
 			}
+
+			// const submissionPayload = {
+			// 	formData: {
+			// 		main: data.main,
+			// 		tokenFeatures: data.tokenFeatures?.features || [],
+			// 		letterhead: data.letterhead,
+			// 		whitepaper: data.whitepaper,
+			// 		websitePlan: data.websitePlan,
+			// 		raiseDocument: data.raiseDocument,
+			// 		raiseDocumentRegions: data.raiseDocument?.regions || [],
+			// 		exchangeListings: data.exchangeListings?.exchanges || [],
+			// 		legalDocuments: data.legalDocuments?.documents || [],
+			// 		uploadedDocuments: uploadedFiles || {}
+			// 	}
+			// };
+
+			// console.log('Sending uploaded file metadata to Edge Function:', submissionPayload);
+
+			// // Call the Edge Function using supabase.functions.invoke
+			// const { data: result, error } = await supabase.functions.invoke('submit-form', {
+			// 	body: submissionPayload
+			// });
+
+			// if (error) {
+			// 	console.error('Edge function error:', error);
+			// 	throw error;
+			// }
 
 			// Insert optional sections data
 			if (data.tokenFeatures && data.tokenFeatures.features?.length > 0) {
@@ -500,28 +529,24 @@ export const useFormSubmission = () => {
 		}
 
 		// Upload files to Supabase and get URLs
-		let uploadedDocuments: Record<string, string> = {};
-		if (fileUpload && Object.keys(fileUpload.uploadedFiles).length > 0) {
-			try {
-				// First submit the form to get submission ID
-				const result = await submitForm(submissionData);
-				if (result.success) {
-					// Then upload files with the submission ID
-					uploadedDocuments = await fileUpload.uploadToSupabase(result.submissionId);
-					
-					// Update the submission with document URLs if any were uploaded
-					if (Object.keys(uploadedDocuments).length > 0) {
-						await submitForm(submissionData, uploadedDocuments);
-					}
-				}
-				return result;
-			} catch (error) {
-				console.error('Error during file upload:', error);
-				// Still try to submit the form without files
-			}
+		let uploadedFilesMetadata: Record<string, any> = {};
+		if (fileUpload && fileUpload.uploadedFiles) {
+			console.log('Processing uploaded files:', fileUpload.uploadedFiles);
+			uploadedFilesMetadata = Object.entries(fileUpload.uploadedFiles).reduce((acc, [fieldName, fileData]: [string, any]) => {
+				acc[fieldName] = {
+					originalFilename: fileData.file?.name || 'unknown',
+					filePath: fileData.storagePath || fileData.url || '',
+					fileSize: fileData.file?.size || 0,
+					mimeType: fileData.file?.type || 'application/octet-stream',
+					uploadedAt: fileData.uploadedAt || new Date()
+				};
+				return acc;
+			}, {} as Record<string, any>);
+
+			console.log('Prepared uploaded files metadata:', uploadedFilesMetadata);
 		}
 
-		return await submitForm(submissionData, uploadedDocuments);
+		return await submitForm(submissionData, uploadedFilesMetadata);
 	};
 
 	return { submitForm, validateAndSubmit, isSubmitting };

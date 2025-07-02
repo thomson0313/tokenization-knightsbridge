@@ -15,16 +15,16 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight request')
-    return new Response(null, { 
-      headers: corsHeaders, 
-      status: 200 
+    return new Response(null, {
+      headers: corsHeaders,
+      status: 200
     })
   }
 
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 405
       }
@@ -41,7 +41,7 @@ serve(async (req) => {
     console.log('Parsing request body')
     const requestBody = await req.text()
     console.log('Request body:', requestBody)
-    
+
     const { formData } = JSON.parse(requestBody)
     console.log('Parsed form data:', JSON.stringify(formData, null, 2))
 
@@ -61,6 +61,32 @@ serve(async (req) => {
     const submissionId = submission.id
     console.log('Created submission with ID:', submissionId)
 
+    // Insert uploaded documents metadata
+    if (formData.uploadedDocuments && Object.keys(formData.uploadedDocuments).length > 0) {
+      console.log('Inserting uploaded documents metadata:', formData.uploadedDocuments)
+      const documentsToInsert = Object.entries(formData.uploadedDocuments).map(([fieldName, fileData]: [string, any]) => ({
+        submission_id: submissionId,
+        field_name: fieldName,
+        original_filename: fileData.originalFilename || fileData.file?.name || 'unknown',
+        file_path: fileData.filePath || fileData.storagePath || '',
+        file_size: fileData.fileSize || fileData.file?.size || 0,
+        mime_type: fileData.mimeType || fileData.file?.type || 'application/octet-stream'
+      }))
+
+      console.log('Documents to insert:', documentsToInsert)
+
+      const { error: documentsError } = await supabaseClient
+        .from('uploaded_documents')
+        .insert(documentsToInsert)
+
+      if (documentsError) {
+        console.error('Documents metadata error:', documentsError)
+        // Don't throw error for documents metadata, just log it
+      } else {
+        console.log('Successfully inserted documents metadata')
+      }
+    }
+
     // Insert related data
     if (formData.tokenFeatures && formData.tokenFeatures.length > 0) {
       console.log('Inserting token features')
@@ -68,11 +94,11 @@ serve(async (req) => {
         submission_id: submissionId,
         feature_name: feature
       }))
-      
+
       const { error: featuresError } = await supabaseClient
         .from('token_features')
         .insert(tokenFeatures)
-      
+
       if (featuresError) {
         console.error('Features error:', featuresError)
         throw featuresError
@@ -85,11 +111,11 @@ serve(async (req) => {
         submission_id: submissionId,
         region: region
       }))
-      
+
       const { error: regionsError } = await supabaseClient
         .from('raise_document_regions')
         .insert(regions)
-      
+
       if (regionsError) {
         console.error('Regions error:', regionsError)
         throw regionsError
@@ -102,11 +128,11 @@ serve(async (req) => {
         submission_id: submissionId,
         exchange_name: exchange
       }))
-      
+
       const { error: exchangesError } = await supabaseClient
         .from('exchange_listings')
         .insert(exchanges)
-      
+
       if (exchangesError) {
         console.error('Exchanges error:', exchangesError)
         throw exchangesError
@@ -119,11 +145,11 @@ serve(async (req) => {
         submission_id: submissionId,
         document_type: doc
       }))
-      
+
       const { error: documentsError } = await supabaseClient
         .from('legal_documents')
         .insert(documents)
-      
+
       if (documentsError) {
         console.error('Documents error:', documentsError)
         throw documentsError
@@ -133,9 +159,9 @@ serve(async (req) => {
     console.log('Form submission completed successfully')
     return new Response(
       JSON.stringify({ success: true, submissionId }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        status: 200
       }
     )
 
@@ -143,7 +169,7 @@ serve(async (req) => {
     console.error('Function error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400
       }
