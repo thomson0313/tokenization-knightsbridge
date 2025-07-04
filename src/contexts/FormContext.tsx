@@ -5,6 +5,7 @@ interface FormContextType {
   formData: any;
   setFormData: (data: any) => void;
   updateFormData: (field: string, value: any) => void;
+  updateArrayField: (field: string, item: string, checked: boolean) => void;
   resetFormData: () => void;
   fileUpload: any;
   setFileUpload: (data: any) => void;
@@ -105,6 +106,24 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }));
   };
 
+  const updateArrayField = (field: string, item: string, checked: boolean) => {
+    setFormData(prev => {
+      const currentArray = prev[field] || [];
+      let updatedArray;
+      
+      if (checked) {
+        updatedArray = [...currentArray, item];
+      } else {
+        updatedArray = currentArray.filter((i: string) => i !== item);
+      }
+      
+      return {
+        ...prev,
+        [field]: updatedArray
+      };
+    });
+  };
+
   const resetFormData = () => {
     setFormData(initialFormData);
     setFileUpload({});
@@ -115,6 +134,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       formData,
       setFormData,
       updateFormData,
+      updateArrayField,
       resetFormData,
       fileUpload,
       setFileUpload
