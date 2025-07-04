@@ -27,8 +27,11 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, isDarkMode, onT
 
     try {
       const { data, error } = await supabase.functions.invoke('admin-credentials', {
-        method: 'POST',
-        body: { email, password }
+        body: JSON.stringify({ 
+          action: 'POST',
+          email, 
+          password 
+        })
       });
 
       if (error) throw error;

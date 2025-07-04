@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
-import { AdminCredentialsForm } from '../components/admin/AdminCredentialsForm';
+import { AdminSettings } from '../components/admin/AdminSettings';
 import { DataTable } from '../components/admin/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Header } from '../components/Header';
@@ -287,6 +287,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully",
+    });
+  };
+
   const totalSubmissions = submissions.length;
   const knightsbridgeSubmissions = submissions.filter(s => s.type === 'Knightsbridge').length;
   const decentralizedSubmissions = submissions.filter(s => s.type === 'Decentralized').length;
@@ -301,18 +309,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
       <Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
-              Admin Dashboard
-            </h1>
-            <p className="text-text-secondary">
-              Manage and monitor form submissions from Knightsbridge and Decentralized processes
-            </p>
-          </div>
-
-          {/* Admin Credentials Management */}
-          <div className="mb-8">
-            <AdminCredentialsForm />
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-text-primary mb-2">
+                Admin Dashboard
+              </h1>
+              <p className="text-text-secondary">
+                Manage and monitor form submissions from Knightsbridge and Decentralized processes
+              </p>
+            </div>
+            <AdminSettings onLogout={handleLogout} />
           </div>
 
           {/* Stats Cards */}

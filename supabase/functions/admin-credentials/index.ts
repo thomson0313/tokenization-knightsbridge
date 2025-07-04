@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
 }
 
 serve(async (req) => {
@@ -18,7 +19,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    if (req.method === 'GET') {
+    const body = await req.json()
+    const { action, email, password } = body
+
+    if (action === 'GET' || req.method === 'GET') {
       // Get current admin credentials (without password)
       const { data, error } = await supabaseClient
         .from('admin_credentials')
@@ -38,10 +42,8 @@ serve(async (req) => {
       )
     }
 
-    if (req.method === 'PUT') {
+    if (action === 'PUT' || req.method === 'PUT') {
       // Update admin credentials
-      const { email, password } = await req.json()
-
       if (!email || !password) {
         return new Response(
           JSON.stringify({ success: false, error: 'Email and password are required' }),
@@ -52,10 +54,26 @@ serve(async (req) => {
         )
       }
 
+      // Get the current record first
+      const { data: currentData } = await supabaseClient
+        .from('admin_credentials')
+        .select('id')
+        .single()
+
+      if (!currentData) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'No admin credentials found' }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 404 
+          }
+        )
+      }
+
       const { data, error } = await supabaseClient
         .from('admin_credentials')
         .update({ email, password })
-        .eq('id', (await supabaseClient.from('admin_credentials').select('id').single()).data?.id)
+        .eq('id', currentData.id)
         .select()
         .single()
 
@@ -72,10 +90,8 @@ serve(async (req) => {
       )
     }
 
-    if (req.method === 'POST') {
+    if (action === 'POST' || req.method === 'POST') {
       // Verify admin credentials for login
-      const { email, password } = await req.json()
-
       const { data, error } = await supabaseClient
         .from('admin_credentials')
         .select('*')
@@ -111,6 +127,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('Admin credentials error:', error)
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { 
