@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, onThemeToggle }) => 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="text-text-primary text-sm font-medium cursor-pointer hover:text-blue-400 transition-colors bg-transparent">
                     Services
-                    <ChevronDown className="ml-1 h-3 w-3" />
+                    {/* <ChevronDown className="ml-1 h-3 w-3" /> */}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-bg-secondary border border-border-primary rounded-md shadow-lg p-2 min-w-[200px]">
                     <NavigationMenuLink asChild>
