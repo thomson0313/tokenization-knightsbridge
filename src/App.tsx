@@ -11,6 +11,8 @@ import Knightsbridge from "./pages/Knightsbridge";
 import AdminDashboard from "./pages/AdminDashboard";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,14 @@ const App = () => {
             <Route 
               path="/knightsbridge" 
               element={<Knightsbridge isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
+            />
+            <Route 
+              path="/faq" 
+              element={<FAQ isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
+            />
+            <Route 
+              path="/contact" 
+              element={<Contact isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle} />} 
             />
             <Route 
               path="/admin-dashboard-knightsbridge" 
