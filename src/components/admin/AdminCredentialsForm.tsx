@@ -99,7 +99,7 @@ export const AdminCredentialsForm: React.FC = () => {
   }
 
   return (
-    <Car>
+    <Card>
       <CardHeader>
         <CardTitle>Update Admin Credentials</CardTitle>
         <p className="text-sm text-text-secondary">
