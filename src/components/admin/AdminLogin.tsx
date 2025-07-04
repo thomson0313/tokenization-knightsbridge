@@ -27,16 +27,19 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, isDarkMode, onT
 
     try {
       const { data, error } = await supabase.functions.invoke('admin-credentials', {
-        body: JSON.stringify({ 
-          action: 'POST',
+        method: 'POST',
+        body: { 
           email, 
           password 
-        })
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
 
-      if (data.success) {
+      if (data?.success) {
         onLogin();
         toast({
           title: "Success",
@@ -46,6 +49,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, isDarkMode, onT
         setError('Invalid email or password');
       }
     } catch (error) {
+      console.error('Login failed:', error);
       setError('Login failed. Please try again.');
       toast({
         title: "Error",

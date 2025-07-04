@@ -38,16 +38,20 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('admin-credentials', {
-        body: JSON.stringify({ action: 'GET' })
+        method: 'GET'
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Fetch error:', error);
+        throw error;
+      }
 
-      if (data.success) {
+      if (data?.success) {
         setCurrentEmail(data.credentials.email);
         setEmail(data.credentials.email);
       }
     } catch (error) {
+      console.error('Failed to fetch credentials:', error);
       toast({
         title: "Error",
         description: "Failed to fetch current credentials",
@@ -73,16 +77,19 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
     setIsUpdating(true);
     try {
       const { data, error } = await supabase.functions.invoke('admin-credentials', {
-        body: JSON.stringify({ 
-          action: 'PUT',
+        method: 'PUT',
+        body: { 
           email, 
           password 
-        })
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
+      }
 
-      if (data.success) {
+      if (data?.success) {
         toast({
           title: "Success",
           description: "Admin credentials updated successfully",
@@ -91,9 +98,10 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
         setPassword('');
         onClose();
       } else {
-        throw new Error(data.error || 'Failed to update credentials');
+        throw new Error(data?.error || 'Failed to update credentials');
       }
     } catch (error) {
+      console.error('Failed to update credentials:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update credentials",
