@@ -23,48 +23,48 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [currentEmail, setCurrentEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [currentEmail, setCurrentEmail] = useState('');
+  // const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchCurrentCredentials();
-    }
-  }, [isOpen]);
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     fetchCurrentCredentials();
+  //   }
+  // }, [isOpen]);
 
-  const fetchCurrentCredentials = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('admin-credentials', {
-        method: 'GET'
-      });
+  // const fetchCurrentCredentials = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const { data, error } = await supabase.functions.invoke('admin-credentials', {
+  //       method: 'GET'
+  //     });
 
-      if (error) {
-        console.error('Fetch error:', error);
-        throw error;
-      }
+  //     if (error) {
+  //       console.error('Fetch error:', error);
+  //       throw error;
+  //     }
 
-      if (data?.success) {
-        setCurrentEmail(data.credentials.email);
-        setEmail(data.credentials.email);
-      }
-    } catch (error) {
-      console.error('Failed to fetch credentials:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch current credentials",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (data?.success) {
+  //       setCurrentEmail(data.credentials.email);
+  //       setEmail(data.credentials.email);
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to fetch credentials:', error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch current credentials",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         title: "Error",
@@ -78,9 +78,9 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
     try {
       const { data, error } = await supabase.functions.invoke('admin-credentials', {
         method: 'PUT',
-        body: { 
-          email, 
-          password 
+        body: {
+          email,
+          password
         }
       });
 
@@ -94,7 +94,7 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
           title: "Success",
           description: "Admin credentials updated successfully",
         });
-        setCurrentEmail(email);
+        // setCurrentEmail(email);
         setPassword('');
         onClose();
       } else {
@@ -117,58 +117,54 @@ export const AdminCredentialsModal: React.FC<AdminCredentialsModalProps> = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Update Admin Credentials</DialogTitle>
-          {currentEmail && (
+          {/* {currentEmail && (
             <p className="text-sm text-text-secondary">
               Current email: {currentEmail}
             </p>
-          )}
+          )} */}
         </DialogHeader>
-        
-        {isLoading ? (
-          <div className="text-center py-4">Loading...</div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">New Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter new admin email"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter new admin password"
-                required
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                type="submit" 
-                disabled={isUpdating}
-                className="flex-1"
-              >
-                {isUpdating ? 'Updating...' : 'Update Credentials'}
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onClose}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="email">New Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter new admin email"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="password">New Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter new admin password"
+              required
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="submit"
+              disabled={isUpdating}
+              className="flex-1"
+            >
+              {isUpdating ? 'Updating...' : 'Update Credentials'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
