@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
+import { AdminCredentialsForm } from '../components/admin/AdminCredentialsForm';
 import { DataTable } from '../components/admin/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Header } from '../components/Header';
@@ -307,6 +308,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
             <p className="text-text-secondary">
               Manage and monitor form submissions from Knightsbridge and Decentralized processes
             </p>
+          </div>
+
+          {/* Admin Credentials Management */}
+          <div className="mb-8">
+            <AdminCredentialsForm />
           </div>
 
           {/* Stats Cards */}
