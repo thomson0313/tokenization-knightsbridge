@@ -1,154 +1,23 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useFileUpload } from '../hooks/useFileUpload';
 
-interface FormData {
-  // Contact Information
-  contactEmail: string;
-  contactPhone: string;
-  
-  // KYC Information
-  kycFullName: string;
-  kycIdNumber: string;
-  kycDateOfBirth: string;
-  kycNationality: string;
-  kycAddress: string;
-  kycOccupation: string;
-  kycEmployer: string;
-  kycIncomeSource: string;
-  kycNetWorth: string;
-  kycInvestmentExperience: string;
-  kycRiskTolerance: string;
-  kycInvestmentObjectives: string;
-  
-  // Custodian Information
-  custodianName: string;
-  custodianContact: string;
-  custodianRegistration: string;
-  custodianAddress: string;
-  custodianServices: string;
-  
-  // Issuer Information
-  issuerEntityName: string;
-  issuerJurisdiction: string;
-  issuerContactPerson: string;
-  issuerContactInfo: string;
-  issuerAddress: string;
-  issuerBusinessType: string;
-  issuerRegistrationNumber: string;
-  
-  // Business Plan
-  businessPlanType: {
-    utility?: boolean;
-    security?: boolean;
-    governance?: boolean;
-    payment?: boolean;
-    reward?: boolean;
-  };
-  businessPlanGuidelines: string;
-  businessPlanExecutiveSummary: string;
-  businessPlanMarketAnalysis: string;
-  businessPlanFinancialProjections: string;
-  
-  // Token Information
-  tokenName: string;
-  tokenTicker: string;
-  tokenChain: string;
-  tokenDecimals: string;
-  targetPrice: string;
-  treasuryAddress: string;
-  
-  // Features
-  featuresEnabled: boolean;
-  tokenFeatures: string[];
-  featuresGuidelines: string;
-  
-  // Services
-  letterheadEnabled: boolean;
-  letterheadGuidelines: string;
-  
-  // Raise Document
-  raiseDocumentEnabled: boolean;
-  raiseDocumentRegions: string[];
-  raiseDocumentCompany: string;
-  raiseDocumentContactName: string;
-  raiseDocumentContactPerson: string;
-  raiseDocumentPosition: string;
-  raiseDocumentEmail: string;
-  raiseDocumentPhone: string;
-  raiseDocumentAddress: string;
-  raiseDocumentWebsite: string;
-  
-  // White Paper
-  whitePaperEnabled: boolean;
-  whitePaperPages: string;
-  whitePaperGuidelines: string;
-  
-  // Website Plan
-  websitePlanEnabled: boolean;
-  websitePlanGuidelines: string;
-  
-  // Exchange Listings
-  exchangeListingEnabled: boolean;
-  exchangeListings: string[];
-  
-  // Legal Documents
-  legalDocumentsEnabled: boolean;
-  legalDocuments: string[];
-  legalDocumentsPreferences: string;
-}
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface FormContextType {
-  formData: FormData;
+  formData: any;
+  setFormData: (data: any) => void;
   updateFormData: (field: string, value: any) => void;
-  updateArrayField: (field: string, value: string, checked: boolean) => void;
-  fileUpload: ReturnType<typeof useFileUpload>;
+  resetFormData: () => void;
+  fileUpload: any;
+  setFileUpload: (data: any) => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
-const initialFormData: FormData = {
+const initialFormData = {
   // Contact Information
   contactEmail: '',
   contactPhone: '',
   
-  // KYC Information
-  kycFullName: '',
-  kycIdNumber: '',
-  kycDateOfBirth: '',
-  kycNationality: '',
-  kycAddress: '',
-  kycOccupation: '',
-  kycEmployer: '',
-  kycIncomeSource: '',
-  kycNetWorth: '',
-  kycInvestmentExperience: '',
-  kycRiskTolerance: '',
-  kycInvestmentObjectives: '',
-  
-  // Custodian Information
-  custodianName: '',
-  custodianContact: '',
-  custodianRegistration: '',
-  custodianAddress: '',
-  custodianServices: '',
-  
-  // Issuer Information
-  issuerEntityName: '',
-  issuerJurisdiction: '',
-  issuerContactPerson: '',
-  issuerContactInfo: '',
-  issuerAddress: '',
-  issuerBusinessType: '',
-  issuerRegistrationNumber: '',
-  
-  // Business Plan
-  businessPlanType: {},
-  businessPlanGuidelines: '',
-  businessPlanExecutiveSummary: '',
-  businessPlanMarketAnalysis: '',
-  businessPlanFinancialProjections: '',
-  
-  // Token Information
+  // Token Mint
   tokenName: '',
   tokenTicker: '',
   tokenChain: '',
@@ -159,10 +28,9 @@ const initialFormData: FormData = {
   // Features
   featuresEnabled: false,
   tokenFeatures: [],
-  featuresGuidelines: '',
   
-  // Services
-  letterheadEnabled: false,
+  // Letterhead
+  letterheadEnabled: true,
   letterheadGuidelines: '',
   
   // Raise Document
@@ -179,14 +47,14 @@ const initialFormData: FormData = {
   
   // White Paper
   whitePaperEnabled: false,
-  whitePaperPages: '',
+  whitePaperPages: 'none',
   whitePaperGuidelines: '',
   
   // Website Plan
   websitePlanEnabled: false,
   websitePlanGuidelines: '',
   
-  // Exchange Listings
+  // Exchange Listing
   exchangeListingEnabled: false,
   exchangeListings: [],
   
@@ -194,27 +62,63 @@ const initialFormData: FormData = {
   legalDocumentsEnabled: false,
   legalDocuments: [],
   legalDocumentsPreferences: '',
+  
+  // Knightsbridge specific fields
+  kycFullName: '',
+  kycIdNumber: '',
+  kycDateOfBirth: '',
+  kycNationality: '',
+  kycAddress: '',
+  kycOccupation: '',
+  kycEmployer: '',
+  kycIncomeSource: '',
+  
+  custodianName: '',
+  custodianContact: '',
+  custodianRegistration: '',
+  custodianAddress: '',
+  custodianServices: '',
+  
+  issuerEntityName: '',
+  issuerJurisdiction: '',
+  issuerContactPerson: '',
+  issuerContactInfo: '',
+  issuerAddress: '',
+  issuerBusinessType: '',
+  issuerRegistrationNumber: '',
+  
+  businessPlanType: [],
+  businessPlanGuidelines: '',
+  businessPlanExecutiveSummary: '',
+  businessPlanMarketAnalysis: '',
+  businessPlanFinancialProjections: ''
 };
 
 export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const fileUpload = useFileUpload();
+  const [formData, setFormData] = useState(initialFormData);
+  const [fileUpload, setFileUpload] = useState({});
 
   const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const updateArrayField = (field: string, value: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      [field]: checked 
-        ? [...(prev[field as keyof FormData] as string[]), value]
-        : (prev[field as keyof FormData] as string[]).filter(item => item !== value)
+      [field]: value
     }));
   };
 
+  const resetFormData = () => {
+    setFormData(initialFormData);
+    setFileUpload({});
+  };
+
   return (
-    <FormContext.Provider value={{ formData, updateFormData, updateArrayField, fileUpload }}>
+    <FormContext.Provider value={{
+      formData,
+      setFormData,
+      updateFormData,
+      resetFormData,
+      fileUpload,
+      setFileUpload
+    }}>
       {children}
     </FormContext.Provider>
   );
