@@ -4,6 +4,8 @@ import { KYCInformationSection } from '../components/forms/knightsbridge/KYCInfo
 import { CustodianInformationSection } from '../components/forms/knightsbridge/CustodianInformationSection';
 import { IssuerInformationSection } from '../components/forms/knightsbridge/IssuerInformationSection';
 import { BusinessPlanSection } from '../components/forms/knightsbridge/BusinessPlanSection';
+import { SavingsPlanSection } from '../components/forms/knightsbridge/SavingsPlanSection';
+import { PensionPlanSection } from '../components/forms/knightsbridge/PensionPlanSection';
 import { TokenMintForm } from '../components/forms/TokenMintForm';
 import { FeaturesSection } from '../components/forms/FeaturesSection';
 import { LetterheadSection } from '../components/forms/LetterheadSection';
@@ -97,6 +99,12 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 
 						<div className="w-full h-px bg-border-primary my-8" />
 						<BusinessPlanSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<SavingsPlanSection />
+
+						<div className="w-full h-px bg-border-primary my-8" />
+						<PensionPlanSection />
 
 						<div className="w-full h-px bg-border-primary my-8" />
 						<ContactInformationSection />
