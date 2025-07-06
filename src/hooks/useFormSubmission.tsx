@@ -49,7 +49,6 @@ interface FormSubmissionData {
 	exchangeListings?: {
 		submission_id?: string;
 		exchanges: string[];
-		preferences: string;
 	};
 	legalDocuments?: {
 		submission_id?: string;
@@ -365,18 +364,6 @@ export const useFormSubmission = () => {
 					console.error('Exchanges error:', exchangesError);
 					throw exchangesError;
 				}
-
-				const { error: listingPrefError } = await supabase
-					.from('exchange_listings_preferences')
-					.insert({
-						submission_id: submissionId,
-						preferences: data.exchangeListings.preferences
-					});
-
-				if (listingPrefError) {
-					console.error('Legal preferences error:', listingPrefError);
-					throw listingPrefError;
-				}
 			}
 
 			if (data.legalDocuments && data.legalDocuments.documents?.length > 0) {
@@ -431,7 +418,6 @@ export const useFormSubmission = () => {
 		// Validate required fields
 		const requiredErrors = validateRequiredFields(formData);
 		const optionalErrors = validateOptionalSections(formData);
-		console.log(formData)
 
 		const allErrors = [...requiredErrors, ...optionalErrors];
 
@@ -457,7 +443,6 @@ export const useFormSubmission = () => {
 				token_decimals: formData.tokenDecimals,
 				target_price: formData.targetPrice,
 				treasury_address: formData.treasuryAddress,
-				is_stablecoin: formData.isStablecoin || false,
 				// Map Knightsbridge-specific fields to snake_case database columns
 				kyc_full_name: formData.kycFullName,
 				kyc_id_number: formData.kycIdNumber,
@@ -481,8 +466,6 @@ export const useFormSubmission = () => {
 				issuer_registration_number: formData.issuerRegistrationNumber,
 				business_plan_type: typeof formData.businessPlanType === 'object' ? JSON.stringify(formData.businessPlanType) : formData.businessPlanType,
 				business_plan_guidelines: formData.businessPlanGuidelines,
-				savings_plan_guidelines: formData.savingsPlanGuidelines,
-				pension_plan_guidelines: formData.pensionPlanGuidelines,
 				business_plan_executive_summary: formData.businessPlanExecutiveSummary,
 				business_plan_market_analysis: formData.businessPlanMarketAnalysis,
 				business_plan_financial_projections: formData.businessPlanFinancialProjections,
@@ -534,8 +517,7 @@ export const useFormSubmission = () => {
 
 		if (formData.exchangeListings?.length > 0) {
 			submissionData.exchangeListings = {
-				exchanges: formData.exchangeListings,
-				preferences: formData.exchangeListingsPreferences || ''
+				exchanges: formData.exchangeListings
 			};
 		}
 

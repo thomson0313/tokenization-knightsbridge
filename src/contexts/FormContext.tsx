@@ -48,12 +48,6 @@ interface FormData {
   businessPlanExecutiveSummary: string;
   businessPlanMarketAnalysis: string;
   businessPlanFinancialProjections: string;
-
-  // Savings Plan
-  savingsPlanGuidelines: string;
-
-  // Pension Plan
-  pensionPlanGuidelines: string;
   
   // Token Information
   tokenName: string;
@@ -62,7 +56,6 @@ interface FormData {
   tokenDecimals: string;
   targetPrice: string;
   treasuryAddress: string;
-  isStablecoin: boolean;
   
   // Features
   featuresEnabled: boolean;
@@ -97,7 +90,6 @@ interface FormData {
   // Exchange Listings
   exchangeListingEnabled: boolean;
   exchangeListings: string[];
-  exchangeListingsPreferences: string;
   
   // Legal Documents
   legalDocumentsEnabled: boolean;
@@ -155,12 +147,6 @@ const initialFormData: FormData = {
   businessPlanExecutiveSummary: '',
   businessPlanMarketAnalysis: '',
   businessPlanFinancialProjections: '',
-
-  // Savings Plan
-  savingsPlanGuidelines: '',
-
-  // Pension Plan
-  pensionPlanGuidelines: '',
   
   // Token Information
   tokenName: '',
@@ -169,7 +155,6 @@ const initialFormData: FormData = {
   tokenDecimals: '',
   targetPrice: '',
   treasuryAddress: '',
-  isStablecoin: false,
   
   // Features
   featuresEnabled: false,
@@ -204,7 +189,6 @@ const initialFormData: FormData = {
   // Exchange Listings
   exchangeListingEnabled: false,
   exchangeListings: [],
-  exchangeListingsPreferences: '',
   
   // Legal Documents
   legalDocumentsEnabled: false,

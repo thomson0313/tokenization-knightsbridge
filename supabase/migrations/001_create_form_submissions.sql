@@ -1,8 +1,5 @@
 
--- Consolidated database schema for form submissions
--- This file creates the complete database structure from scratch
-
--- Create main form_submissions table
+-- Create form_submissions table
 CREATE TABLE form_submissions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   type TEXT NOT NULL CHECK (type IN ('Knightsbridge', 'Decentralized')),
@@ -21,6 +18,10 @@ CREATE TABLE form_submissions (
   kyc_occupation TEXT,
   kyc_employer TEXT,
   kyc_income_source TEXT,
+  kyc_net_worth TEXT,
+  kyc_investment_experience TEXT,
+  kyc_risk_tolerance TEXT,
+  kyc_investment_objectives TEXT,
   
   -- Custodian Information (Knightsbridge only)
   custodian_name TEXT,
@@ -52,6 +53,31 @@ CREATE TABLE form_submissions (
   token_decimals TEXT,
   target_price TEXT,
   treasury_address TEXT,
+  
+  -- Services Information
+  letterhead_enabled BOOLEAN DEFAULT FALSE,
+  letterhead_guidelines TEXT,
+  
+  -- Raise Document Information
+  raise_document_company TEXT,
+  raise_document_contact_name TEXT,
+  raise_document_contact_person TEXT,
+  raise_document_position TEXT,
+  raise_document_email TEXT,
+  raise_document_phone TEXT,
+  raise_document_address TEXT,
+  raise_document_website TEXT,
+  
+  -- White Paper Information
+  white_paper_pages TEXT,
+  white_paper_guidelines TEXT,
+  
+  -- Website Plan Information
+  website_plan_enabled BOOLEAN DEFAULT FALSE,
+  website_plan_guidelines TEXT,
+  
+  -- Legal Documents Preferences
+  legal_documents_preferences TEXT,
   
   -- Payment Information
   payment_amount DECIMAL(10,2) DEFAULT 0,
@@ -93,79 +119,19 @@ CREATE TABLE legal_documents (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create letterhead_services table
-CREATE TABLE letterhead_services (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
-  enabled BOOLEAN DEFAULT false,
-  guidelines TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create raise_documents table (for detailed info)
-CREATE TABLE raise_documents (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
-  company TEXT,
-  contact_name TEXT,
-  contact_person TEXT,
-  position TEXT,
-  email TEXT,
-  phone TEXT,
-  address TEXT,
-  website TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create whitepapers table
-CREATE TABLE whitepapers (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
-  pages TEXT,
-  guidelines TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create website_plans table
-CREATE TABLE website_plans (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
-  enabled BOOLEAN DEFAULT false,
-  guidelines TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Create legal_document_preferences table
-CREATE TABLE legal_document_preferences (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
-  preferences TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable RLS on all tables
+-- Enable RLS
 ALTER TABLE form_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE token_features ENABLE ROW LEVEL SECURITY;
 ALTER TABLE raise_document_regions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE exchange_listings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE legal_documents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE letterhead_services ENABLE ROW LEVEL SECURITY;
-ALTER TABLE raise_documents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE whitepapers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE website_plans ENABLE ROW LEVEL SECURITY;
-ALTER TABLE legal_document_preferences ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies (allow all operations for now)
+-- Create policies (for now, allow all operations - you can restrict later)
 CREATE POLICY "Allow all operations on form_submissions" ON form_submissions FOR ALL USING (true);
 CREATE POLICY "Allow all operations on token_features" ON token_features FOR ALL USING (true);
 CREATE POLICY "Allow all operations on raise_document_regions" ON raise_document_regions FOR ALL USING (true);
 CREATE POLICY "Allow all operations on exchange_listings" ON exchange_listings FOR ALL USING (true);
 CREATE POLICY "Allow all operations on legal_documents" ON legal_documents FOR ALL USING (true);
-CREATE POLICY "Allow all operations on letterhead_services" ON letterhead_services FOR ALL USING (true);
-CREATE POLICY "Allow all operations on raise_documents" ON raise_documents FOR ALL USING (true);
-CREATE POLICY "Allow all operations on whitepapers" ON whitepapers FOR ALL USING (true);
-CREATE POLICY "Allow all operations on website_plans" ON website_plans FOR ALL USING (true);
-CREATE POLICY "Allow all operations on legal_document_preferences" ON legal_document_preferences FOR ALL USING (true);
 
 -- Create indexes for better performance
 CREATE INDEX idx_form_submissions_type ON form_submissions(type);
@@ -175,8 +141,3 @@ CREATE INDEX idx_token_features_submission_id ON token_features(submission_id);
 CREATE INDEX idx_raise_document_regions_submission_id ON raise_document_regions(submission_id);
 CREATE INDEX idx_exchange_listings_submission_id ON exchange_listings(submission_id);
 CREATE INDEX idx_legal_documents_submission_id ON legal_documents(submission_id);
-CREATE INDEX idx_letterhead_services_submission_id ON letterhead_services(submission_id);
-CREATE INDEX idx_raise_documents_submission_id ON raise_documents(submission_id);
-CREATE INDEX idx_whitepapers_submission_id ON whitepapers(submission_id);
-CREATE INDEX idx_website_plans_submission_id ON website_plans(submission_id);
-CREATE INDEX idx_legal_document_preferences_submission_id ON legal_document_preferences(submission_id);
