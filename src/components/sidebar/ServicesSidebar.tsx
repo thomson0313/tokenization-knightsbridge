@@ -55,7 +55,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
     
     // Website Plan
     if (formData.websitePlanEnabled) {
-      services.push({ name: 'Website Plan', price: 100 });
+      services.push({ name: 'Website Plan', price: 1000 });
     }
     
     // Exchange Listing

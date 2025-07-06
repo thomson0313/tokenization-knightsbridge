@@ -52,7 +52,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
     
     // Website Plan
     if (formData.websitePlanEnabled) {
-      services.push({ name: 'Website Plan', price: 100 });
+      services.push({ name: 'Website Plan', price: 1000 });
     }
     
     // Exchange Listing
