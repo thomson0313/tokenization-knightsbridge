@@ -22,13 +22,6 @@ export const BusinessPlanSection: React.FC = () => {
 		}
 	};
 
-	const handleUploadDocument = async (file: File) => {
-		const url = await fileUpload.uploadFile(file, 'businessPlanDocument');
-		if (url) {
-			updateFormData('businessPlanDocumentUrl', url);
-		}
-	};
-
 	const handleGuidelinesChange = (guidelines: string) => {
 		updateFormData('businessPlanGuidelines', guidelines);
 	};

@@ -44,7 +44,13 @@ CREATE TABLE form_submissions (
   business_plan_executive_summary TEXT,
   business_plan_market_analysis TEXT,
   business_plan_financial_projections TEXT,
-  
+
+  -- Savings Plans (Knightsbridge only)
+  savings_plan_guidelines TEXT,
+
+  -- Pension Plans (Knightsbridge only)
+  pension_plan_guidelines TEXT,
+
   -- Token Information (both types)
   token_name TEXT,
   token_ticker TEXT,
@@ -52,6 +58,7 @@ CREATE TABLE form_submissions (
   token_decimals TEXT,
   target_price TEXT,
   treasury_address TEXT,
+  is_stablecoin BOOLEAN DEFAULT false,
   
   -- Payment Information
   payment_amount DECIMAL(10,2) DEFAULT 0,
@@ -143,6 +150,14 @@ CREATE TABLE legal_document_preferences (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create exchange_listings_preferences table
+CREATE TABLE exchange_listings_preferences (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  submission_id UUID REFERENCES form_submissions(id) ON DELETE CASCADE,
+  preferences TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Enable RLS on all tables
 ALTER TABLE form_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE token_features ENABLE ROW LEVEL SECURITY;
@@ -154,6 +169,7 @@ ALTER TABLE raise_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE whitepapers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE website_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE legal_document_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE exchange_listings_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies (allow all operations for now)
 CREATE POLICY "Allow all operations on form_submissions" ON form_submissions FOR ALL USING (true);
@@ -166,6 +182,7 @@ CREATE POLICY "Allow all operations on raise_documents" ON raise_documents FOR A
 CREATE POLICY "Allow all operations on whitepapers" ON whitepapers FOR ALL USING (true);
 CREATE POLICY "Allow all operations on website_plans" ON website_plans FOR ALL USING (true);
 CREATE POLICY "Allow all operations on legal_document_preferences" ON legal_document_preferences FOR ALL USING (true);
+CREATE POLICY "Allow all operations on exchange_listings_preferences" ON exchange_listings_preferences FOR ALL USING (true);
 
 -- Create indexes for better performance
 CREATE INDEX idx_form_submissions_type ON form_submissions(type);
@@ -180,3 +197,4 @@ CREATE INDEX idx_raise_documents_submission_id ON raise_documents(submission_id)
 CREATE INDEX idx_whitepapers_submission_id ON whitepapers(submission_id);
 CREATE INDEX idx_website_plans_submission_id ON website_plans(submission_id);
 CREATE INDEX idx_legal_document_preferences_submission_id ON legal_document_preferences(submission_id);
+CREATE INDEX idx_exchange_listings_preferences_submission_id ON exchange_listings_preferences(submission_id);

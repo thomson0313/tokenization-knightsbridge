@@ -3,17 +3,42 @@ import React from 'react';
 import { FormInput } from '../ui/FormInput';
 import { CategoryHeader } from '../ui/CategoryHeader';
 import { useFormContext } from '../../contexts/FormContext';
+import { CheckboxField } from '../ui/CheckboxField';
 
 export const TokenMintForm: React.FC = () => {
   const { formData, updateFormData } = useFormContext();
+
+  const stablecoinOptions = [
+    { value: true, label: 'Stablecoin' },
+  ];
+
+  const handleIsStablecoin = (isStablecoin: boolean, checked: boolean) => {
+    if (checked) {
+      updateFormData('isStablecoin', isStablecoin);
+    } else {
+      updateFormData('isStablecoin', false);
+    }
+  };
 
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
         title="Mint Token"
         description="Create and mint your customization token"
+        rightContent={
+          <div className="flex gap-[51px] max-sm:flex-wrap max-sm:gap-[15px]">
+            {stablecoinOptions.map((option: any) => (
+              <CheckboxField
+                key={option.value}
+                label={option.label}
+                checked={formData.isStablecoin === option.value}
+                onChange={(checked) => handleIsStablecoin(option.value, checked)}
+              />
+            ))}
+          </div>
+        }
       />
-      
+
       <div className="box-border grid grid-cols-[358px_358px] gap-[16px_20px] mb-8 m-0 p-0 max-md:grid-cols-[1fr] max-md:gap-4 max-sm:grid-cols-[1fr]">
         <FormInput
           label="Token Name"
