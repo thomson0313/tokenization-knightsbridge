@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useToast } from '@/hooks/use-toast';
@@ -36,13 +37,51 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 	isSubmitting = false,
 	totalAmount = 0
 }) => {
-	const [selectedPayment, setSelectedPayment] = useState('btc');
-	const [isProcessingCrypto, setIsProcessingCrypto] = useState(false);
+	const [selectedPayment, setSelectedPayment] = useState('stripe');
+	const [isProcessing, setIsProcessing] = useState(false);
 	const { toast } = useToast();
 	const isMobile = useIsMobile();
 
+	const handleStripePayment = async () => {
+		setIsProcessing(true);
+
+		try {
+			const submissionDataResult: any = await onPayNow();
+
+			if (!submissionDataResult) throw new Error('Form submission failed');
+
+			const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
+				body: {
+					amount: totalAmount,
+					orderDescription: `Token Services Payment - Stripe`
+				}
+			});
+
+			if (error) throw error;
+
+			if (data.success && data.payment) {
+				window.open(data.payment.payment_url, '_blank');
+				toast({
+					title: "Payment Page Opened",
+					description: "Stripe payment page opened in new tab.",
+				});
+			} else {
+				throw new Error('Failed to create Stripe payment');
+			}
+		} catch (error) {
+			console.error('Payment process error:', error);
+			toast({
+				title: "Payment Error",
+				description: "Failed to process payment. Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsProcessing(false);
+		}
+	};
+
 	const handleCryptoPayment = async (currency: string) => {
-		setIsProcessingCrypto(true);
+		setIsProcessing(true);
 
 		try {
 			const submissionDataResult: any = await onPayNow();
@@ -79,15 +118,15 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 				variant: "destructive",
 			});
 		} finally {
-			setIsProcessingCrypto(false);
+			setIsProcessing(false);
 		}
 	};
 
 	const handlePayNow = async () => {
-		if (selectedPayment === 'btc' || selectedPayment === 'usdt') {
+		if (selectedPayment === 'stripe') {
+			await handleStripePayment();
+		} else if (selectedPayment === 'btc' || selectedPayment === 'usdt') {
 			await handleCryptoPayment(selectedPayment);
-		} else {
-			await onPayNow();
 		}
 	};
 
@@ -156,16 +195,16 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 
 			<button
 				onClick={handlePayNow}
-				disabled={isSubmitting || isProcessingCrypto}
+				disabled={isSubmitting || isProcessing}
 				className="w-full py-4 bg-text-primary text-bg-primary text-[17px] font-medium rounded-xl hover:opacity-90 transition-opacity mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isProcessingCrypto
+				{isProcessing
 					? 'Processing...'
 					: isSubmitting
 						? 'Submitting Data...'
 						: selectedPayment === 'stripe'
-							? 'Pay with Stripe'
-							: `Pay ${totalAmount} USD in ${selectedPayment === 'btc' ? 'Bitcoin' : 'USDT'}`
+							? `Pay $${totalAmount} with Stripe`
+							: `Pay $${totalAmount} in ${selectedPayment === 'btc' ? 'Bitcoin' : 'USDT'}`
 				}
 			</button>
 		</div>
