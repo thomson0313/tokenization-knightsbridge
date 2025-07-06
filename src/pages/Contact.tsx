@@ -84,7 +84,7 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode, onThemeToggle }) => {
                 <Mail className="w-6 h-6 text-blue-500 mt-1" />
                 <div>
                   <h3 className="text-text-primary font-medium mb-1">Email</h3>
-                  <p className="text-text-secondary">support@tokenization.com</p>
+                  <p className="text-text-secondary">Help@kxco.io</p>
                 </div>
               </div>
               
@@ -92,7 +92,7 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode, onThemeToggle }) => {
                 <Phone className="w-6 h-6 text-blue-500 mt-1" />
                 <div>
                   <h3 className="text-text-primary font-medium mb-1">Phone</h3>
-                  <p className="text-text-secondary">+1 (555) 123-4567</p>
+                  <p className="text-text-secondary">+66840041393</p>
                 </div>
               </div>
               
@@ -101,8 +101,8 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode, onThemeToggle }) => {
                 <div>
                   <h3 className="text-text-primary font-medium mb-1">Address</h3>
                   <p className="text-text-secondary">
-                    123 Blockchain Street<br />
-                    Crypto City, CC 12345
+                    622 Emporium Tower<br />
+                    Bangkok, Thailand, 10110
                   </p>
                 </div>
               </div>
