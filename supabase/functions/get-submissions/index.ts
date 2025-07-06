@@ -27,7 +27,12 @@ serve(async (req) => {
         token_features(feature_name),
         raise_document_regions(region),
         exchange_listings(exchange_name),
-        legal_documents(document_type)
+        legal_documents(document_type),
+        letterhead_services(enabled, guidelines),
+        raise_documents(company, contact_name, contact_person, position, email, phone, address, website),
+        whitepapers(pages, guidelines),
+        website_plans(enabled, guidelines),
+        legal_document_preferences(preferences)
       `)
       .order('created_at', { ascending: false })
 
@@ -91,33 +96,48 @@ serve(async (req) => {
       // Features and services
       wantMoreFeatures: submission.token_features?.map((f: any) => f.feature_name) || [],
       features: submission.token_features?.map((f: any) => f.feature_name) || [],
+      featuresEnabled: submission.token_features && submission.token_features.length > 0,
+      featuresGuidelines: submission.features_guidelines,
       
-      letterheadEnabled: submission.letterhead_enabled,
-      letterheadGuidelines: submission.letterhead_guidelines,
+      // Letterhead service
+      letterheadEnabled: submission.letterhead_services?.[0]?.enabled || false,
+      letterheadGuidelines: submission.letterhead_services?.[0]?.guidelines,
       
+      // Raise document fields
+      raiseDocumentEnabled: submission.raise_documents && submission.raise_documents.length > 0,
       raiseDocumentRegions: submission.raise_document_regions?.map((r: any) => r.region) || [],
-      raiseDocumentCompany: submission.raise_document_company,
-      raiseDocumentContactName: submission.raise_document_contact_name,
-      raiseDocumentContactPerson: submission.raise_document_contact_person,
-      raiseDocumentPosition: submission.raise_document_position,
-      raiseDocumentEmail: submission.raise_document_email,
-      raiseDocumentPhone: submission.raise_document_phone,
-      raiseDocumentAddress: submission.raise_document_address,
-      raiseDocumentWebsite: submission.raise_document_website,
+      raiseDocumentCompany: submission.raise_documents?.[0]?.company,
+      raiseDocumentContactName: submission.raise_documents?.[0]?.contact_name,
+      raiseDocumentContactPerson: submission.raise_documents?.[0]?.contact_person,
+      raiseDocumentPosition: submission.raise_documents?.[0]?.position,
+      raiseDocumentEmail: submission.raise_documents?.[0]?.email,
+      raiseDocumentPhone: submission.raise_documents?.[0]?.phone,
+      raiseDocumentAddress: submission.raise_documents?.[0]?.address,
+      raiseDocumentWebsite: submission.raise_documents?.[0]?.website,
       
-      whitePaperPages: submission.white_paper_pages,
-      whitePaperGuidelines: submission.white_paper_guidelines,
+      // Whitepaper fields
+      whitePaperEnabled: submission.whitepapers && submission.whitepapers.length > 0,
+      whitePaperPages: submission.whitepapers?.[0]?.pages,
+      whitePaperGuidelines: submission.whitepapers?.[0]?.guidelines,
       
-      websitePlanEnabled: submission.website_plan_enabled,
-      websitePlanGuidelines: submission.website_plan_guidelines,
+      // Website plan fields
+      websitePlanEnabled: submission.website_plans?.[0]?.enabled || false,
+      websitePlanGuidelines: submission.website_plans?.[0]?.guidelines,
       
+      // Exchange listings
       exchangeListings: submission.exchange_listings?.map((e: any) => e.exchange_name) || [],
       
+      // Legal documents
+      legalDocumentsEnabled: submission.legal_documents && submission.legal_documents.length > 0,
       legalDocuments: submission.legal_documents?.map((d: any) => d.document_type) || [],
-      legalDocumentsPreferences: submission.legal_documents_preferences,
+      legalDocumentsPreferences: submission.legal_document_preferences?.[0]?.preferences,
       
-      paymentAmount: submission.payment_amount,
-      status: submission.status
+      // Payment and status
+      paymentAmount: submission.payment_amount || 0,
+      status: submission.status || 'Pending',
+      
+      // Additional fields that might be missing
+      uploadedDocuments: [] // This would need to be populated from a separate table if file uploads are stored
     }))
 
     return new Response(
@@ -129,6 +149,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('Error fetching submissions:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
