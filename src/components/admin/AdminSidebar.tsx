@@ -24,7 +24,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeSection, onSec
   ];
 
   return (
-    <div className="w-64 bg-bg-secondary border-r border-border-primary">
+    <div className="w-64 h-screen bg-bg-secondary border-r border-border-primary">
       <div className="p-4">
         <h2 className="text-text-primary text-lg font-medium mb-4">Admin Panel</h2>
         <nav className="space-y-2">
