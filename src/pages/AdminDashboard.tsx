@@ -1,6 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { AdminLogin } from '../components/admin/AdminLogin';
 import { AdminSettings } from '../components/admin/AdminSettings';
+import { AdminSidebar } from '../components/admin/AdminSidebar';
+import { ContactMessages } from '../components/admin/ContactMessages';
 import { DataTable } from '../components/admin/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Header } from '../components/Header';
@@ -113,6 +116,7 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeToggle }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeSection, setActiveSection] = useState<'form-submissions' | 'contact-messages'>('form-submissions');
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -174,90 +178,106 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   return (
     <div className="min-h-screen bg-bg-primary">
       <Header isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8 flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-text-primary mb-2">
-                Admin Dashboard
-              </h1>
-              <p className="text-text-secondary">
-                Manage and monitor form submissions from Knightsbridge and Decentralized processes
-              </p>
+      <div className="flex">
+        <AdminSidebar 
+          activeSection={activeSection} 
+          onSectionChange={setActiveSection} 
+        />
+        
+        <div className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8 flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-text-primary mb-2">
+                  {activeSection === 'form-submissions' ? 'Form Submissions' : 'Contact Messages'}
+                </h1>
+                <p className="text-text-secondary">
+                  {activeSection === 'form-submissions' 
+                    ? 'Manage and monitor form submissions from Knightsbridge and Decentralized processes'
+                    : 'View and manage contact messages from users'
+                  }
+                </p>
+              </div>
+              <AdminSettings onLogout={handleLogout} />
             </div>
-            <AdminSettings onLogout={handleLogout} />
+
+            {activeSection === 'form-submissions' ? (
+              <>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm font-medium text-text-secondary">
+                        Total Submissions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-text-primary">
+                        {totalSubmissions}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm font-medium text-text-secondary">
+                        Knightsbridge
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {knightsbridgeSubmissions}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm font-medium text-text-secondary">
+                        Decentralized
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">
+                        {decentralizedSubmissions}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm font-medium text-text-secondary">
+                        Total Revenue
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-text-primary">
+                        ${totalRevenue.toLocaleString()}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Data Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Form Submissions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="text-text-secondary">Loading submissions...</div>
+                      </div>
+                    ) : (
+                      <DataTable data={submissions} />
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <ContactMessages />
+            )}
           </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-text-secondary">
-                  Total Submissions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-text-primary">
-                  {totalSubmissions}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-text-secondary">
-                  Knightsbridge
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
-                  {knightsbridgeSubmissions}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-text-secondary">
-                  Decentralized
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
-                  {decentralizedSubmissions}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-text-secondary">
-                  Total Revenue
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-text-primary">
-                  ${totalRevenue.toLocaleString()}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Data Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Submissions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="text-text-secondary">Loading submissions...</div>
-                </div>
-              ) : (
-                <DataTable data={submissions} />
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
