@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { useToast } from '../hooks/use-toast';
+import { supabase } from '../utils/supabase';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 interface ContactProps {
@@ -35,8 +36,20 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode, onThemeToggle }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message
+          }
+        ]);
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Message Sent!",
@@ -50,6 +63,7 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode, onThemeToggle }) => {
         message: ''
       });
     } catch (error) {
+      console.error('Error saving contact message:', error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
