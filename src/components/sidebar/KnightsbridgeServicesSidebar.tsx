@@ -20,7 +20,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
   const { formData } = useFormContext();
   const [animatedTotal, setAnimatedTotal] = useState(200); // Start with Knightsbridge Service + Mint Token
 
-  // Calculate which services are enabled based on form data
+  // Calculate which services are enabled based on form data with per-item pricing
   const getEnabledServices = () => {
     const services = [];
     
@@ -30,9 +30,30 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
     // Mint Token is always included
     services.push({ name: 'Mint Token', price: 100 });
     
-    // Features
+    // Features - $100 per feature
     if (formData.featuresEnabled && formData.tokenFeatures && formData.tokenFeatures.length > 0) {
-      services.push({ name: 'Features', price: 100 });
+      const featureLabels: { [key: string]: string } = {
+        'revokeOwnership': 'Revoke ownership',
+        'liquidityFee': 'Liquidity Fee',
+        'pausable': 'Pausable',
+        'fees': 'Fees',
+        'deflationary': 'Deflationary',
+        'blacklist': 'Blacklist',
+        'transactionLimits': 'Transaction Limits',
+        'superchain': 'Superchain',
+        'walletLimits': 'Wallet Limits',
+        'marketingFee': 'Marketing Fee',
+        'interoperability': 'Interoperability',
+        'verifyContract': 'Verify Contract',
+        'ableToMint': 'Able to mint?',
+        'ableToBurn': 'Able to Burn?',
+        'others': 'Others'
+      };
+      
+      formData.tokenFeatures.forEach(feature => {
+        const label = featureLabels[feature] || feature;
+        services.push({ name: `${label} (Features)`, price: 100 });
+      });
     }
     
     // Letterhead
@@ -40,14 +61,29 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
       services.push({ name: 'Letterhead', price: 100 });
     }
     
-    // Raise Document
+    // Raise Document - $100 per region
     if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
-      services.push({ name: 'Raise Document', price: 100 });
+      const regionLabels: { [key: string]: string } = {
+        'usa': 'USA',
+        'nonUsa': 'Non USA',
+        'both': 'Both'
+      };
+      
+      formData.raiseDocumentRegions.forEach(region => {
+        const label = regionLabels[region] || region;
+        services.push({ name: `${label} (Raise Document)`, price: 100 });
+      });
     }
     
-    // White Paper
-    if (formData.whitePaperEnabled && formData.whitePaperPages) {
-      services.push({ name: 'White Paper', price: 100 });
+    // White Paper - $100 per page option
+    if (formData.whitePaperEnabled && formData.whitePaperPages && formData.whitePaperPages !== 'none') {
+      const pageLabels: { [key: string]: string } = {
+        '30': '30 Pages',
+        '60': '60 Pages'
+      };
+      
+      const label = pageLabels[formData.whitePaperPages] || formData.whitePaperPages;
+      services.push({ name: `${label} (White Paper)`, price: 100 });
     }
     
     // Website Plan
@@ -55,14 +91,39 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
       services.push({ name: 'Website Plan', price: 1000 });
     }
     
-    // Exchange Listing
+    // Exchange Listing - $100 per exchange
     if (formData.exchangeListingEnabled && formData.exchangeListings && formData.exchangeListings.length > 0) {
-      services.push({ name: 'Listing Exchange', price: 100 });
+      const exchangeLabels: { [key: string]: string } = {
+        'xt': 'XT',
+        'lbank': 'LBank',
+        'etf': 'ETF'
+      };
+      
+      formData.exchangeListings.forEach(exchange => {
+        const label = exchangeLabels[exchange] || exchange;
+        services.push({ name: `${label} (Exchange Listing)`, price: 100 });
+      });
     }
     
-    // Legal Documents
+    // Legal Documents - $100 per document
     if (formData.legalDocumentsEnabled && formData.legalDocuments && formData.legalDocuments.length > 0) {
-      services.push({ name: 'Legal Documents', price: 100 });
+      const documentLabels: { [key: string]: string } = {
+        'offeringMemorandum': 'Offering Memorandum',
+        'smartContractLegalOpinion': 'Smart Contract Legal Opinion',
+        'nonDisclosureAgreement': 'Non-disclosure Agreement',
+        'securityTokenOffering': 'Security Token Offering',
+        'tokenPurchaseAgreement': 'Token Purchase Agreement',
+        'sada': 'SADA',
+        'nda': 'NDA',
+        'smartContractAudit': 'Smart Contract Audit',
+        'tokenomicsWhitepaper': 'Tokenomics Whitepaper',
+        'mutualNda': 'Mutual NDA'
+      };
+      
+      formData.legalDocuments.forEach(document => {
+        const label = documentLabels[document] || document;
+        services.push({ name: `${label} (Legal Documents)`, price: 100 });
+      });
     }
     
     return services;
