@@ -23,7 +23,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
           </h1>
           <p className="text-text-secondary text-lg md:text-xl lg:text-2xl font-normal max-w-3xl mx-auto leading-relaxed">
             Professional tools for token minting, compliance, legal structuring, and<br />
-            exchange listing — tailored for decentralized
+            exchange listing — tailored for the digital age
           </p>
         </div>
 
