@@ -260,7 +260,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   onChange,
   className = ""
 }) => {
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+1');
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+66');
   const [searchTerm, setSearchTerm] = useState('');
   
   // Extract phone number without country code from current value
@@ -278,10 +278,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   // Extract country code from current value
   const getCountryCode = (fullValue: string) => {
-    if (!fullValue) return '+1';
+    if (!fullValue) return '+66';
     
     const matchingCode = countryCodes.find(cc => fullValue.startsWith(cc.code));
-    return matchingCode ? matchingCode.code : '+1';
+    return matchingCode ? matchingCode.code : '+66';
   };
 
   const phoneNumber = getPhoneNumber(value);
@@ -324,7 +324,17 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       <div className="flex gap-2">
         <Select value={selectedCountryCode} onValueChange={handleCountryCodeChange}>
           <SelectTrigger className="w-24 h-[40px] border bg-input-bg text-text-primary border-input-border focus:outline-none focus:border-blue-500">
-            <SelectValue />
+            <SelectValue>
+              {(() => {
+                const selectedCountry = countryCodes.find(c => c.code === selectedCountryCode);
+                return selectedCountry ? (
+                  <span className="flex items-center gap-1">
+                    <span>{selectedCountry.flag}</span>
+                    <span>{selectedCountry.code}</span>
+                  </span>
+                ) : selectedCountryCode;
+              })()}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent className="bg-input-bg border-input-border max-h-[300px]">
             <div className="sticky top-0 p-2 bg-input-bg border-b border-input-border">
