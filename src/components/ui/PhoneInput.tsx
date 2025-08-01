@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
 interface PhoneInputProps {
@@ -261,6 +261,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   className = ""
 }) => {
   const [selectedCountryCode, setSelectedCountryCode] = useState('+1');
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Extract phone number without country code from current value
   const getPhoneNumber = (fullValue: string) => {
@@ -285,6 +286,17 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   const phoneNumber = getPhoneNumber(value);
   const currentCountryCode = getCountryCode(value);
+
+  // Filter countries based on search term
+  const filteredCountries = useMemo(() => {
+    if (!searchTerm) return countryCodes;
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return countryCodes.filter(country => 
+      country.country.toLowerCase().includes(lowerSearchTerm) ||
+      country.code.includes(searchTerm)
+    );
+  }, [searchTerm]);
 
   // Update selected country code if it differs from current
   React.useEffect(() => {
@@ -314,19 +326,36 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           <SelectTrigger className="w-24 h-[40px] border bg-input-bg text-text-primary border-input-border focus:outline-none focus:border-blue-500">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-input-bg border-input-border">
-            {countryCodes.map((country) => (
-              <SelectItem 
-                key={`${country.code}-${country.country}`} 
-                value={country.code}
-                className="text-text-primary hover:bg-[rgba(255,255,255,0.1)]"
-              >
-                <span className="flex items-center gap-2">
-                  <span>{country.flag}</span>
-                  <span>{country.code}</span>
-                </span>
-              </SelectItem>
-            ))}
+          <SelectContent className="bg-input-bg border-input-border max-h-[300px]">
+            <div className="sticky top-0 p-2 bg-input-bg border-b border-input-border">
+              <input
+                type="text"
+                placeholder="Search country or code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full h-8 px-2 text-sm bg-input-bg text-text-primary placeholder:text-text-secondary border border-input-border rounded focus:outline-none focus:border-blue-500"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            <div className="max-h-[200px] overflow-y-auto">
+              {filteredCountries.length === 0 ? (
+                <div className="p-2 text-text-secondary text-sm">No countries found</div>
+              ) : (
+                filteredCountries.map((country) => (
+                  <SelectItem 
+                    key={`${country.code}-${country.country}`} 
+                    value={country.code}
+                    className="text-text-primary hover:bg-[rgba(255,255,255,0.1)]"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{country.flag}</span>
+                      <span className="font-medium">{country.code}</span>
+                      <span className="text-text-secondary text-sm">{country.country}</span>
+                    </span>
+                  </SelectItem>
+                ))
+              )}
+            </div>
           </SelectContent>
         </Select>
         <input
