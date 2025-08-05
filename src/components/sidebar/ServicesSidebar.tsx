@@ -61,7 +61,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 
 		// Letterhead
 		if (formData.letterheadEnabled) {
-			services.push({ name: 'Letterhead', price: 100 });
+			services.push({ name: 'Letterhead', price: 1000 });
 		}
 
 		// Raise Document - $10000 per region
@@ -113,13 +113,12 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 			const legalDocumentInfo: { [key: string]: { label: string; price: number } } = {
 				'offeringMemorandum': { label: 'Offering Memorandum', price: 10000 },
 				'smartContractLegalOpinion': { label: 'Smart Contract Legal Opinion', price: 1500 },
-				'nonDisclosureAgreement': { label: 'Non-disclosure Agreement', price: 100 }, // assuming this stays at $100
 				'securityTokenOffering': { label: 'Security Token Offering', price: 10000 },
 				'tokenPurchaseAgreement': { label: 'Token Purchase Agreement', price: 10000 },
 				'sada': { label: 'SADA', price: 10000 },
 				'nda': { label: 'NDA', price: 500 },
 				'smartContractAudit': { label: 'Smart Contract Audit', price: 2500 },
-				'tokenomicsWhitepaper': { label: 'Tokenomics Whitepaper', price: 100 }, // assuming default
+				'tokenomicsWhitepaper': { label: 'Tokenomics Whitepaper', price: 500 },
 				'mutualNda': { label: 'Mutual NDA', price: 500 }
 			};
 

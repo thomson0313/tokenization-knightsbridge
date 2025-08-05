@@ -34,7 +34,7 @@ export const LegalDocumentsSection: React.FC = () => {
         checked={isEnabled}
         onCheckboxChange={handleCheckboxChange}
       />
-      
+
       <div className={`transition-all duration-500 overflow-hidden ${isEnabled ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="box-border mb-8 m-0 p-0">
           <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
@@ -48,18 +48,18 @@ export const LegalDocumentsSection: React.FC = () => {
               checked={(formData.legalDocuments || []).includes('smartContractLegalOpinion')}
               onChange={(checked) => updateDocument('smartContractLegalOpinion', checked)}
             />
-            <CheckboxField
+            {/* <CheckboxField
               label="Non-disclosure Agreement"
               checked={(formData.legalDocuments || []).includes('nonDisclosureAgreement')}
               onChange={(checked) => updateDocument('nonDisclosureAgreement', checked)}
-            />
-          </div>
-          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
+            /> */}
             <CheckboxField
               label="Security Token Offering"
               checked={(formData.legalDocuments || []).includes('securityTokenOffering')}
               onChange={(checked) => updateDocument('securityTokenOffering', checked)}
             />
+          </div>
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Token Purchase Agreement"
               checked={(formData.legalDocuments || []).includes('tokenPurchaseAgreement')}
@@ -70,13 +70,13 @@ export const LegalDocumentsSection: React.FC = () => {
               checked={(formData.legalDocuments || []).includes('sada')}
               onChange={(checked) => updateDocument('sada', checked)}
             />
-          </div>
-          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
-              label="NDA"
+              label="NDA (Non-Disclosure Agreement)"
               checked={(formData.legalDocuments || []).includes('nda')}
               onChange={(checked) => updateDocument('nda', checked)}
             />
+          </div>
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Smart Contract Audit"
               checked={(formData.legalDocuments || []).includes('smartContractAudit')}
@@ -87,18 +87,18 @@ export const LegalDocumentsSection: React.FC = () => {
               checked={(formData.legalDocuments || []).includes('tokenomicsWhitepaper')}
               onChange={(checked) => updateDocument('tokenomicsWhitepaper', checked)}
             />
-          </div>
-          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
             <CheckboxField
               label="Mutual NDA"
               checked={(formData.legalDocuments || []).includes('mutualNda')}
               onChange={(checked) => updateDocument('mutualNda', checked)}
             />
-            <CheckboxField
+          </div>
+          <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
+            {/* <CheckboxField
               label="All?"
               checked={(formData.legalDocuments || []).includes('all')}
               onChange={(checked) => updateDocument('all', checked)}
-            />
+            /> */}
           </div>
         </div>
         <div className="box-border mt-8 m-0 p-0">
