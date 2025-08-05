@@ -16,7 +16,7 @@ serve(async (req) => {
 
   try {
     // Get the request body
-    const { amount, orderDescription = "Token Services Payment" } = await req.json();
+    const { amount, orderDescription = "Token Services Payment", submissionId } = await req.json();
 
     if (!amount || amount <= 0) {
       throw new Error("Invalid amount provided");
@@ -51,8 +51,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/payment-success`,
-      cancel_url: `${origin}/payment-cancelled`,
+      success_url: `${origin}/payment-success${submissionId ? `?submissionId=${submissionId}` : ''}`,
+      cancel_url: `${origin}/payment-cancelled${submissionId ? `?submissionId=${submissionId}` : ''}`,
     });
 
     console.log(`Created Stripe checkout session: ${session.id} for amount: $${amount}`);

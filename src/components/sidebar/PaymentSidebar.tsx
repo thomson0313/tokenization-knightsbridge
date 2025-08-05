@@ -53,13 +53,28 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 			const { data, error } = await supabase.functions.invoke('create-stripe-checkout', {
 				body: {
 					amount: totalAmount,
-					orderDescription: `Token Services Payment - Stripe`
+					orderDescription: `Token Services Payment - Stripe`,
+					submissionId: submissionDataResult?.submissionId
 				}
 			});
 
 			if (error) throw error;
 
 			if (data.success && data.payment) {
+				// Update payment status to processing when payment link is opened
+				if (submissionDataResult?.submissionId) {
+					try {
+						await supabase.functions.invoke('update-payment-status', {
+							body: {
+								submissionId: submissionDataResult.submissionId,
+								status: 'processing'
+							}
+						});
+					} catch (statusError) {
+						console.error('Failed to update payment status:', statusError);
+					}
+				}
+
 				const newWindow = window.open(data.payment.payment_url, '_blank');
 				if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
 					// Popup was blocked, fallback to same tab
@@ -100,13 +115,28 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 					amount: totalAmount,
 					currency: currency === 'btc' ? 'BTC' : 'USDTTRC20',
 					orderId,
-					orderDescription: `Token Services Payment - ${currency.toUpperCase()}`
+					orderDescription: `Token Services Payment - ${currency.toUpperCase()}`,
+					submissionId: submissionDataResult?.submissionId
 				}
 			});
 
 			if (error) throw error;
 
 			if (data.success && data.payment) {
+				// Update payment status to processing when payment link is opened
+				if (submissionDataResult?.submissionId) {
+					try {
+						await supabase.functions.invoke('update-payment-status', {
+							body: {
+								submissionId: submissionDataResult.submissionId,
+								status: 'processing'
+							}
+						});
+					} catch (statusError) {
+						console.error('Failed to update payment status:', statusError);
+					}
+				}
+
 				const newWindow = window.open(data.payment.payment_url, '_blank');
 				if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
 					// Popup was blocked, fallback to same tab

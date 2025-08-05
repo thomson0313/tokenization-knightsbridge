@@ -16,7 +16,7 @@ serve(async (req) => {
   try {
     console.log('NOWPayments function called')
 
-    const { amount, currency, orderId, orderDescription } = await req.json()
+    const { amount, currency, orderId, orderDescription, submissionId } = await req.json()
     console.log('Request data:', { amount, currency, orderId, orderDescription })
 
     const nowPaymentsApiKey = Deno.env.get('NOWPAYMENTS_API_KEY')
@@ -37,8 +37,8 @@ serve(async (req) => {
       pay_currency: currency, // BTC or USDTTRC20
       order_id: orderId,
       order_description: orderDescription,
-      success_url: `${origin}/payment-success`,
-      cancel_url: `${origin}/payment-cancelled`,
+      success_url: `${origin}/payment-success${submissionId ? `?submissionId=${submissionId}` : ''}`,
+      cancel_url: `${origin}/payment-cancelled${submissionId ? `?submissionId=${submissionId}` : ''}`,
     }
 
     console.log('Making request to NOWPayments with:', requestBody)

@@ -96,7 +96,7 @@ interface FormSubmission {
   legalDocumentsPreferences?: string;
   
   paymentAmount: number;
-  status: 'Pending' | 'Completed' | 'Processing';
+  status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
   
   // Add uploaded documents
   uploadedDocuments?: Array<{
@@ -124,6 +124,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
+      // Check for expired payments first
+      await supabase.functions.invoke('check-expired-payments');
+      
       // Use the get-submissions Edge Function instead of direct Supabase queries
       const { data, error } = await supabase.functions.invoke('get-submissions');
 

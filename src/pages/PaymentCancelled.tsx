@@ -1,11 +1,28 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { XCircle } from 'lucide-react';
+import { supabase } from '../utils/supabase';
 
 const PaymentCancelled = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const submissionId = searchParams.get('submissionId');
+    if (submissionId) {
+      // Update payment status to cancelled
+      supabase.functions.invoke('update-payment-status', {
+        body: {
+          submissionId,
+          status: 'cancelled'
+        }
+      }).catch(error => {
+        console.error('Failed to update payment status:', error);
+      });
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4">
