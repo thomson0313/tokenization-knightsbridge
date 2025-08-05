@@ -42,8 +42,8 @@ export const ExchangeListingSection: React.FC = () => {
   return (
     <section className="box-border m-0 p-0">
       <CategoryHeader
-        title="Listings on Exchange"
-        description="Choose your preference for listing"
+        title="Consulting on Listing"
+        description="Choose your preference for listing *price may vary"
         hasCheckbox={true}
         checked={isEnabled}
         onCheckboxChange={handleCheckboxChange}
