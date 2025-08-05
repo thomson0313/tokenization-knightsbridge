@@ -71,7 +71,7 @@ export const LegalDocumentsSection: React.FC = () => {
               onChange={(checked) => updateDocument('sada', checked)}
             />
             <CheckboxField
-              label="NDA (Non-Disclosure Agreement)"
+              label="Non-Disclosure Agreement"
               checked={(formData.legalDocuments || []).includes('nda')}
               onChange={(checked) => updateDocument('nda', checked)}
             />

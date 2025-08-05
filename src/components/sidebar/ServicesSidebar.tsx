@@ -78,15 +78,21 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 			});
 		}
 
-		// White Paper - $10000 per page option
+		// White Paper - $10,000 for 30 pages, $15,000 for 60 pages
 		if (formData.whitePaperEnabled && formData.whitePaperPages && formData.whitePaperPages !== 'none') {
-			const pageLabels: { [key: string]: string } = {
-				'30': '30 Pages',
-				'60': '60 Pages'
+			const pageInfo: { [key: string]: { label: string; price: number } } = {
+				'30': { label: '30 Pages', price: 10000 },
+				'60': { label: '60 Pages', price: 15000 }
 			};
 
-			const label = pageLabels[formData.whitePaperPages] || formData.whitePaperPages;
-			services.push({ name: `${label} (White Paper)`, price: 10000 });
+			const page = pageInfo[formData.whitePaperPages];
+
+			if (page) {
+				services.push({ name: `${page.label} (White Paper)`, price: page.price });
+			} else {
+				// Optional: fallback if value is unexpected
+				services.push({ name: `${formData.whitePaperPages} Pages (White Paper)`, price: 10000 });
+			}
 		}
 
 		// Website Plan

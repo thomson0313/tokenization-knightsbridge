@@ -75,15 +75,21 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 			});
 		}
 
-		// White Paper - $10000 per page option
+		// White Paper - $10,000 for 30 pages, $15,000 for 60 pages
 		if (formData.whitePaperEnabled && formData.whitePaperPages && formData.whitePaperPages !== 'none') {
-			const pageLabels: { [key: string]: string } = {
-				'30': '30 Pages',
-				'60': '60 Pages'
+			const pageInfo: { [key: string]: { label: string; price: number } } = {
+				'30': { label: '30 Pages', price: 10000 },
+				'60': { label: '60 Pages', price: 15000 }
 			};
 
-			const label = pageLabels[formData.whitePaperPages] || formData.whitePaperPages;
-			services.push({ name: `${label} (White Paper)`, price: 10000 });
+			const page = pageInfo[formData.whitePaperPages];
+
+			if (page) {
+				services.push({ name: `${page.label} (White Paper)`, price: page.price });
+			} else {
+				// Optional: fallback if value is unexpected
+				services.push({ name: `${formData.whitePaperPages} Pages (White Paper)`, price: 10000 });
+			}
 		}
 
 		// Website Plan
@@ -185,10 +191,10 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 
 			<div className="space-y-4 mb-8">
 				{enabledServices.map((service, index) => (
-				<div key={index} className="flex justify-between items-center py-2">
-					<span className="text-text-primary">{service.name}</span>
-					<span className="text-text-primary">${service.price.toLocaleString()}</span>
-				</div>
+					<div key={index} className="flex justify-between items-center py-2">
+						<span className="text-text-primary">{service.name}</span>
+						<span className="text-text-primary">${service.price.toLocaleString()}</span>
+					</div>
 				))}
 
 				<div className="w-full h-px bg-border-primary my-4"></div>
