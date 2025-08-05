@@ -10,7 +10,7 @@ export const RaiseDocumentSection: React.FC = () => {
 
   const regionOptions = [
     { value: 'usa', label: 'USA' },
-    { value: 'non-usa', label: 'Non USA' },
+    { value: 'Non-USA', label: 'Non USA' },
     { value: 'both', label: 'Both' }
   ];
 
