@@ -192,7 +192,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
         {enabledServices.map((service, index) => (
           <div key={index} className="flex justify-between items-center py-2 border-b border-border-primary">
             <span className="text-text-primary text-sm md:text-[16px]">{service.name}</span>
-            <span className="text-text-primary text-sm md:text-[16px]">${service.price}</span>
+            <span className="text-text-primary text-sm md:text-[16px]">${service.price.toLocaleString()}</span>
           </div>
         ))}
 
@@ -202,7 +202,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
               Total:
             </div>
             <div className="text-text-primary text-lg font-semibold">
-              ${animatedTotal}
+              ${animatedTotal.toLocaleString()}
             </div>
           </div>
         </div>

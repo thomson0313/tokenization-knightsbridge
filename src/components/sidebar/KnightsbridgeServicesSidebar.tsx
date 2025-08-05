@@ -186,17 +186,17 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 
 			<div className="space-y-4 mb-8">
 				{enabledServices.map((service, index) => (
-					<div key={index} className="flex justify-between items-center py-2">
-						<span className="text-text-primary">{service.name}</span>
-						<span className="text-text-primary">${service.price}</span>
-					</div>
+				<div key={index} className="flex justify-between items-center py-2">
+					<span className="text-text-primary">{service.name}</span>
+					<span className="text-text-primary">${service.price.toLocaleString()}</span>
+				</div>
 				))}
 
 				<div className="w-full h-px bg-border-primary my-4"></div>
 
 				<div className="flex justify-between items-center py-2 font-medium">
 					<span className="text-text-primary text-lg">Total</span>
-					<span className="text-text-primary text-lg">${animatedTotal}</span>
+					<span className="text-text-primary text-lg">${animatedTotal.toLocaleString()}</span>
 				</div>
 			</div>
 
