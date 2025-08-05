@@ -64,7 +64,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 			services.push({ name: 'Letterhead', price: 1000 });
 		}
 
-		// Raise Document - $10000 per region
+		// Raise Document - $18000 per region
 		if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
 			const regionLabels: { [key: string]: string } = {
 				'usa': 'USA',
@@ -74,7 +74,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 
 			formData.raiseDocumentRegions.forEach(region => {
 				const label = regionLabels[region] || region;
-				services.push({ name: `${label} (Raise Document)`, price: 10000 });
+				services.push({ name: `${label} (Raise Document)`, price: 18000 });
 			});
 		}
 
