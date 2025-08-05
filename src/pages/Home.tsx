@@ -50,7 +50,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
           {/* Step 01 */}
           <div className="text-left">
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
-              STEP 01: <br />CHOOSE PATH TO THIS ?
+              STEP 01: <br />CHOOSE PATH
             </h3>
             <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Select between the Knightsbridge Approved route or the fully Decentralized launch.
