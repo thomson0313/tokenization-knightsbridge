@@ -30,17 +30,17 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-6 mb-20">
           <Link
-            to="/decentralized"
-            className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
-          >
-            Decentralized
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-          </Link>
-          <Link
             to="/knightsbridge"
             className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
           >
             Knightsbridge
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+          </Link>
+          <Link
+            to="/decentralized"
+            className="group px-8 py-4 border border-text-secondary rounded-lg text-text-primary text-lg font-medium hover:border-text-primary transition-all duration-200 flex items-center justify-center gap-3 min-w-[200px]"
+          >
+            Decentralized
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
           </Link>
         </div>
@@ -61,7 +61,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
           {/* Step 02 */}
           <div className="text-left">
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
-              STEP 02: <br/>CUSTOMIZE
+              STEP 02: <br />CUSTOMIZE
             </h3>
             <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Add token details, select optional services (whitepaper, legal docs, listings), and upload required documents.
@@ -72,7 +72,7 @@ const Home: React.FC<HomeProps> = ({ isDarkMode, onThemeToggle }) => {
           {/* Step 03 */}
           <div className="text-left">
             <h3 className="text-text-primary text-xl md:text-2xl font-medium mb-4">
-              STEP 03: <br/>CHECKOUT
+              STEP 03: <br />CHECKOUT
             </h3>
             <p className="text-text-secondary text-base md:text-lg leading-relaxed h-20 md:h-24">
               Choose your payment method — Stripe, USDT, or Bitcoin.
