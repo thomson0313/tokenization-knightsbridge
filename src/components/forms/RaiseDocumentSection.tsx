@@ -3,7 +3,6 @@ import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { FormInput } from '../ui/FormInput';
 import { CategoryHeader } from '../ui/CategoryHeader';
-import { RadioGroup } from '../ui/RadioGroup';
 import { useFormContext } from '../../contexts/FormContext';
 
 export const RaiseDocumentSection: React.FC = () => {
@@ -19,8 +18,13 @@ export const RaiseDocumentSection: React.FC = () => {
     updateFormData(field, value);
   };
 
-  const handleRegionChange = (region: string) => {
-    updateFormData('raiseDocumentRegion', region);
+  const handleRegionChange = (region: string, checked: boolean) => {
+    // For raise document, only allow one selection at a time
+    if (checked) {
+      updateFormData('raiseDocumentRegion', region);
+    } else {
+      updateFormData('raiseDocumentRegion', '');
+    }
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
@@ -49,11 +53,16 @@ export const RaiseDocumentSection: React.FC = () => {
         checked={isEnabled}
         onCheckboxChange={handleCheckboxChange}
         rightContent={
-          <RadioGroup
-            options={regionOptions}
-            selectedValue={formData.raiseDocumentRegion || ''}
-            onChange={handleRegionChange}
-          />
+          <div className="flex gap-[61px] max-sm:flex-wrap max-sm:gap-[15px]">
+            {regionOptions.map((option) => (
+              <CheckboxField
+                key={option.value}
+                label={option.label}
+                checked={formData.raiseDocumentRegion === option.value}
+                onChange={(checked) => handleRegionChange(option.value, checked)}
+              />
+            ))}
+          </div>
         }
       />
       
