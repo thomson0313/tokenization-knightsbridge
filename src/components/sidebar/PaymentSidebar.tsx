@@ -60,11 +60,16 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 			if (error) throw error;
 
 			if (data.success && data.payment) {
-				window.open(data.payment.payment_url, '_blank');
-				toast({
-					title: "Payment Page Opened",
-					description: "Stripe payment page opened in new tab.",
-				});
+				const newWindow = window.open(data.payment.payment_url, '_blank');
+				if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+					// Popup was blocked, fallback to same tab
+					window.location.href = data.payment.payment_url;
+				} else {
+					toast({
+						title: "Payment Page Opened",
+						description: "Stripe payment page opened in new tab.",
+					});
+				}
 			} else {
 				throw new Error('Failed to create Stripe payment');
 			}
@@ -102,11 +107,16 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 			if (error) throw error;
 
 			if (data.success && data.payment) {
-				window.open(data.payment.payment_url, '_blank');
-				toast({
-					title: "Payment Page Opened",
-					description: `${currency.toUpperCase()} payment page opened in new tab.`,
-				});
+				const newWindow = window.open(data.payment.payment_url, '_blank');
+				if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+					// Popup was blocked, fallback to same tab
+					window.location.href = data.payment.payment_url;
+				} else {
+					toast({
+						title: "Payment Page Opened",
+						description: `${currency.toUpperCase()} payment page opened in new tab.`,
+					});
+				}
 			} else {
 				throw new Error('Failed to create payment');
 			}
