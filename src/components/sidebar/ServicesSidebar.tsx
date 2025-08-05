@@ -29,11 +29,11 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
   // Calculate which services are enabled based on form data with per-item pricing
   const getEnabledServices = () => {
     const services = [];
-    
+
     // Mint Token is always included
-    services.push({ name: 'Mint Token', price: 100 });
-    
-    // Features - $100 per feature
+    services.push({ name: 'Mint Token', price: 75 });
+
+    // Features - $75 per feature
     if (formData.featuresEnabled && formData.tokenFeatures && formData.tokenFeatures.length > 0) {
       const featureLabels: { [key: string]: string } = {
         'revokeOwnership': 'Revoke ownership',
@@ -52,48 +52,48 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
         'ableToBurn': 'Able to Burn?',
         'others': 'Others'
       };
-      
+
       formData.tokenFeatures.forEach(feature => {
         const label = featureLabels[feature] || feature;
-        services.push({ name: `${label} (Features)`, price: 100 });
+        services.push({ name: `${label} (Features)`, price: 75 });
       });
     }
-    
+
     // Letterhead
     if (formData.letterheadEnabled) {
       services.push({ name: 'Letterhead', price: 100 });
     }
-    
-    // Raise Document - $100 per region
+
+    // Raise Document - $10000 per region
     if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
       const regionLabels: { [key: string]: string } = {
         'usa': 'USA',
         'nonUsa': 'Non USA',
         'both': 'Both'
       };
-      
+
       formData.raiseDocumentRegions.forEach(region => {
         const label = regionLabels[region] || region;
-        services.push({ name: `${label} (Raise Document)`, price: 100 });
+        services.push({ name: `${label} (Raise Document)`, price: 10000 });
       });
     }
-    
-    // White Paper - $100 per page option
+
+    // White Paper - $10000 per page option
     if (formData.whitePaperEnabled && formData.whitePaperPages && formData.whitePaperPages !== 'none') {
       const pageLabels: { [key: string]: string } = {
         '30': '30 Pages',
         '60': '60 Pages'
       };
-      
+
       const label = pageLabels[formData.whitePaperPages] || formData.whitePaperPages;
-      services.push({ name: `${label} (White Paper)`, price: 100 });
+      services.push({ name: `${label} (White Paper)`, price: 10000 });
     }
-    
+
     // Website Plan
     if (formData.websitePlanEnabled) {
-      services.push({ name: 'Website Plan', price: 1000 });
+      services.push({ name: 'Website Plan', price: 10000 });
     }
-    
+
     // Exchange Listing - $100 per exchange
     if (formData.exchangeListingEnabled && formData.exchangeListings && formData.exchangeListings.length > 0) {
       const exchangeLabels: { [key: string]: string } = {
@@ -101,34 +101,40 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
         'lbank': 'LBank',
         'etf': 'ETF'
       };
-      
+
       formData.exchangeListings.forEach(exchange => {
         const label = exchangeLabels[exchange] || exchange;
         services.push({ name: `${label} (Exchange Listing)`, price: 100 });
       });
     }
-    
-    // Legal Documents - $100 per document
+
+    // Legal Documents - custom pricing per document
     if (formData.legalDocumentsEnabled && formData.legalDocuments && formData.legalDocuments.length > 0) {
-      const documentLabels: { [key: string]: string } = {
-        'offeringMemorandum': 'Offering Memorandum',
-        'smartContractLegalOpinion': 'Smart Contract Legal Opinion',
-        'nonDisclosureAgreement': 'Non-disclosure Agreement',
-        'securityTokenOffering': 'Security Token Offering',
-        'tokenPurchaseAgreement': 'Token Purchase Agreement',
-        'sada': 'SADA',
-        'nda': 'NDA',
-        'smartContractAudit': 'Smart Contract Audit',
-        'tokenomicsWhitepaper': 'Tokenomics Whitepaper',
-        'mutualNda': 'Mutual NDA'
+      const legalDocumentInfo: { [key: string]: { label: string; price: number } } = {
+        'offeringMemorandum': { label: 'Offering Memorandum', price: 10000 },
+        'smartContractLegalOpinion': { label: 'Smart Contract Legal Opinion', price: 1500 },
+        'nonDisclosureAgreement': { label: 'Non-disclosure Agreement', price: 100 }, // assuming this stays at $100
+        'securityTokenOffering': { label: 'Security Token Offering', price: 10000 },
+        'tokenPurchaseAgreement': { label: 'Token Purchase Agreement', price: 10000 },
+        'sada': { label: 'SADA', price: 10000 },
+        'nda': { label: 'NDA', price: 500 },
+        'smartContractAudit': { label: 'Smart Contract Audit', price: 2500 },
+        'tokenomicsWhitepaper': { label: 'Tokenomics Whitepaper', price: 100 }, // assuming default
+        'mutualNda': { label: 'Mutual NDA', price: 500 }
       };
-      
+
       formData.legalDocuments.forEach(document => {
-        const label = documentLabels[document] || document;
-        services.push({ name: `${label} (Legal Documents)`, price: 100 });
+        const doc = legalDocumentInfo[document];
+        if (doc) {
+          services.push({ name: `${doc.label} (Legal Documents)`, price: doc.price });
+        } else {
+          // fallback if document type is unknown
+          services.push({ name: `${document} (Legal Documents)`, price: 100 });
+        }
       });
     }
-    
+
+
     return services;
   };
 
@@ -202,7 +208,7 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
         </div>
       </div>
 
-      <Button 
+      <Button
         onClick={handleCheckout}
         disabled={isSubmitting}
         className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
