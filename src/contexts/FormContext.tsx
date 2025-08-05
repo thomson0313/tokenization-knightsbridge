@@ -75,7 +75,7 @@ interface FormData {
   
   // Raise Document
   raiseDocumentEnabled: boolean;
-  raiseDocumentRegions: string[];
+  raiseDocumentRegion: string;
   raiseDocumentCompany: string;
   raiseDocumentContactName: string;
   raiseDocumentContactPerson: string;
@@ -182,7 +182,7 @@ const initialFormData: FormData = {
   
   // Raise Document
   raiseDocumentEnabled: false,
-  raiseDocumentRegions: [],
+  raiseDocumentRegion: '',
   raiseDocumentCompany: '',
   raiseDocumentContactName: '',
   raiseDocumentContactPerson: '',

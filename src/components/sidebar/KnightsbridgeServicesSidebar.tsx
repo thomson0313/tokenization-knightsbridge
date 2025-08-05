@@ -61,25 +61,23 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 			services.push({ name: 'Letterhead', price: 1000 });
 		}
 
-		// Raise Document - $18000 for 'both', $10000 for 'usa' and 'nonUsa'
-		if (formData.raiseDocumentEnabled && formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0) {
+		// Raise Document - $18000 for 'both', $10000 for 'usa' and 'Non-USA'
+		if (formData.raiseDocumentEnabled && formData.raiseDocumentRegion) {
 			const regionLabels: { [key: string]: string } = {
 				'usa': 'USA',
-				'nonUsa': 'Non USA',
+				'Non-USA': 'Non USA',
 				'both': 'Both'
 			};
 
-			formData.raiseDocumentRegions.forEach(region => {
-				const label = regionLabels[region] || region;
+			const label = regionLabels[formData.raiseDocumentRegion] || formData.raiseDocumentRegion;
 
-				// Set price based on region
-				let price = 10000;
-				if (region === 'both') {
-					price = 18000;
-				}
+			// Set price based on region
+			let price = 10000;
+			if (formData.raiseDocumentRegion === 'both') {
+				price = 18000;
+			}
 
-				services.push({ name: `${label} (Raise Document)`, price });
-			});
+			services.push({ name: `${label} (Raise Document)`, price });
 		}
 
 		// White Paper - $10,000 for 30 pages, $15,000 for 60 pages

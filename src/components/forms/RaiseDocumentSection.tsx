@@ -3,6 +3,7 @@ import React from 'react';
 import { CheckboxField } from '../ui/CheckboxField';
 import { FormInput } from '../ui/FormInput';
 import { CategoryHeader } from '../ui/CategoryHeader';
+import { RadioGroup } from '../ui/RadioGroup';
 import { useFormContext } from '../../contexts/FormContext';
 
 export const RaiseDocumentSection: React.FC = () => {
@@ -18,23 +19,14 @@ export const RaiseDocumentSection: React.FC = () => {
     updateFormData(field, value);
   };
 
-  const handleRegionChange = (region: string, checked: boolean) => {
-    const currentRegions = formData.raiseDocumentRegions || [];
-    let updatedRegions;
-    
-    if (checked) {
-      updatedRegions = [...currentRegions, region];
-    } else {
-      updatedRegions = currentRegions.filter((r: string) => r !== region);
-    }
-    
-    updateFormData('raiseDocumentRegions', updatedRegions);
+  const handleRegionChange = (region: string) => {
+    updateFormData('raiseDocumentRegion', region);
   };
 
   const handleCheckboxChange = (enabled: boolean) => {
     updateFormData('raiseDocumentEnabled', enabled);
     if (!enabled) {
-      updateFormData('raiseDocumentRegions', []);
+      updateFormData('raiseDocumentRegion', '');
       updateFormData('raiseDocumentCompany', '');
       updateFormData('raiseDocumentContactName', '');
       updateFormData('raiseDocumentContactPerson', '');
@@ -46,7 +38,7 @@ export const RaiseDocumentSection: React.FC = () => {
     }
   };
 
-  const isEnabled = formData.raiseDocumentEnabled || (formData.raiseDocumentRegions && formData.raiseDocumentRegions.length > 0);
+  const isEnabled = formData.raiseDocumentEnabled || !!formData.raiseDocumentRegion;
 
   return (
     <section className="box-border m-0 p-0">
@@ -57,16 +49,11 @@ export const RaiseDocumentSection: React.FC = () => {
         checked={isEnabled}
         onCheckboxChange={handleCheckboxChange}
         rightContent={
-          <div className="flex gap-[61px] max-sm:flex-wrap max-sm:gap-[15px]">
-            {regionOptions.map((option) => (
-              <CheckboxField
-                key={option.value}
-                label={option.label}
-                checked={(formData.raiseDocumentRegions || []).includes(option.value)}
-                onChange={(checked) => handleRegionChange(option.value, checked)}
-              />
-            ))}
-          </div>
+          <RadioGroup
+            options={regionOptions}
+            selectedValue={formData.raiseDocumentRegion || ''}
+            onChange={handleRegionChange}
+          />
         }
       />
       
