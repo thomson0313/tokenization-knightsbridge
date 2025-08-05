@@ -10,8 +10,7 @@ export const ExchangeListingSection: React.FC = () => {
   const exchangeOptions = [
     { value: 'xt', label: 'XT' },
     { value: 'lbank', label: 'LBank' },
-    { value: 'etf', label: 'ETF' },
-    { value: 'none', label: 'None' }
+    { value: 'etf', label: 'ETF' }
   ];
 
   const handleExchangeChange = (exchange: string, checked: boolean) => {

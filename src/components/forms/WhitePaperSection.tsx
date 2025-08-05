@@ -9,8 +9,7 @@ export const WhitePaperSection: React.FC = () => {
 
   const pageOptions = [
     { value: '30', label: '30 Pages' },
-    { value: '60', label: '60 Pages' },
-    { value: 'none', label: 'None' }
+    { value: '60', label: '60 Pages' }
   ];
 
   const handlePageChange = (page: string, checked: boolean) => {
