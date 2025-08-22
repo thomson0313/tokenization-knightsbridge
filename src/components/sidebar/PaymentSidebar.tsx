@@ -182,21 +182,21 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 			</div>
 
 			<div className="space-y-4">
-				{['stripe', 'btc', 'usdt'].map((method) => {
+				{[/*'stripe', */'btc', 'usdt'].map((method) => {
 					const labelMap: Record<string, string> = {
-						stripe: 'Stripe',
+						// stripe: 'Stripe',
 						btc: 'Bitcoin',
 						usdt: 'USDT (TRC20)',
 					};
 
 					const symbolMap: Record<string, string> = {
-						stripe: 'S',
+						// stripe: 'S',
 						btc: '₿',
 						usdt: '₮',
 					};
 
 					const colorMap: Record<string, string> = {
-						stripe: 'bg-blue-600',
+						// stripe: 'bg-blue-600',
 						btc: 'bg-orange-500',
 						usdt: 'bg-green-500',
 					};
