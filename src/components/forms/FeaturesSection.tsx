@@ -47,15 +47,15 @@ export const FeaturesSection: React.FC = () => {
                 onChange={(checked) => updateFeature('ableToBurn', checked)}
               />
             </div>
-            <CheckboxField
+            {/* <CheckboxField
               label="Others ?"
               checked={(formData.tokenFeatures || []).includes('others')}
               onChange={(checked) => updateFeature('others', checked)}
-            />
+            /> */}
           </div>
         }
       />
-      
+
       {isEnabled && (
         <>
           <div className="box-border flex flex-col gap-[17px] mb-8 m-0 p-0">
@@ -76,7 +76,7 @@ export const FeaturesSection: React.FC = () => {
                 onChange={(checked) => updateFeature('pausable', checked)}
               />
             </div>
-            
+
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Fees"
@@ -94,7 +94,7 @@ export const FeaturesSection: React.FC = () => {
                 onChange={(checked) => updateFeature('blacklist', checked)}
               />
             </div>
-            
+
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Transaction Limits"
@@ -112,7 +112,7 @@ export const FeaturesSection: React.FC = () => {
                 onChange={(checked) => updateFeature('walletLimits', checked)}
               />
             </div>
-            
+
             <div className="box-border grid grid-cols-3 gap-[27px] mb-[27px] m-0 p-0 max-md:grid-cols-2 max-sm:grid-cols-1">
               <CheckboxField
                 label="Marketing Fee"
@@ -131,7 +131,7 @@ export const FeaturesSection: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="box-border flex flex-col m-0 p-0">
             <label className="box-border text-text-primary text-[17px] font-normal mb-[11px] m-0 p-0">
               Guidelines
