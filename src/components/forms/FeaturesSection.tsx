@@ -19,6 +19,15 @@ export const FeaturesSection: React.FC = () => {
     }
   };
 
+  const handleEnableChange = (enabled: boolean, label: string) => {
+    if (label === 'Mintable') {
+      updateFeature('ableToMint', enabled);
+    } else {
+      updateFeature('ableToBurn', enabled);
+    }
+    handleCheckboxChange(enabled);
+  }
+
   const handleGuidelinesChange = (guidelines: string) => {
     updateFormData('featuresGuidelines', guidelines);
   };
@@ -39,12 +48,12 @@ export const FeaturesSection: React.FC = () => {
               <CheckboxField
                 label="Mintable"
                 checked={(formData.tokenFeatures || []).includes('ableToMint')}
-                onChange={(checked) => updateFeature('ableToMint', checked)}
+                onChange={(checked) => handleEnableChange(checked, 'Mintable')}
               />
               <CheckboxField
                 label="Burnable"
                 checked={(formData.tokenFeatures || []).includes('ableToBurn')}
-                onChange={(checked) => updateFeature('ableToBurn', checked)}
+                onChange={(checked) => handleEnableChange(checked, 'Burnable')}
               />
             </div>
             {/* <CheckboxField
