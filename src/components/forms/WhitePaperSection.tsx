@@ -13,6 +13,7 @@ export const WhitePaperSection: React.FC = () => {
 	];
 
 	const handlePageChange = (page: string, checked: boolean) => {
+		updateFormData('whitePaperEnabled', checked);
 		// For whitepaper, only allow one selection at a time
 		if (checked) {
 			updateFormData('whitePaperPages', page);
