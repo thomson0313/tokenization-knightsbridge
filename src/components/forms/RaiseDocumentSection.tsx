@@ -19,6 +19,7 @@ export const RaiseDocumentSection: React.FC = () => {
 	};
 
 	const handleRegionChange = (region: string, checked: boolean) => {
+		updateFormData('raiseDocumentEnabled', checked);
 		// For raise document, only allow one selection at a time
 		if (checked) {
 			updateFormData('raiseDocumentRegion', region);
