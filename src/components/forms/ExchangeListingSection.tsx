@@ -14,6 +14,7 @@ export const ExchangeListingSection: React.FC = () => {
   ];
 
   const handleExchangeChange = (exchange: string, checked: boolean) => {
+    updateFormData('exchangeListingEnabled', checked);
     const currentExchanges = formData.exchangeListings || [];
     let updatedExchanges;
 
