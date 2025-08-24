@@ -37,12 +37,12 @@ export const FeaturesSection: React.FC = () => {
           <div className="flex flex-col gap-[10px]">
             <div className="flex gap-[34px] max-sm:flex-wrap max-sm:gap-[15px]">
               <CheckboxField
-                label="Able to mint?"
+                label="Mintable"
                 checked={(formData.tokenFeatures || []).includes('ableToMint')}
                 onChange={(checked) => updateFeature('ableToMint', checked)}
               />
               <CheckboxField
-                label="Able to Burn?"
+                label="Burnable"
                 checked={(formData.tokenFeatures || []).includes('ableToBurn')}
                 onChange={(checked) => updateFeature('ableToBurn', checked)}
               />

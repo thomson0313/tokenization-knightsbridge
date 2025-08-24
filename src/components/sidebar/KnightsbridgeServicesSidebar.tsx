@@ -45,8 +45,8 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 				'marketingFee': 'Marketing Fee',
 				'interoperability': 'Interoperability',
 				'verifyContract': 'Verify Contract',
-				'ableToMint': 'Able to mint?',
-				'ableToBurn': 'Able to Burn?',
+				'ableToMint': 'Mintable',
+				'ableToBurn': 'Burnable',
 				'others': 'Others'
 			};
 

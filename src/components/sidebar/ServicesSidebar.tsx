@@ -48,8 +48,8 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 				'marketingFee': 'Marketing Fee',
 				'interoperability': 'Interoperability',
 				'verifyContract': 'Verify Contract',
-				'ableToMint': 'Able to mint?',
-				'ableToBurn': 'Able to Burn?',
+				'ableToMint': 'Mintable',
+				'ableToBurn': 'Burnable',
 				'others': 'Others'
 			};
 
