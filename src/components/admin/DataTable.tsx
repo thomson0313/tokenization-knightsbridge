@@ -18,6 +18,7 @@ import {
 } from '../ui/pagination';
 import { ChevronDown, ChevronRight, Eye, Download } from 'lucide-react';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import {
 	Dialog,
 	DialogContent,
@@ -808,19 +809,19 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 										</TableCell>
 										<TableCell>${submission.paymentAmount}</TableCell>
 										<TableCell>
-											<span className={`px-2 py-1 rounded-full text-xs ${
+											<Badge variant={
 												submission.payment_status === 'Completed'
-													? 'bg-green-100 text-green-800'
+													? 'success'
 													: submission.payment_status === 'Processing'
-														? 'bg-yellow-100 text-yellow-800'
+														? 'warning'
 														: submission.payment_status === 'Cancelled'
-															? 'bg-red-100 text-red-800'
+															? 'error'
 															: submission.payment_status === 'Expired'
-																? 'bg-orange-100 text-orange-800'
-																: 'bg-gray-100 text-gray-800'
-											}`}>
+																? 'error'
+																: 'pending'
+											}>
 												{submission.payment_status}
-											</span>
+											</Badge>
 										</TableCell>
 										<TableCell>
 											<SubmissionDetailDialog submission={submission} />
