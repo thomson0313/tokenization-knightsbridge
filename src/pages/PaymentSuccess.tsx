@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import { supabase } from '../utils/supabase';
+import emailjs from '@emailjs/browser';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -17,6 +18,40 @@ const PaymentSuccess = () => {
         body: {
           submissionId,
           status: 'completed'
+        }
+      }).then(async () => {
+        // Send notification email after successful payment status update
+        try {
+          // Get submission data to retrieve contact email
+          const { data: submissions } = await supabase.functions.invoke('get-submissions');
+          const submission = submissions?.find((sub: any) => sub.id === submissionId);
+          
+          if (submission?.contact_email) {
+            // Create form data for emailjs
+            const form = document.createElement('form');
+            const emailInput = document.createElement('input');
+            emailInput.name = 'to_email';
+            emailInput.value = submission.contact_email;
+            form.appendChild(emailInput);
+            
+            const messageInput = document.createElement('input');
+            messageInput.name = 'message';
+            messageInput.value = `Payment completed successfully for submission ${submissionId}`;
+            form.appendChild(messageInput);
+            
+            // Send email using emailjs
+            await emailjs.sendForm(
+              import.meta.env.VITE_EMAIL_SERVICE_ID,
+              import.meta.env.VITE_EMAIL_TEMPLATE_ID,
+              form,
+              {
+                publicKey: import.meta.env.VITE_EMAIL_PUBLIC_KEY,
+              }
+            );
+            console.log('Notification email sent successfully');
+          }
+        } catch (emailError) {
+          console.error('Failed to send notification email:', emailError);
         }
       }).catch(error => {
         console.error('Failed to update payment status:', error);
