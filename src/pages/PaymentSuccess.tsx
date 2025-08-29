@@ -41,7 +41,7 @@ const PaymentSuccess = () => {
 
 						const amountInput = document.createElement('input');
 						amountInput.name = 'amount';
-						amountInput.value = submission.payment_amount?.toString() || '0';
+						amountInput.value = submission.paymentAmount?.toString() || '0';
 						form.appendChild(amountInput);
 
 						const currencyInput = document.createElement('input');
