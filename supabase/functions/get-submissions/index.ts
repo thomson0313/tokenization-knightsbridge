@@ -168,6 +168,7 @@ serve(async (req) => {
       // Payment and status
       paymentAmount: submission.payment_amount || 0,
       status: submission.status || 'Pending',
+      payment_status: submission.payment_status || 'Pending',
       
       // Add uploaded documents from the separate query
       uploadedDocuments: (documentsBySubmission[submission.id] || []).map((doc) => ({
