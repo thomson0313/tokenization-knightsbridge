@@ -101,7 +101,6 @@ const PaymentSuccess = () => {
 					>
 						Return to Home
 					</Button>
-
 					<Button
 						onClick={() => navigate('/decentralized')}
 						variant="outline"
