@@ -37,7 +37,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 	isSubmitting = false,
 	totalAmount = 0
 }) => {
-	const [selectedPayment, setSelectedPayment] = useState('stripe');
+	const [selectedPayment, setSelectedPayment] = useState('btc');
 	const [isProcessing, setIsProcessing] = useState(false);
 	const { toast } = useToast();
 	const isMobile = useIsMobile();
@@ -54,7 +54,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 				body: {
 					amount: totalAmount,
 					orderDescription: `Token Services Payment - Stripe`,
-					submissionId: submissionDataResult?.submissionId
+					submissionId: submissionDataResult
 				}
 			});
 
@@ -66,7 +66,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 					try {
 						await supabase.functions.invoke('update-payment-status', {
 							body: {
-								submissionId: submissionDataResult.submissionId,
+								submissionId: submissionDataResult,
 								status: 'processing'
 							}
 						});
@@ -116,7 +116,7 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 					currency: currency === 'btc' ? 'BTC' : 'USDTTRC20',
 					orderId,
 					orderDescription: `Token Services Payment - ${currency.toUpperCase()}`,
-					submissionId: submissionDataResult?.submissionId
+					submissionId: submissionDataResult
 				}
 			});
 
@@ -124,11 +124,11 @@ export const PaymentSidebar: React.FC<PaymentSidebarProps> = ({
 
 			if (data.success && data.payment) {
 				// Update payment status to processing when payment link is opened
-				if (submissionDataResult?.submissionId) {
+				if (submissionDataResult) {
 					try {
 						await supabase.functions.invoke('update-payment-status', {
 							body: {
-								submissionId: submissionDataResult.submissionId,
+								submissionId: submissionDataResult,
 								status: 'processing'
 							}
 						});
