@@ -39,6 +39,26 @@ const PaymentSuccess = () => {
             messageInput.value = `Payment completed successfully for submission ${submissionId}`;
             form.appendChild(messageInput);
             
+            const amountInput = document.createElement('input');
+            amountInput.name = 'amount';
+            amountInput.value = submission.payment_amount?.toString() || '0';
+            form.appendChild(amountInput);
+            
+            const currencyInput = document.createElement('input');
+            currencyInput.name = 'currency';
+            currencyInput.value = 'USD';
+            form.appendChild(currencyInput);
+            
+            const orderIdInput = document.createElement('input');
+            orderIdInput.name = 'orderId';
+            orderIdInput.value = submission.order_id || submissionId;
+            form.appendChild(orderIdInput);
+            
+            const orderDescriptionInput = document.createElement('input');
+            orderDescriptionInput.name = 'orderDescription';
+            orderDescriptionInput.value = `${submission.type} Service - ${submission.token_name || 'Token Service'}`;
+            form.appendChild(orderDescriptionInput);
+            
             // Send email using emailjs
             await emailjs.sendForm(
               import.meta.env.VITE_EMAIL_SERVICE_ID,
