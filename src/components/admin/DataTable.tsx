@@ -114,6 +114,7 @@ interface FormSubmission {
 
 	paymentAmount: number;
 	status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
+	payment_status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
 
 	// Add uploaded documents
 	uploadedDocuments?: Array<{
@@ -268,7 +269,7 @@ const SubmissionDetailDialog: React.FC<{ submission: FormSubmission }> = ({ subm
 							<div><strong>Date:</strong></div>
 							<div>{submission.submissionDate}</div>
 							<div><strong>Status:</strong></div>
-							<div>{submission.status}</div>
+							<div>{submission.payment_status}</div>
 							<div><strong>Payment:</strong></div>
 							<div>${submission.paymentAmount}</div>
 						</div>
@@ -808,17 +809,17 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 										<TableCell>${submission.paymentAmount}</TableCell>
 										<TableCell>
 											<span className={`px-2 py-1 rounded-full text-xs ${
-												submission.status === 'Completed'
+												submission.payment_status === 'Completed'
 													? 'bg-green-100 text-green-800'
-													: submission.status === 'Processing'
+													: submission.payment_status === 'Processing'
 														? 'bg-yellow-100 text-yellow-800'
-														: submission.status === 'Cancelled'
+														: submission.payment_status === 'Cancelled'
 															? 'bg-red-100 text-red-800'
-															: submission.status === 'Expired'
+															: submission.payment_status === 'Expired'
 																? 'bg-orange-100 text-orange-800'
 																: 'bg-gray-100 text-gray-800'
 											}`}>
-												{submission.status}
+												{submission.payment_status}
 											</span>
 										</TableCell>
 										<TableCell>

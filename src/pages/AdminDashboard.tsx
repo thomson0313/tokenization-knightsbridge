@@ -97,6 +97,7 @@ interface FormSubmission {
 
 	paymentAmount: number;
 	status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
+	payment_status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
 
 	// Add uploaded documents
 	uploadedDocuments?: Array<{
