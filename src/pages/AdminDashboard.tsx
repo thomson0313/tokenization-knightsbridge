@@ -97,7 +97,7 @@ interface FormSubmission {
 
 	paymentAmount: number;
 	status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
-	payment_status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
+	payment_status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'expired';
 
 	// Add uploaded documents
 	uploadedDocuments?: Array<{
@@ -173,7 +173,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
 	const totalSubmissions = submissions.length;
 	const knightsbridgeSubmissions = submissions.filter(s => s.type === 'Knightsbridge').length;
 	const decentralizedSubmissions = submissions.filter(s => s.type === 'Decentralized').length;
-	const totalRevenue = submissions.reduce((sum, s) => sum + s.paymentAmount, 0);
+	
+	// Calculate revenue: processing + completed / completed only
+	const processingAndCompletedRevenue = submissions
+		.filter(s => s.payment_status === 'processing' || s.payment_status === 'completed')
+		.reduce((sum, s) => sum + s.paymentAmount, 0);
+	const completedRevenue = submissions
+		.filter(s => s.payment_status === 'completed')
+		.reduce((sum, s) => sum + s.paymentAmount, 0);
+	const totalRevenueDisplay = `$${processingAndCompletedRevenue.toLocaleString()}/$${completedRevenue.toLocaleString()}`;
 
 	if (!isAuthenticated) {
 		return <AdminLogin onLogin={handleLogin} isDarkMode={isDarkMode} onThemeToggle={onThemeToggle} />;
@@ -256,7 +264,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isDarkMode, onThemeTogg
 										</CardHeader>
 										<CardContent>
 											<div className="text-2xl font-bold text-text-primary">
-												${totalRevenue.toLocaleString()}
+												{totalRevenueDisplay}
 											</div>
 										</CardContent>
 									</Card>
