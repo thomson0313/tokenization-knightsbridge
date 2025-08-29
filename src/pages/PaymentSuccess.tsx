@@ -24,14 +24,14 @@ const PaymentSuccess = () => {
 				try {
 					// Get submission data to retrieve contact email
 					const { data: submissions } = await supabase.functions.invoke('get-submissions');
-					const submission = submissions?.find((sub: any) => sub.id === submissionId);
+					const submission = submissions?.submissions.find((sub: any) => sub.id === submissionId);
 
-					if (submission?.contact_email) {
+					if (submission?.contactEmail) {
 						// Create form data for emailjs
 						const form = document.createElement('form');
 						const emailInput = document.createElement('input');
 						emailInput.name = 'to_email';
-						emailInput.value = submission.contact_email;
+						emailInput.value = submission.contactEmail;
 						form.appendChild(emailInput);
 
 						const messageInput = document.createElement('input');
