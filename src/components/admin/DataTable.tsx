@@ -115,7 +115,7 @@ interface FormSubmission {
 
 	paymentAmount: number;
 	status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
-	payment_status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled' | 'Expired';
+	payment_status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'expired';
 
 	// Add uploaded documents
 	uploadedDocuments?: Array<{
@@ -810,13 +810,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
 										<TableCell>${submission.paymentAmount}</TableCell>
 										<TableCell>
 											<Badge variant={
-												submission.payment_status === 'Completed'
+												submission.payment_status === 'completed'
 													? 'success'
-													: submission.payment_status === 'Processing'
+													: submission.payment_status === 'processing'
 														? 'warning'
-														: submission.payment_status === 'Cancelled'
+														: submission.payment_status === 'cancelled'
 															? 'error'
-															: submission.payment_status === 'Expired'
+															: submission.payment_status === 'expired'
 																? 'error'
 																: 'pending'
 											}>
