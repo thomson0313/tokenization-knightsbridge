@@ -46,20 +46,38 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 			return;
 		}
 
-		// Send email using emailjs
-		const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
-		const TemplateId = import.meta.env.VITE_EMAIL_TEMPLATE_ID || '';
-		const EmailPublicKey = import.meta.env.VITE_EMAIL_PUBLIC_KEY || '';
+	// Format selected services for email
+	const selectedServices = [];
+	if (formData.kycFullName) selectedServices.push('KYC Information');
+	if (formData.custodianName) selectedServices.push('Custodian Information');
+	if (formData.issuerEntityName) selectedServices.push('Issuer Information');
+	if (formData.businessPlanType) selectedServices.push(`Business Plan (${formData.businessPlanType})`);
+	if (formData.savingsPlanGuidelines) selectedServices.push('Savings Plan');
+	if (formData.pensionPlanGuidelines) selectedServices.push('Pension Plan');
+	if (formData.tokenName) selectedServices.push(`Token Mint (${formData.tokenName})`);
+	if (formData.tokenFeatures?.length > 0) selectedServices.push(`Features: ${formData.tokenFeatures.join(', ')}`);
+	if (formData.letterheadEnabled) selectedServices.push('Letterhead');
+	if (formData.websitePlanEnabled) selectedServices.push('Website Plan');
+	if (formData.whitePaperPages) selectedServices.push(`Whitepaper (${formData.whitePaperPages} pages)`);
+	if (formData.raiseDocumentRegion) selectedServices.push(`Raise Document: ${formData.raiseDocumentRegion}`);
+	if (formData.exchangeListings?.length > 0) selectedServices.push(`Exchange Listings: ${formData.exchangeListings.join(', ')}`);
+	if (formData.legalDocuments?.length > 0) selectedServices.push(`Legal Documents: ${formData.legalDocuments.join(', ')}`);
 
-		const templateParams = {
-			to_email: formData.contactEmail,
-			from_name: 'Knightsbridge',
-			amount: amount.toString(),
-			currency: 'USD',
-			services: JSON.stringify(formData)
-		};
+	// Send email using emailjs
+	const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
+	const TemplateId = import.meta.env.VITE_EMAIL_TEMPLATE_ID || '';
+	const EmailPublicKey = import.meta.env.VITE_EMAIL_PUBLIC_KEY || '';
 
-		await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
+	const templateParams = {
+		to_email: formData.contactEmail,
+		from_name: 'Knightsbridge',
+		amount: amount.toString(),
+		currency: 'USD',
+		orderId: 'submissionId' in result ? result.submissionId : '',
+		services: selectedServices.join(' | ')
+	};
+
+	await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
 		
 		toast.success('Form submitted successfully! Check your email for confirmation.');
 		setIsSubmitting(false);
