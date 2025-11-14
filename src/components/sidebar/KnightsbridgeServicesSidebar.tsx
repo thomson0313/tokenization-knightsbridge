@@ -4,17 +4,11 @@ import { useFormContext } from '../../contexts/FormContext';
 
 interface KnightsbridgeServicesSidebarProps {
 	onCheckout: (totalAmount: number) => void;
-	selectedServices: {
-		knightsbridgeService: boolean;
-		serviceTax: boolean;
-		vatTax: boolean;
-	};
 	isSubmitting?: boolean;
 }
 
 export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebarProps> = ({
 	onCheckout,
-	selectedServices,
 	isSubmitting = false
 }) => {
 	const { formData } = useFormContext();
@@ -200,13 +194,6 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 						<span className="text-text-primary">{service.name}</span>
 					</div>
 				))}
-
-				<div className="w-full h-px bg-border-primary my-4"></div>
-
-				<div className="flex justify-between items-center py-2 font-medium">
-					<span className="text-text-primary text-lg">Total</span>
-					<span className="text-text-primary text-lg">${animatedTotal.toLocaleString()}</span>
-				</div>
 			</div>
 
 			<Button
