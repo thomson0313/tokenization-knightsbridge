@@ -37,14 +37,14 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 	const handleCheckout = async (amount: number) => {
 		setIsSubmitting(true);
 		try {
-			// Validate form
-			const result = await validateAndSubmit(formData, 'Knightsbridge', amount, undefined);
-			
-			if (result.success && 'errors' in result && result.errors && result.errors.length > 0) {
-				// Validation failed
-				setIsSubmitting(false);
-				return;
-			}
+		// Validate form
+		const result = await validateAndSubmit(formData, 'Knightsbridge', amount, undefined);
+		
+		if (!result.success) {
+			// Validation failed
+			setIsSubmitting(false);
+			return;
+		}
 
 		// Send email using emailjs
 		const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';

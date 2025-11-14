@@ -30,14 +30,14 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 	const handleCheckout = async (amount: number) => {
 		setIsSubmitting(true);
 		try {
-			// Validate form
-			const result = await validateAndSubmit(formData, 'Decentralized', amount, undefined);
-			
-			if (result.success && 'errors' in result && result.errors && result.errors.length > 0) {
-				// Validation failed
-				setIsSubmitting(false);
-				return;
-			}
+		// Validate form
+		const result = await validateAndSubmit(formData, 'Decentralized', amount, undefined);
+		
+		if (!result.success) {
+			// Validation failed
+			setIsSubmitting(false);
+			return;
+		}
 
 			// Send email using emailjs
 			const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
