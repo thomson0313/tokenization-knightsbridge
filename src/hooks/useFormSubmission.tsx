@@ -406,14 +406,9 @@ export const useFormSubmission = () => {
 					console.error('Legal preferences error:', legalPrefError);
 					throw legalPrefError;
 				}
-			}
+		}
 
-			toast({
-				title: "Success!",
-				description: "Your form has been submitted successfully.",
-			});
-
-			return { success: true, submissionId };
+		return { success: true, submissionId };
 		} catch (error) {
 			console.error('Form submission error:', error);
 			toast({

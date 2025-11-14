@@ -46,28 +46,28 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 				return;
 			}
 
-			// Send email using emailjs
-			const ServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-			const TemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
-			const EmailPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+		// Send email using emailjs
+		const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
+		const TemplateId = import.meta.env.VITE_EMAIL_TEMPLATE_ID || '';
+		const EmailPublicKey = import.meta.env.VITE_EMAIL_PUBLIC_KEY || '';
 
-			const templateParams = {
-				to_email: formData.contactEmail,
-				from_name: 'Knightsbridge',
-				amount: amount.toString(),
-				currency: 'USD',
-				services: JSON.stringify(formData)
-			};
+		const templateParams = {
+			to_email: formData.contactEmail,
+			from_name: 'Knightsbridge',
+			amount: amount.toString(),
+			currency: 'USD',
+			services: JSON.stringify(formData)
+		};
 
-			await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
-			
-			toast.success('Form submitted successfully! Check your email for confirmation.');
-			setIsSubmitting(false);
-		} catch (error) {
-			console.error('Form submission error:', error);
-			toast.error('Failed to submit form. Please try again.');
-			setIsSubmitting(false);
-		}
+		await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
+		
+		toast.success('Form submitted successfully! Check your email for confirmation.');
+		setIsSubmitting(false);
+	} catch (error) {
+		console.error('Form submission error:', error);
+		toast.error('Failed to submit form. Please try again.');
+		setIsSubmitting(false);
+	}
 	};
 
 	return (
