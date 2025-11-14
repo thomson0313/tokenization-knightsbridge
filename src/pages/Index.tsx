@@ -40,7 +40,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 		}
 
 		// Format selected services for email
-		const selectedServices = [];
+		const selectedServices = ['Decentralized'];
 		if (formData.tokenName) selectedServices.push(`Token Mint (${formData.tokenName})`);
 		if (formData.tokenFeatures?.length > 0) selectedServices.push(`Features: ${formData.tokenFeatures.join(', ')}`);
 		if (formData.letterheadEnabled) selectedServices.push('Letterhead');
@@ -61,7 +61,7 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 			amount: amount.toString(),
 			currency: 'USD',
 			orderId: 'submissionId' in result ? result.submissionId : '',
-			services: selectedServices.join(' | ')
+			services: selectedServices.join(' - ')
 		};
 
 		await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);

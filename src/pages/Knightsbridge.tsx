@@ -47,11 +47,13 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 		}
 
 	// Format selected services for email
-	const selectedServices = [];
+	const selectedServices = ['Knightsbridge'];
 	if (formData.kycFullName) selectedServices.push('KYC Information');
 	if (formData.custodianName) selectedServices.push('Custodian Information');
 	if (formData.issuerEntityName) selectedServices.push('Issuer Information');
-	if (formData.businessPlanType) selectedServices.push(`Business Plan (${formData.businessPlanType})`);
+	if (formData.businessPlanType && (formData.businessPlanGuidelines || formData.businessPlanExecutiveSummary || formData.businessPlanMarketAnalysis || formData.businessPlanFinancialProjections)) {
+		selectedServices.push(`Business Plan (${formData.businessPlanType})`);
+	}
 	if (formData.savingsPlanGuidelines) selectedServices.push('Savings Plan');
 	if (formData.pensionPlanGuidelines) selectedServices.push('Pension Plan');
 	if (formData.tokenName) selectedServices.push(`Token Mint (${formData.tokenName})`);
@@ -74,7 +76,7 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 		amount: amount.toString(),
 		currency: 'USD',
 		orderId: 'submissionId' in result ? result.submissionId : '',
-		services: selectedServices.join(' | ')
+		services: selectedServices.join(' - ')
 	};
 
 	await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
