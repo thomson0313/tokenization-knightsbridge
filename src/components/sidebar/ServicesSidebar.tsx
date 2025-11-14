@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { useFormContext } from '../../contexts/FormContext';
+import emailjs from '@emailjs/browser';
+import { useToast } from '../ui/use-toast';
 
 interface ServicesSidebarProps {
 	onCheckout: (totalAmount: number) => void;
@@ -24,7 +26,9 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 	isSubmitting = false
 }) => {
 	const { formData } = useFormContext();
-	const [animatedTotal, setAnimatedTotal] = useState(100); // Start with Mint Token price
+	const { toast } = useToast();
+	const [animatedTotal, setAnimatedTotal] = useState(100);
+	const [isSending, setIsSending] = useState(false);
 
 	// Calculate which services are enabled based on form data with per-item pricing
 	const getEnabledServices = () => {
@@ -178,8 +182,75 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 		}
 	}, [totalPrice]);
 
-	const handleCheckout = () => {
-		onCheckout(totalPrice);
+	const handleCheckout = async () => {
+		if (!formData.contactEmail) {
+			toast({
+				title: "Error",
+				description: "Please provide a contact email",
+				variant: "destructive",
+			});
+			return;
+		}
+
+		setIsSending(true);
+		try {
+			// Create form data for emailjs
+			const form = document.createElement('form');
+			
+			const emailInput = document.createElement('input');
+			emailInput.name = 'to_email';
+			emailInput.value = formData.contactEmail;
+			form.appendChild(emailInput);
+
+			const messageInput = document.createElement('input');
+			messageInput.name = 'message';
+			messageInput.value = `New service request`;
+			form.appendChild(messageInput);
+
+			const amountInput = document.createElement('input');
+			amountInput.name = 'amount';
+			amountInput.value = totalPrice.toString();
+			form.appendChild(amountInput);
+
+			const currencyInput = document.createElement('input');
+			currencyInput.name = 'currency';
+			currencyInput.value = 'USD';
+			form.appendChild(currencyInput);
+
+			const orderIdInput = document.createElement('input');
+			orderIdInput.name = 'orderId';
+			orderIdInput.value = `REQ-${Date.now()}`;
+			form.appendChild(orderIdInput);
+
+			const orderDescriptionInput = document.createElement('input');
+			orderDescriptionInput.name = 'orderDescription';
+			orderDescriptionInput.value = `Token Service - ${enabledServices.map(s => s.name).join(', ')}`;
+			form.appendChild(orderDescriptionInput);
+
+			// Send email using emailjs
+			await emailjs.sendForm(
+				import.meta.env.VITE_EMAIL_SERVICE_ID,
+				import.meta.env.VITE_EMAIL_TEMPLATE_ID,
+				form,
+				{
+					publicKey: import.meta.env.VITE_EMAIL_PUBLIC_KEY,
+				}
+			);
+
+			toast({
+				title: "Success",
+				description: "Your request has been submitted successfully!",
+			});
+		} catch (error) {
+			console.error('Failed to send notification email:', error);
+			toast({
+				title: "Error",
+				description: "Failed to submit request. Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsSending(false);
+		}
 	};
 
 	return (
@@ -204,25 +275,14 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 						<span className="text-text-primary text-sm md:text-[16px]">{service.name}</span>
 					</div>
 				))}
-
-				<div className="border-t-2 border-text-primary pt-4 mt-6">
-					<div className="flex justify-between items-center mb-6">
-						<div className="text-text-primary text-lg font-semibold">
-							Total:
-						</div>
-						<div className="text-text-primary text-lg font-semibold">
-							${animatedTotal.toLocaleString()}
-						</div>
-					</div>
-				</div>
 			</div>
 
 			<Button
 				onClick={handleCheckout}
-				disabled={isSubmitting}
+				disabled={isSubmitting || isSending}
 				className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isSubmitting ? 'Processing...' : 'Check Out Now'}
+				{isSending ? 'Sending...' : 'Submit Request'}
 			</Button>
 		</div>
 	);
