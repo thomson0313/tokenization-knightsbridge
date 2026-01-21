@@ -16,9 +16,10 @@ import { ExchangeListingSection } from '../components/forms/ExchangeListingSecti
 import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection';
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { KnightsbridgeServicesSidebar } from '../components/sidebar/KnightsbridgeServicesSidebar';
-import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 import { FormProvider, useFormContext } from '../contexts/FormContext';
 import { useFormSubmission } from '../hooks/useFormSubmission';
+import emailjs from '@emailjs/browser';
+import { toast } from 'sonner';
 
 import Icon from '../assets/img/knightsbridge_icon.png';
 
@@ -28,39 +29,65 @@ interface KnightsbridgeProps {
 }
 
 const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThemeToggle }) => {
-	const [showPayment, setShowPayment] = useState(false);
-	const [selectedServices, setSelectedServices] = useState({
-		knightsbridgeService: true,
-		serviceTax: true,
-		vatTax: true
-	});
-	const [totalAmount, setTotalAmount] = useState(200); // Start with Knightsbridge Service + Mint Token
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const { formData, fileUpload } = useFormContext();
-	const { validateAndSubmit, isSubmitting } = useFormSubmission();
+	const { formData } = useFormContext();
+	const { validateAndSubmit } = useFormSubmission();
 
-	const handleCheckout = (amount: number) => {
-		setTotalAmount(amount);
-		setShowPayment(true);
-	};
-
-	const handlePayNow = async () => {
+	const handleCheckout = async (amount: number) => {
+		setIsSubmitting(true);
 		try {
-			const result = await validateAndSubmit(formData, 'Knightsbridge', totalAmount, fileUpload);
-			if (result.success) {
-				setShowPayment(false);
-				// Only access submissionId if success is true
-				return (result as { success: true; submissionId: any }).submissionId;
-			}
-			return null; // explicitly return null if not successful
-		} catch (error) {
-			console.error('Form submission error:', error);
-			return null; // explicitly return null on error
+		// Validate form
+		const result = await validateAndSubmit(formData, 'Knightsbridge', amount, undefined);
+		
+		if (!result.success) {
+			// Validation failed
+			setIsSubmitting(false);
+			return;
 		}
+
+	// Format selected services for email
+	const selectedServices = ['Knightsbridge'];
+	if (formData.kycFullName) selectedServices.push('KYC Information');
+	if (formData.custodianName) selectedServices.push('Custodian Information');
+	if (formData.issuerEntityName) selectedServices.push('Issuer Information');
+	if (formData.businessPlanType && (formData.businessPlanGuidelines || formData.businessPlanExecutiveSummary || formData.businessPlanMarketAnalysis || formData.businessPlanFinancialProjections)) {
+		selectedServices.push(`Business Plan (${formData.businessPlanType})`);
+	}
+	if (formData.savingsPlanGuidelines) selectedServices.push('Savings Plan');
+	if (formData.pensionPlanGuidelines) selectedServices.push('Pension Plan');
+	if (formData.tokenName) selectedServices.push(`Token Mint (${formData.tokenName})`);
+	if (formData.tokenFeatures?.length > 0) selectedServices.push(`Features: ${formData.tokenFeatures.join(', ')}`);
+	if (formData.letterheadEnabled) selectedServices.push('Letterhead');
+	if (formData.websitePlanEnabled) selectedServices.push('Website Plan');
+	if (formData.whitePaperPages) selectedServices.push(`Whitepaper (${formData.whitePaperPages} pages)`);
+	if (formData.raiseDocumentRegion) selectedServices.push(`Raise Document: ${formData.raiseDocumentRegion}`);
+	if (formData.exchangeListings?.length > 0) selectedServices.push(`Exchange Listings: ${formData.exchangeListings.join(', ')}`);
+	if (formData.legalDocuments?.length > 0) selectedServices.push(`Legal Documents: ${formData.legalDocuments.join(', ')}`);
+
+	// Send email using emailjs
+	const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
+	const TemplateId = import.meta.env.VITE_EMAIL_TEMPLATE_ID || '';
+	const EmailPublicKey = import.meta.env.VITE_EMAIL_PUBLIC_KEY || '';
+
+	const templateParams = {
+		to_email: formData.contactEmail,
+		from_name: 'Knightsbridge',
+		amount: amount.toString(),
+		currency: 'USD',
+		orderId: 'submissionId' in result ? result.submissionId : '',
+		services: selectedServices.join(' - ')
 	};
 
-	const handleClosePayment = () => {
-		setShowPayment(false);
+	await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
+		
+		toast.success('Form submitted successfully! Check your email for confirmation.');
+		setIsSubmitting(false);
+	} catch (error) {
+		console.error('Form submission error:', error);
+		toast.error('Failed to submit form. Please try again.');
+		setIsSubmitting(false);
+	}
 	};
 
 	return (
@@ -138,22 +165,12 @@ const KnightsbridgeContent: React.FC<KnightsbridgeProps> = ({ isDarkMode, onThem
 						<div className="sticky top-4">
 							<KnightsbridgeServicesSidebar
 								onCheckout={handleCheckout}
-								selectedServices={selectedServices}
 								isSubmitting={isSubmitting}
 							/>
 						</div>
 					</div>
 				</div>
 			</main>
-
-			{/* Payment Sidebar - now handles its own positioning and mobile responsiveness */}
-			<PaymentSidebar
-				isVisible={showPayment}
-				onClose={handleClosePayment}
-				onPayNow={handlePayNow}
-				isSubmitting={isSubmitting}
-				totalAmount={totalAmount}
-			/>
 		</div>
 	);
 };

@@ -5,22 +5,11 @@ import { useFormContext } from '../../contexts/FormContext';
 
 interface ServicesSidebarProps {
 	onCheckout: (totalAmount: number) => void;
-	selectedServices: {
-		mintToken: boolean;
-		features: string[];
-		letterhead: boolean;
-		raiseDocument: string[];
-		whitePaper: string[];
-		websitePlan: boolean;
-		exchangeListing: string[];
-		legalDocuments: string[];
-	};
 	isSubmitting?: boolean;
 }
 
 export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 	onCheckout,
-	selectedServices,
 	isSubmitting = false
 }) => {
 	const { formData } = useFormContext();
@@ -191,31 +180,19 @@ export const ServicesSidebar: React.FC<ServicesSidebarProps> = ({
 						<h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2">
 							Your Selected Services
 						</h2>
-						<p className="text-text-secondary text-base md:text-[17px] font-normal">
-							See the prices for each
-						</p>
+					<p className="text-text-secondary text-base md:text-[17px] font-normal">
+						Review your selections
+					</p>
 					</div>
 				</div>
 			</div>
 
 			<div className="space-y-4">
 				{enabledServices.map((service, index) => (
-					<div key={index} className="flex justify-between items-center py-2 border-b border-border-primary">
+					<div key={index} className="flex items-center py-2 border-b border-border-primary">
 						<span className="text-text-primary text-sm md:text-[16px]">{service.name}</span>
-						<span className="text-text-primary text-sm md:text-[16px]">${service.price.toLocaleString()}</span>
 					</div>
 				))}
-
-				<div className="border-t-2 border-text-primary pt-4 mt-6">
-					<div className="flex justify-between items-center mb-6">
-						<div className="text-text-primary text-lg font-semibold">
-							Total:
-						</div>
-						<div className="text-text-primary text-lg font-semibold">
-							${animatedTotal.toLocaleString()}
-						</div>
-					</div>
-				</div>
 			</div>
 
 			<Button
