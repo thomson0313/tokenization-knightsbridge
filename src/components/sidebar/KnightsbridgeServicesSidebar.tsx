@@ -201,7 +201,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 				disabled={isSubmitting}
 				className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isSubmitting ? 'Processing...' : 'Check Out Now'}
+				{isSubmitting ? 'Processing...' : 'Get Quote Now'}
 			</Button>
 		</div>
 	);
