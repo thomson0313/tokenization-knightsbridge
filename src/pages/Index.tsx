@@ -11,10 +11,9 @@ import { ExchangeListingSection } from '../components/forms/ExchangeListingSecti
 import { LegalDocumentsSection } from '../components/forms/LegalDocumentsSection';
 import { ContactInformationSection } from '../components/forms/ContactInformationSection';
 import { ServicesSidebar } from '../components/sidebar/ServicesSidebar';
+import { PaymentSidebar } from '../components/sidebar/PaymentSidebar';
 import { FormProvider, useFormContext } from '../contexts/FormContext';
 import { useFormSubmission } from '../hooks/useFormSubmission';
-import emailjs from '@emailjs/browser';
-import { toast } from 'sonner';
 
 interface IndexProps {
 	isDarkMode: boolean;
@@ -22,57 +21,44 @@ interface IndexProps {
 }
 
 const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showPayment, setShowPayment] = useState(false);
+	const [selectedServices, setSelectedServices] = useState({
+		mintToken: false,
+		features: [] as string[],
+		letterhead: true, // Always enabled for letterhead
+		raiseDocument: [] as string[],
+		whitePaper: [] as string[],
+		websitePlan: false,
+		exchangeListing: [] as string[],
+		legalDocuments: [] as string[]
+	});
+	const [totalAmount, setTotalAmount] = useState(100); // Start with Mint Token
 
-	const { formData } = useFormContext();
-	const { validateAndSubmit } = useFormSubmission();
+	const { formData, fileUpload } = useFormContext();
+	const { validateAndSubmit, isSubmitting } = useFormSubmission();
 
-	const handleCheckout = async (amount: number) => {
-		setIsSubmitting(true);
+	const handleCheckout = (amount: number) => {
+		setTotalAmount(amount);
+		setShowPayment(true);
+	};
+
+	const handlePayNow = async () => {
 		try {
-		// Validate form
-		const result = await validateAndSubmit(formData, 'Decentralized', amount, undefined);
-		
-		if (!result.success) {
-			// Validation failed
-			setIsSubmitting(false);
-			return;
-		}
-
-		// Format selected services for email
-		const selectedServices = ['Decentralized'];
-		if (formData.tokenName) selectedServices.push(`Token Mint (${formData.tokenName})`);
-		if (formData.tokenFeatures?.length > 0) selectedServices.push(`Features: ${formData.tokenFeatures.join(', ')}`);
-		if (formData.letterheadEnabled) selectedServices.push('Letterhead');
-		if (formData.websitePlanEnabled) selectedServices.push('Website Plan');
-		if (formData.whitePaperPages) selectedServices.push(`Whitepaper (${formData.whitePaperPages} pages)`);
-		if (formData.raiseDocumentRegion) selectedServices.push(`Raise Document: ${formData.raiseDocumentRegion}`);
-		if (formData.exchangeListings?.length > 0) selectedServices.push(`Exchange Listings: ${formData.exchangeListings.join(', ')}`);
-		if (formData.legalDocuments?.length > 0) selectedServices.push(`Legal Documents: ${formData.legalDocuments.join(', ')}`);
-
-		// Send email using emailjs
-		const ServiceId = import.meta.env.VITE_EMAIL_SERVICE_ID || '';
-		const TemplateId = import.meta.env.VITE_EMAIL_TEMPLATE_ID || '';
-		const EmailPublicKey = import.meta.env.VITE_EMAIL_PUBLIC_KEY || '';
-
-		const templateParams = {
-			to_email: formData.contactEmail,
-			from_name: 'Decentralized',
-			amount: amount.toString(),
-			currency: 'USD',
-			orderId: 'submissionId' in result ? result.submissionId : '',
-			services: selectedServices.join(' - ')
-		};
-
-		await emailjs.send(ServiceId, TemplateId, templateParams, EmailPublicKey);
-			
-			toast.success('Form submitted successfully! Check your email for confirmation.');
-			setIsSubmitting(false);
+			const result = await validateAndSubmit(formData, 'Decentralized', totalAmount, fileUpload);
+			if (result.success) {
+				setShowPayment(false);
+				// Only access submissionId if success is true
+				return (result as { success: true; submissionId: any }).submissionId;
+			}
+			return null; // explicitly return null if not successful
 		} catch (error) {
 			console.error('Form submission error:', error);
-			toast.error('Failed to submit form. Please try again.');
-			setIsSubmitting(false);
+			return null; // explicitly return null on error
 		}
+	};
+
+	const handleClosePayment = () => {
+		setShowPayment(false);
 	};
 
 	return (
@@ -114,14 +100,20 @@ const IndexContent: React.FC<IndexProps> = ({ isDarkMode, onThemeToggle }) => {
 
 					<div className="flex-[3] min-w-0 relative">
 						<div className="sticky top-4">
-							<ServicesSidebar 
-								onCheckout={handleCheckout} 
-								isSubmitting={isSubmitting}
-							/>
+							<ServicesSidebar onCheckout={handleCheckout} selectedServices={selectedServices} />
 						</div>
 					</div>
 				</div>
 			</main>
+
+			{/* Payment Sidebar - now handles its own positioning and mobile responsiveness */}
+			<PaymentSidebar
+				isVisible={showPayment}
+				onClose={handleClosePayment}
+				onPayNow={handlePayNow}
+				isSubmitting={isSubmitting}
+				totalAmount={totalAmount}
+			/>
 		</div>
 	);
 };

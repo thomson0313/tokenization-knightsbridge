@@ -4,11 +4,17 @@ import { useFormContext } from '../../contexts/FormContext';
 
 interface KnightsbridgeServicesSidebarProps {
 	onCheckout: (totalAmount: number) => void;
+	selectedServices: {
+		knightsbridgeService: boolean;
+		serviceTax: boolean;
+		vatTax: boolean;
+	};
 	isSubmitting?: boolean;
 }
 
 export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebarProps> = ({
 	onCheckout,
+	selectedServices,
 	isSubmitting = false
 }) => {
 	const { formData } = useFormContext();
@@ -181,19 +187,27 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 						<h2 className="text-text-primary text-2xl md:text-3xl lg:text-[35px] font-normal mb-2">
 							Your Selected Services
 						</h2>
-					<p className="text-text-secondary text-base md:text-[17px] font-normal">
-						Review your selections
-					</p>
+						<p className="text-text-secondary text-base md:text-[17px] font-normal">
+							See the prices for each
+						</p>
 					</div>
 				</div>
 			</div>
 
 			<div className="space-y-4 mb-8">
 				{enabledServices.map((service, index) => (
-					<div key={index} className="flex items-center py-2">
+					<div key={index} className="flex justify-between items-center py-2">
 						<span className="text-text-primary">{service.name}</span>
+						<span className="text-text-primary">${service.price.toLocaleString()}</span>
 					</div>
 				))}
+
+				<div className="w-full h-px bg-border-primary my-4"></div>
+
+				<div className="flex justify-between items-center py-2 font-medium">
+					<span className="text-text-primary text-lg">Total</span>
+					<span className="text-text-primary text-lg">${animatedTotal.toLocaleString()}</span>
+				</div>
 			</div>
 
 			<Button
@@ -201,7 +215,7 @@ export const KnightsbridgeServicesSidebar: React.FC<KnightsbridgeServicesSidebar
 				disabled={isSubmitting}
 				className="w-full bg-text-primary text-bg-primary hover:bg-text-secondary transition-colors py-3 text-base font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isSubmitting ? 'Processing...' : 'Get Quote Now'}
+				{isSubmitting ? 'Processing...' : 'Check Out Now'}
 			</Button>
 		</div>
 	);
